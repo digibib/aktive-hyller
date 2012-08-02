@@ -1,0 +1,18 @@
+>> Writing PID to tmp/thin.3000.pid
+>> Using rack adapter
+>> Thin web server (v1.4.1 codename Chromeo)
+>> Maximum connections set to 1024
+>> Listening on 0.0.0.0:3000, CTRL+C to stop
+127.0.0.1 - - [02/Aug/2012 11:54:31] "GET /historikk HTTP/1.1" 200 9 0.0027
+127.0.0.1 - - [02/Aug/2012 11:54:33] "GET / HTTP/1.1" 200 666 0.0262
+127.0.0.1 - - [02/Aug/2012 11:54:33] "GET /css/style.css HTTP/1.1" 304 - 0.0027
+RFID-leser koblet til!
+RFID-leser koblet fra!
+127.0.0.1 - - [02/Aug/2012 11:54:34] "GET / HTTP/1.1" 200 666 0.0039
+127.0.0.1 - - [02/Aug/2012 11:54:34] "GET /css/style.css HTTP/1.1" 304 - 0.0006
+127.0.0.1 - - [02/Aug/2012 11:54:34] "GET /js/jquery.min.js HTTP/1.1" 304 - 0.0004
+RFID-leser koblet til!
+>> Waiting for 2 connection(s) to finish, can take up to 30 sec, CTRL+C to stop now
+>> Stopping ...
+RFID-leser koblet fra!
+>> Exiting!

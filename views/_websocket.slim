@@ -1,0 +1,15 @@
+javascript:
+  var ws = new WebSocket("ws://localhost:4567/ws");
+  
+  ws.onmessage = function(evt) {
+    window.location.href = "/omtale?tnr=" + evt.data;
+    //document.getElementById('debug').innerHTML = evt.data;
+  }
+
+  ws.onclose = function() {
+    console.log("Websocket connection lost!");
+  }
+
+  ws.onopen = function() {
+    console.log("Websocket connected!");
+  }
