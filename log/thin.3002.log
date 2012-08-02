@@ -1,6 +1,0 @@
->> Writing PID to tmp/thin.3002.pid
->> Using rack adapter
->> Thin web server (v1.4.1 codename Chromeo)
->> Maximum connections set to 1024
->> Listening on 0.0.0.0:3002, CTRL+C to stop
->> Exiting!
