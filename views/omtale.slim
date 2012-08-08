@@ -1,0 +1,90 @@
+doctype html
+html
+  head
+    title Aktive hyller
+    link href='/css/style.css' type='text/css' rel='stylesheet'
+    script src="/js/jquery.min.js"
+
+  body
+    div id="container" class="select-disable"
+      div id="header"
+        img src="/img/logo.png" class="logo"
+        div id="top-buttons"
+          button[class="top-button"] Bokanbefalinger
+          button[class="top-button"] Nytt søk
+
+      div id="leftmenu"
+        ul
+          li[class="left-button"] Omtale
+          li[class="left-button"] Flere bøker av forfatteren
+          li[class="left-button"] Noe som ligner
+          li[class="left-button-s"] Historikk
+
+      div id="contents"
+        div id="content-right"
+          div id="omtale-tittel"
+            h2 Jan-Erik Fjell
+            h2 Tysteren
+            hr
+          div id="omtale-scroll"
+            div id="scroll-actions"
+              |<a class="prev">
+              |<img src="/img/up.png" style="margin-top:20px"></a>
+              |<br/>
+              |<a class="next">
+              |<img src="/img/down.png" style="margin-top:480px"></a>
+            
+          div id="omtale-tekst"
+            div id="scrollable"
+              p TYSTEREN er vinner av Bokhandlerprisen 2010. Boken ble raskt bokhandlernes favoritt og ble fort sammenliknet med Jo Nesbøs bøker. Handlingen i Tysteren er todelt. I New York, på 1960-tallet, tas Vincent Giordano opp i den beryktede mafiafamilien Locatelli og får sin ilddåp: å henrette en tyster. I nåtids Fredrikstad drepes byens rikeste mann. Det er grunn til å tro at drapet er økonomisk motivert.
+              p Fra Kripos kommer overbetjent Anton Brekke for å lede etterforskningen.
+              pre «Jeg vil bare be deg om en tjeneste.
+              pre Den samme jeg ba deg om for snart seks år siden.» 
+              pre Vincent stakk hånden i innerlomma på dressjakka,
+              pre tok ut en liten, rød nøkkel og la den på bordet.
+              pre «Husker du?»
+              p TYSTEREN er en parallellhistorie som begynner i New York på 1960-tallet. Vincent Giordano tas opp i den beryktede mafiafamilien Locatelli og får sin ilddåp: å henrette en tyster. I nåtid i Fredrikstad drepes byens rikeste mann. Det er grunn til å tro at drapet er økonomisk motivert.
+              p Fra Kripos kommer overbetjent Anton Brekke for å lede etterforskningen. Frodig, freidig og frekk, med drag på damene og en hemmelig lidenskap: pokerspill. Med den ivrige politistudenten Magnus Torp i hælene begynner Brekke å rulle opp flere historier som på en overraskende måte flettes sammen til en snedig finale.
+              p TYSTEREN er en parallellhistorie som begynner i New York på 1960-tallet. Vincent Giordano tas opp i den beryktede mafiafamilien Locatelli og får sin ilddåp: å henrette en tyster. I nåtid i Fredrikstad drepes byens rikeste mann. Det er grunn til å tro at drapet er økonomisk motivert.
+              p Fra Kripos kommer overbetjent Anton Brekke for å lede etterforskningen. Frodig, freidig og frekk, med drag på damene og en hemmelig lidenskap: pokerspill. Med den ivrige 
+              politistudenten Magnus Torp i hælene begynner Brekke å rulle opp flere historier som på en overraskende måte flettes sammen til en snedig finale.
+              p TYSTEREN er en parallellhistorie som begynner i New York på 1960-tallet. Vincent Giordano tas opp i den beryktede mafiafamilien Locatelli og får sin ilddåp: å henrette en tyster. I nåtid i Fredrikstad drepes byens rikeste mann. Det er grunn til å tro at drapet er økonomisk moztivert.
+              p Skapsprengere kommer og sprenger penger.æøå
+
+          div style="clear:both"
+          div id="omtale-kilder"
+            button[class="kilde kilde-valgt kilde-left"]:span Omtale
+            button[class="kilde kilde-mid kilde-uvalgt"]:span Kilde
+            button[class="kilde kilde-mid kilde-uvalgt"]:span Kilde
+            button[class="kilde kilde-right kilde-inaktiv"]:span Kilde
+            
+        div id="content-left"
+            img src="/img/bok.jpg" class="omtalt-bok"
+            img src="/img/rating.png" class="rating"
+            p Basert på 5 anmeldelser fra bokelskere
+
+javascript:
+  if (window.WebSocket) {
+    var ws = new WebSocket('ws://localhost:3000/example');
+    ws.onopen = function() {
+      console.log("ws connected!");
+    }
+    ws.onclose = function() {
+      console.log("ws closed.");
+    }
+    ws.onmessage = function(msg) {
+      alert(msg);
+    }
+  }
+  $(document).ready(function () {
+    $('a.prev').on('click', function() {
+      console.log("up!");
+      $('#scrollable').animate({scrollTop:-500},'slow');
+    });
+
+    $('a.next').on('click', function() {
+      console.log("down!");
+      $('#scrollable').animate({scrollTop:500},'slow');
+    });
+
+  });

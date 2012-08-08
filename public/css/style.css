@@ -1,1 +1,64 @@
-div#debug { background-color:yellow; border: 1px solid black; border-radius: 2px;}
+*                  { margin:0; padding:0; border:0; /*cursor: none;*/ }
+.select-disable     { -khtml-user-select: none; -moz-user-select: none;
+                    -o-user-select: none;  user-select: none; }
+button::-moz-focus-inner { border: 0; }
+
+body               { font-family: Arial; font-size:100%; }
+h2                 { font-size: 2em; color: #222; letter-spacing: 2px; line-height: 1.1em ;}
+hr                 { border: 1px solid gray; width: 91%; margin-top: 20px; margin-bottom: 20px;}
+a:link             { text-decoration: none; color: #444;}
+a:visited          { color: #444;}
+a:active, a:focus  { outline-style: none; outline: 0; }
+
+div#debug          { background-color:yellow; border: 1px solid black; border-radius: 2px;}
+div#container      { width: 1680px; height:910px; }
+div#header         { height: 130px; width: 100%; background-color: #e65740; }
+div#top-buttons    { float: right; margin: 24px;}
+div#leftmenu       { float: left; width: 235px; height: 100%; }
+div#contents       { padding-left: 25px; padding-top: 35px;
+                     float: left; background-color: #fff; width: 1400px }
+div#content-left   { width: 300px; height:520px; background-color: #ddd;
+                     border-radius: 5px; float: left; padding: 30px; color:#444;}
+div#content-right  { float: right; width:970px; height: 822px; padding: 20px;
+                     background-color: #ddd; border-radius: 5px;}
+
+img.logo           { float:left; margin-left:20px; margin-top: 30px; height: 60px; }
+button.top-button  { border-radius: 5px; height: 80px; width: 240px;
+                     margin-left: 24px; font-size: 1.2em; color: #444;
+                     box-shadow: 6px 6px 7px 2px rgba(0,0,0,0.15);
+                     background: -moz-linear-gradient(top,  #eee,  #b5b5b5);}
+.top-button:active { position:relative; top: 3px; }
+
+
+li.left-button     { display: block; width:210px; height: 270px;
+                     border-top: 1px solid gray; border-right: 1px solid gray;
+                     text-align: center; font-size: 30px; background-color: #ccc}
+li.left-button-s   { display: block; width:210px; height: 100px; background-color: #ccc;
+                     border-top: 1px solid gray; border-right: 1px solid gray;
+                     border-bottom: 1px solid gray; text-align: center; font-size: 30px;}
+
+div#omtale-tittel  { }
+div#omtale-tekst   { background-color: #fff; height: 575px; width: 840px;
+                     padding: 20px; font-size: 1.3em; float:left; }
+div#omtale-kilder  { margin-top:20px; }
+div#omtale-scroll  { float: right; margin-right:20px; }
+
+#scrollable        { position:relative; overflow:hidden; height: 575px; }
+
+.disabled          { visibility: hidden;}
+img.omtalt-bok     { width: 280px; border: 10px solid white;}
+img.rating         { margin-top: 20px; margin-bottom: 10px;}
+
+button.kilde       { width: 220px; height: 80px; font-size: 1.2em;
+                     border-left: 1px solid gray; border-top: 1px solid gray;
+                     border-bottom: 1px solid gray; box-shadow: 1px  2px 30px 10px rgba(0,0,0,0.1);}
+.kilde-mid         { } 
+.kilde-left        { border-radius: 5px 0 0 5px; }
+.kilde-right       { border-radius: 0 5px 5px 0; border-right: 1px solid gray; }
+.kilde-valgt       { color: #fff; font-weight: bold;
+                     background: -moz-linear-gradient(top,  #444,  #ccc); }
+.kilde-uvalgt      { background: -moz-linear-gradient(top,  #eee,  #b5b5b5); }
+.kilde-uvalgt:active { background: -moz-linear-gradient(top,  #444,  #ccc) }
+.kilde-uvalgt:active span { position:relative; top: 3px;}
+.kilde-inaktiv     { background-color: #ccc; color: gray;}
+

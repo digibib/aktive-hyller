@@ -34,7 +34,8 @@ get '/' do
 end
 
 get '/omtale' do
-  "omtale for #{params[:tnr]}"
+  slim(:omtale)
+  #"omtale for #{params[:tnr]}"
 end
 
 get '/flere' do
