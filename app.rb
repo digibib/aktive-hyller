@@ -3,6 +3,10 @@ require "rubygems"
 require 'sinatra'
 require 'sinatra-websocket'
 require 'slim'
+require "sparql/client"
+require "json"
+
+sparql = SPARQL::Client.new("http://data.deichman.no/sparql")
 
 set :server, 'thin'
 set :sockets, []
@@ -48,4 +52,21 @@ end
 
 get '/historikk' do
   'historikk'
+end
+
+get '/book/:tnr' do
+  content_type :json
+
+  query = 
+  <<-eos
+    PREFIX dct: <http://purl.org/dc/terms/>
+    select ?title ?format where {
+    <http://data.deichman.no/resource/tnr_#{params[:tnr].to_i}> dct:title ?title ;
+    dct:format ?format . }
+  eos
+  accepted_formats = ["http://data.deichman.no/format/Book", "http://data.deichman.no/format/Audiobook"]
+
+  results = sparql.query(query)
+  {:title => results[0][:title].value,
+   :accepted_format => accepted_formats.include?(results[0][:format].to_s) }.to_json
 end
