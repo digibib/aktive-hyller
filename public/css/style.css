@@ -10,8 +10,19 @@ a:link             { text-decoration: none; color: #444;}
 a:visited          { color: #444;}
 a:active, a:focus  { outline-style: none; outline: 0; }
 
+div#overlay        { position: fixed; width:100%; height: 100%; top:0; left: 0;
+                     z-index: 50; background: #000; opacity: 0.8; display:none;}
+div#vi-leter       { color: #fff; position:fixed; display:none;
+                     top: 370px; left: 360px; z-index:1000; }
+#vi-leter p        { font-size:3em; }
+div#avbryt         { z-index: 1000; position: fixed; top: 450px; left: 1130px;}
+
 div#debug          { background-color:yellow; border: 1px solid black; border-radius: 2px;}
-div#container      { width: 1680px; height:910px; }
+div#container      { width: 1680px; height:910px; color: #222; }
+div#nysgjerrig     { width:100%; height: 100%; vertical-align: middle}
+div#nysgjerrig-tittel { margin-top:100px; font-size: 6em; font-weight: bold; text-align: center}
+div#nysgjerrig-undertittel { margin:200px;font-size: 4em; text-align: center}
+
 div#header         { height: 130px; width: 100%; background-color: #e65740; }
 div#top-buttons    { float: right; margin: 24px;}
 div#leftmenu       { float: left; width: 235px; height: 100%; }

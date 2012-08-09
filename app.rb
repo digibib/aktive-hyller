@@ -57,6 +57,8 @@ end
 get '/book/:tnr' do
   content_type :json
 
+  accepted_formats = ["http://data.deichman.no/format/Book", "http://data.deichman.no/format/Audiobook"]
+
   query = 
   <<-eos
     PREFIX dct: <http://purl.org/dc/terms/>
@@ -64,9 +66,11 @@ get '/book/:tnr' do
     <http://data.deichman.no/resource/tnr_#{params[:tnr].to_i}> dct:title ?title ;
     dct:format ?format . }
   eos
-  accepted_formats = ["http://data.deichman.no/format/Book", "http://data.deichman.no/format/Audiobook"]
 
   results = sparql.query(query)
+
+  halt 400, "ugyldig tittelnummer" unless results.size > 0
+
   {:title => results[0][:title].value,
    :accepted_format => accepted_formats.include?(results[0][:format].to_s) }.to_json
 end

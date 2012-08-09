@@ -7,8 +7,73 @@ html
     script src="/js/jquery.min.js"
 
   body
-    div id="debug"
+    div id="container" class="select-disable dim"
+      /div id="debug"
+      div id="header"
+        img src="/img/logo.png" class="logo"
+        div id="top-buttons"
+          button[class="top-button"] Bokanbefalinger
+          button[class="top-button"] Nytt søk
 
-    p hei
+      div[id="nysgjerrig-tittel"] Nysgjerrig på boken?
+      div[id="nysgjerrig-undertittel"] Legg den her og finn ut mer!
+      div id="vi-leter"
+        p Vi leter etter boka, vennligst vent
+        div id="avbryt"
+          button[class="top-button" id="avbryt-knapp"] Avbryt
+      div[id="overlay"]
 
-  == render :slim, :'_websocket'
+  javascript:
+    $(document).ready(function() {
+
+      // Initialize
+      var ws = new WebSocket("ws://localhost:4567/ws");
+      
+      $('button#avbryt-knapp').on('click', function() {
+        $('#overlay').hide();
+        $('#vi-leter').hide();
+      });
+
+      // loading animation
+      i = 0;
+      setInterval(function() {
+          i = ++i % 4;
+          $("#loading").html(""+Array(i+1).join("."));
+      }, 500);
+
+
+      // when titlenr is received from server via websocket:
+      ws.onmessage = function(evt) {
+        // show overlay
+        $('#overlay').show();
+        $('button#avbryt-knapp').html('Avbryt');
+        $('#vi-leter').show();
+        
+        request = $.get('/book/'+evt.data);
+
+        request.done(function(data) {
+          console.log(data);
+          if (data.accepted_format) {
+            $('div#vi-leter p').html('Henter informasjon om "' + data.title + '" <span id="loading"></span>' );
+          } else {
+            $('div#vi-leter p').html('Beklager! Foreløpig kan jeg bare hjelpe deg<br/>med bøker og lydbøker');
+            $('button#avbryt-knapp').html('OK');
+          }
+        });
+
+        request.fail(function(message) {
+          console.log(message);
+          $('div#vi-leter p').html('Ops! Klarte ikke å finne noe om denne.');
+          $('button#avbryt-knapp').html('OK');
+        });
+      }
+
+      ws.onclose = function() {
+        console.log("Websocket connection lost!");
+      }
+
+      ws.onopen = function() {
+        console.log("Websocket connected!");
+      }
+
+    });
