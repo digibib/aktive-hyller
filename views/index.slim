@@ -19,6 +19,7 @@ html
       div[id="nysgjerrig-undertittel"] Legg den her og finn ut mer!
       div id="vi-leter"
         p Vi leter etter boka, vennligst vent
+          span id="loading"
         div id="avbryt"
           button[class="top-button" id="avbryt-knapp"] Avbryt
       div[id="overlay"]
@@ -55,6 +56,7 @@ html
           console.log(data);
           if (data.accepted_format) {
             $('div#vi-leter p').html('Henter informasjon om "' + data.title + '" <span id="loading"></span>' );
+            // hent all info til omtalevisning her
           } else {
             $('div#vi-leter p').html('Beklager! Foreløpig kan jeg bare hjelpe deg<br/>med bøker og lydbøker');
             $('button#avbryt-knapp').html('OK');

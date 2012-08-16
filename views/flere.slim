@@ -1,0 +1,77 @@
+doctype html
+html
+  head
+    title Aktive hyller
+    link href='/css/style.css' type='text/css' rel='stylesheet'
+    script src="/js/jquery.min.js"
+
+  body
+    div id="container" class="select-disable"
+      div id="header"
+        img src="/img/logo.png" class="logo"
+        div id="top-buttons"
+          button[class="top-button"] Bokanbefalinger
+          button[class="top-button"] Nytt søk
+
+      div id="leftmenu"
+        ul
+          li[class="left-button"] Omtale
+          li[class="left-button"] *Flere bøker av forfatteren*
+          li[class="left-button"] Noe som ligner
+          li[class="left-button-s"] Historikk
+
+      div id="contents"
+        ul class="listevisning"
+          - books.each_with_index do |book, index|
+            a href="/omtale" class="liste-link"
+              li
+                p class="liste-forfatter" Forfatternavn
+                p class="liste-tittel" #{book}
+                hr style="width:100%;"
+                /img src="/img/bok.jpg" class="listevisning"
+                div class="liste-bilde"
+                  img src="/img/#{index+1}.jpg" class="listevisning"
+      div id="vi-leter"
+        p Vi leter etter boka, vennligst vent
+        div id="avbryt"
+          button[class="top-button" id="avbryt-knapp"] Avbryt
+      div[id="overlay"]
+
+javascript:
+  if (window.WebSocket) {
+    var ws = new WebSocket('ws://localhost:3000/example');
+    ws.onopen = function() {
+      console.log("ws connected!");
+    }
+    ws.onclose = function() {
+      console.log("ws closed.");
+    }
+    ws.onmessage = function(msg) {
+      alert(msg);
+    }
+  }
+  $(document).ready(function () {
+
+   $('button#avbryt-knapp').on('click', function() {
+      $('#overlay').hide();
+      $('#vi-leter').hide();
+    });
+
+    // loading animation
+    i = 0;
+    setInterval(function() {
+      i = ++i % 4;
+      $("#loading").html(""+Array(i+1).join("."));
+    }, 500);
+
+    $('a.liste-link').on('click', function(evt) {
+      evt.preventDefault();
+        // show overlay
+        $('#overlay').show();
+        $('button#avbryt-knapp').html('Avbryt');
+        $('div#vi-leter p').html('Henter informasjon om "' + "BOKTITTEL" + '" <span id="loading"></span>' );
+        $('#vi-leter').show();
+
+    });
+
+  });
