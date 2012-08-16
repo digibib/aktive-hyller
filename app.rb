@@ -2,6 +2,7 @@
 require "rubygems"
 require 'sinatra'
 require 'sinatra-websocket'
+require "sinatra/reloader" if development?
 require 'slim'
 require "sparql/client"
 require "json"
@@ -43,7 +44,7 @@ get '/omtale' do
 end
 
 get '/flere' do
-  'flere bøker av forfatteren'
+  slim(:flere)
 end
 
 get '/relaterte' do
@@ -73,4 +74,38 @@ get '/book/:tnr' do
 
   {:title => results[0][:title].value,
    :accepted_format => accepted_formats.include?(results[0][:format].to_s) }.to_json
+end
+
+get '/more_info/:tnr' do
+  content_type :json
+
+  query = 
+  <<-eos
+  PREFIX rda: <http://rdvocab.info/Elements/>
+  PREFIX dct: <http://purl.org/dc/terms/>
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX bibo: <http://purl.org/ontology/bibo/>
+  PREFIX fabio: <http://purl.org/spar/fabio/>
+  SELECT
+  ?title ?responsible (sql:GROUP_DIGEST(?creatorName, ', ', 1000, 1)) as ?creatorName ?format ?isbn ?work
+  (sql:sample(?img)) as ?img
+  WHERE {
+   GRAPH <http://data.deichman.no/books> {
+    <http://data.deichman.no/resource/tnr_#{params[:tnr].to_i}> dct:title ?title ;
+     dct:format ?format .
+    OPTIONAL { <http://data.deichman.no/resource/tnr_#{params[:tnr].to_i}> bibo:isbn ?isbn . }
+    OPTIONAL { <http://data.deichman.no/resource/tnr_#{params[:tnr].to_i}> dct:creator ?creator .
+               ?creator foaf:name ?creatorName . }
+    OPTIONAL { <http://data.deichman.no/resource/tnr_#{params[:tnr].to_i}> rda:statementOfResponsibility ?responsible .}
+    OPTIONAL { ?work fabio:hasManifestation <http://data.deichman.no/resource/tnr_#{params[:tnr].to_i}> . }
+    OPTIONAL { <http://data.deichman.no/resource/tnr_#{params[:tnr].to_i}> foaf:depiction ?img . }
+   }
+  }
+  eos
+
+  results = sparql.query(query)
+
+  halt 400, "ugyldig tittelnummer" unless results.size > 0
+  
+  results[0].to_hash.to_json
 end
