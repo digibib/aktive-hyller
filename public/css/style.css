@@ -73,3 +73,13 @@ button.kilde       { width: 220px; height: 80px; font-size: 1.2em;
 .kilde-uvalgt:active span { position:relative; top: 3px;}
 .kilde-inaktiv     { background-color: #ccc; color: gray;}
 
+div.liste-bilde    { height:260px; width: 220px; margin: auto; overflow:hidden;
+                     padding: 0; border:0px solid white; }
+ul.listevisning    { list-style-type: none }
+ul.listevisning li { display: inline-block; width: 250px; height: 365px;
+                     background-color: #ccc; margin: 0 60px 35px 0; padding: 20px;
+                     border-radius: 5px; box-shadow: 1px  2px 20px 5px rgba(0,0,0,0.1);
+                     text-align: center;}
+img.listevisning   { height: 260px;}
+p.liste-forfatter  { text-align: left; font-size:18px; font-weight: bold; margin-bottom: 5px; margin-left: 20px;}
+p.liste-tittel     { text-align: left; font-size:18px; margin-left:20px;}

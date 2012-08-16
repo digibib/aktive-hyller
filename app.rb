@@ -39,12 +39,13 @@ get '/' do
 end
 
 get '/omtale' do
-  slim(:omtale)
+  slim :omtale 
   #"omtale for #{params[:tnr]}"
 end
 
 get '/flere' do
-  slim(:flere)
+  books = ["Bok En", "Bok to", "Bok tre", "Bok 4", "Bok5", "Bok 6", "Bok 7", "Bok 8"]
+  slim :flere, :locals => {:books => books}
 end
 
 get '/relaterte' do
