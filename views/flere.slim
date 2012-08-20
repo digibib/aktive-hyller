@@ -14,11 +14,14 @@ html
           button[class="top-button"] Nytt søk
 
       div id="leftmenu"
-        ul
-          li[class="left-button"] Omtale
-          li[class="left-button"] *Flere bøker av forfatteren*
-          li[class="left-button"] Noe som ligner
-          li[class="left-button-s"] Historikk
+        a href="/omtale"
+          div[class="left-button"] Omtale
+        div class="left-button"
+          span style="font-weight:bold" Flere bøker<br/>av forfatteren
+          div class="arrow"
+          div class="arrow-border"
+        div[class="left-button"] Noe som ligner
+        div[class="left-button-s"] Historikk
 
       div id="contents"
         ul class="listevisning"

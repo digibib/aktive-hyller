@@ -41,12 +41,23 @@ button.top-button  { border-radius: 5px; height: 80px; width: 240px;
 .top-button:active { position:relative; top: 3px; }
 
 
-li.left-button     { display: block; width:210px; height: 270px;
+div.arrow          { border-color: transparent transparent transparent gray;
+                     border-style: solid; border-width:16px; height:0; width: 0;
+                     position: absolute; top: 120px; left: 210px; }
+div.arrow-border   { border-color: transparent transparent transparent #eee;
+                     border-style: solid; border-width:16px; height:0; width: 0;
+                     position: absolute; top: 120px; left: 210px;}
+div.left-button     { color: #333; position: relative; display: block; width:210px; height: 250px;
+                     border-top: 1px solid gray; border-right: 1px solid gray; padding-top: 20px;
+                     text-align: center; font-size: 24px; background-color: #ddd;
+                     box-shadow: 1px  10px 20px 5px rgba(0,0,0,0.18);
+                     background: -moz-linear-gradient(left, #aaa, #eee); }
+div.left-button-s   { padding-top: 20px; display: block; width:210px; height: 80px; background-color: #ccc;
                      border-top: 1px solid gray; border-right: 1px solid gray;
-                     text-align: center; font-size: 30px; background-color: #ccc}
-li.left-button-s   { display: block; width:210px; height: 100px; background-color: #ccc;
-                     border-top: 1px solid gray; border-right: 1px solid gray;
-                     border-bottom: 1px solid gray; text-align: center; font-size: 30px;}
+                     border-bottom: 1px solid gray; text-align: center; font-size: 24px;
+                     box-shadow: 1px  10px 20px 5px rgba(0,0,0,0.18);
+                     background: -moz-linear-gradient(left, #aaa, #eee);}
+img.menu-icon        { width:80px; margin-top:60px;}
 
 div#omtale-tittel  { }
 div#omtale-tekst   { background-color: #fff; height: 575px; width: 840px;
