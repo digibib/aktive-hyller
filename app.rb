@@ -1,13 +1,16 @@
 #encoding: UTF-8
 require "rubygems"
+require "bundler/setup"
 require 'sinatra'
 require 'sinatra-websocket'
 require "sinatra/reloader" if development?
 require 'slim'
-require "sparql/client"
+require "rdf/virtuoso"
 require "json"
 
-sparql = SPARQL::Client.new("http://data.deichman.no/sparql")
+url = 'http://data.deichman.no/sparql'
+repo = RDF::Virtuoso::Repository.new(url)
+QUERY = RDF::Virtuoso::Query
 
 set :server, 'thin'
 set :sockets, []
@@ -39,8 +42,20 @@ get '/' do
 end
 
 get '/omtale' do
-  slim :omtale 
-  #"omtale for #{params[:tnr]}"
+  slim :omtale
+end
+
+get '/omtale/:tnr' do
+  tnr = params[:tnr].to_i
+  #her henter vi det vi trenger
+  #1. CurrentBook
+  # 
+  query = QUERY.select(:s, :p).where([:s, :p, RDF::URI("http://data.deichman.no/resource/tnr_" + tnr.to_s)])
+          .from(RDF::URI("http://data.deichman.no/reviews"))
+  puts query
+  result = repo.select(query)
+  puts result.bindings
+  result.bindings.to_json
 end
 
 get '/flere' do
@@ -54,59 +69,4 @@ end
 
 get '/historikk' do
   'historikk'
-end
-
-get '/book/:tnr' do
-  content_type :json
-
-  accepted_formats = ["http://data.deichman.no/format/Book", "http://data.deichman.no/format/Audiobook"]
-
-  query = 
-  <<-eos
-    PREFIX dct: <http://purl.org/dc/terms/>
-    select ?title ?format where {
-    <http://data.deichman.no/resource/tnr_#{params[:tnr].to_i}> dct:title ?title ;
-    dct:format ?format . }
-  eos
-
-  results = sparql.query(query)
-
-  halt 400, "ugyldig tittelnummer" unless results.size > 0
-
-  {:title => results[0][:title].value,
-   :accepted_format => accepted_formats.include?(results[0][:format].to_s) }.to_json
-end
-
-get '/more_info/:tnr' do
-  content_type :json
-
-  query = 
-  <<-eos
-  PREFIX rda: <http://rdvocab.info/Elements/>
-  PREFIX dct: <http://purl.org/dc/terms/>
-  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-  PREFIX bibo: <http://purl.org/ontology/bibo/>
-  PREFIX fabio: <http://purl.org/spar/fabio/>
-  SELECT
-  ?title ?responsible (sql:GROUP_DIGEST(?creatorName, ', ', 1000, 1)) as ?creatorName ?format ?isbn ?work
-  (sql:sample(?img)) as ?img
-  WHERE {
-   GRAPH <http://data.deichman.no/books> {
-    <http://data.deichman.no/resource/tnr_#{params[:tnr].to_i}> dct:title ?title ;
-     dct:format ?format .
-    OPTIONAL { <http://data.deichman.no/resource/tnr_#{params[:tnr].to_i}> bibo:isbn ?isbn . }
-    OPTIONAL { <http://data.deichman.no/resource/tnr_#{params[:tnr].to_i}> dct:creator ?creator .
-               ?creator foaf:name ?creatorName . }
-    OPTIONAL { <http://data.deichman.no/resource/tnr_#{params[:tnr].to_i}> rda:statementOfResponsibility ?responsible .}
-    OPTIONAL { ?work fabio:hasManifestation <http://data.deichman.no/resource/tnr_#{params[:tnr].to_i}> . }
-    OPTIONAL { <http://data.deichman.no/resource/tnr_#{params[:tnr].to_i}> foaf:depiction ?img . }
-   }
-  }
-  eos
-
-  results = sparql.query(query)
-
-  halt 400, "ugyldig tittelnummer" unless results.size > 0
-  
-  results[0].to_hash.to_json
 end
