@@ -1,47 +1,38 @@
-doctype html
-html
-  head
-    title Aktive hyller
-    link href='/css/style.css' type='text/css' rel='stylesheet'
-    script src="/js/jquery.min.js"
+== render :slim, :'header'
 
-  body
-    div id="container" class="select-disable"
-      div id="header"
-        img src="/img/logo.png" class="logo"
-        div id="top-buttons"
-          button[class="top-button"] Bokanbefalinger
-          a href="/"
-            button[id="new-search" class="top-button"] Nytt søk
+div id="leftmenu"
+  a href="/omtale"
+    div[class="left-button"]
+      |Omtale<br/>
+      img src="/img/omtale_gray.png" class="menu-icon"
+  div class="left-button"
+    span style="font-weight:bold" Flere bøker<br/>av forfatteren
+    div class="arrow"
+    div class="arrow-border"
+    img src="/img/flere_red.png" class="menu-icon"
+  div[class="left-button"]
+    |Noe som ligner
+    img src="/img/relaterte_gray.png" class="menu-icon"
+  div[class="left-button-s"]
+    div class="circle-gray" 4
+    |<br/>Historikk
 
-      div id="leftmenu"
-        a href="/omtale"
-          div[class="left-button"] Omtale
-        div class="left-button"
-          span style="font-weight:bold" Flere bøker<br/>av forfatteren
-          div class="arrow"
-          div class="arrow-border"
-        div[class="left-button"] Noe som ligner
-        div[class="left-button-s"]
-          div class="circle-gray" 4
-          |<br/>Historikk
-
-      div id="contents"
-        ul class="listevisning"
-          - books.each_with_index do |book, index|
-            a href="/omtale" class="liste-link"
-              li
-                p class="liste-forfatter" Forfatternavn
-                p class="liste-tittel" #{book}
-                hr style="width:100%;"
-                /img src="/img/bok.jpg" class="listevisning"
-                div class="liste-bilde"
-                  img src="/img/#{index+1}.jpg" class="listevisning"
-      div id="vi-leter"
-        p Vi leter etter boka, vennligst vent
-        div id="avbryt"
-          button[class="top-button" id="avbryt-knapp"] Avbryt
-      div[id="overlay"]
+div id="contents"
+  ul class="listevisning"
+    - books.each_with_index do |book, index|
+      a href="/omtale" class="liste-link"
+        li
+          p class="liste-forfatter" Forfatternavn
+          p class="liste-tittel" #{book}
+          hr style="width:100%;"
+          /img src="/img/bok.jpg" class="listevisning"
+          div class="liste-bilde"
+            img src="/img/#{index+1}.jpg" class="listevisning"
+div id="vi-leter"
+  p Vi leter etter boka, vennligst vent
+  div id="avbryt"
+    button[class="top-button" id="avbryt-knapp"] Avbryt
+div[id="overlay"]
 
 javascript:
   if (window.WebSocket) {

@@ -52,14 +52,14 @@ div.left-button     { color: #333; position: relative; display: block; width:210
                      text-align: center; font-size: 24px; background-color: #ddd;
                      box-shadow: 1px  10px 20px 5px rgba(0,0,0,0.18);
                      background: -moz-linear-gradient(left, #aaa, #eee); }
-div.left-button-s   { padding-top: 20px; display: block; width:210px; height: 80px; background-color: #ccc;
+div.left-button-s   { padding-top: 10px; display: block; width:210px; height: 90px; background-color: #ccc;
                      border-top: 1px solid gray; border-right: 1px solid gray;
                      border-bottom: 1px solid gray; text-align: center; font-size: 24px;
                      box-shadow: 1px  10px 20px 5px rgba(0,0,0,0.18);
                      background: -moz-linear-gradient(left, #aaa, #eee);}
-img.menu-icon        { width:80px; margin-top:60px;}
-div.circle-gray     { display:inline-block; width: 38px; height: 35px; border-radius:30px;
-                     background-color: #666; padding: 5px 2px 0 1px; margin-bottom:5px;}
+img.menu-icon        { width:100px; margin-top:50px;}
+div.circle-gray     { display:inline-block; width: 45px; height: 38px; border-radius:30px;
+                     background-color: #666; padding: 8px 2px 0 1px; margin-bottom:5px;}
 
 div#omtale-tittel  { }
 div#omtale-tekst   { background-color: #fff; height: 575px; width: 840px;
