@@ -22,8 +22,8 @@ div id="leftmenu"
 div id="contents"
   div id="content-right"
     div id="omtale-tittel"
-      h2 Jan-Erik Fjell
-      h2 Tysteren
+      h2 #{book.title} 
+      h2 #{book.creatorName ? "av #{book.creatorName}" : book.responsible }
       hr
     div id="omtale-scroll"
       div id="scroll-actions"
@@ -35,20 +35,8 @@ div id="contents"
       
     div id="omtale-tekst"
       div id="scrollable"
-        p TYSTEREN er vinner av Bokhandlerprisen 2010. Boken ble raskt bokhandlernes favoritt og ble fort sammenliknet med Jo Nesbøs bøker. Handlingen i Tysteren er todelt. I New York, på 1960-tallet, tas Vincent Giordano opp i den beryktede mafiafamilien Locatelli og får sin ilddåp: å henrette en tyster. I nåtids Fredrikstad drepes byens rikeste mann. Det er grunn til å tro at drapet er økonomisk motivert.
-        p Fra Kripos kommer overbetjent Anton Brekke for å lede etterforskningen.
-        pre «Jeg vil bare be deg om en tjeneste.
-        pre Den samme jeg ba deg om for snart seks år siden.» 
-        pre Vincent stakk hånden i innerlomma på dressjakka,
-        pre tok ut en liten, rød nøkkel og la den på bordet.
-        pre «Husker du?»
-        p TYSTEREN er en parallellhistorie som begynner i New York på 1960-tallet. Vincent Giordano tas opp i den beryktede mafiafamilien Locatelli og får sin ilddåp: å henrette en tyster. I nåtid i Fredrikstad drepes byens rikeste mann. Det er grunn til å tro at drapet er økonomisk motivert.
-        p Fra Kripos kommer overbetjent Anton Brekke for å lede etterforskningen. Frodig, freidig og frekk, med drag på damene og en hemmelig lidenskap: pokerspill. Med den ivrige politistudenten Magnus Torp i hælene begynner Brekke å rulle opp flere historier som på en overraskende måte flettes sammen til en snedig finale.
-        p TYSTEREN er en parallellhistorie som begynner i New York på 1960-tallet. Vincent Giordano tas opp i den beryktede mafiafamilien Locatelli og får sin ilddåp: å henrette en tyster. I nåtid i Fredrikstad drepes byens rikeste mann. Det er grunn til å tro at drapet er økonomisk motivert.
-        p Fra Kripos kommer overbetjent Anton Brekke for å lede etterforskningen. Frodig, freidig og frekk, med drag på damene og en hemmelig lidenskap: pokerspill. Med den ivrige 
-        politistudenten Magnus Torp i hælene begynner Brekke å rulle opp flere historier som på en overraskende måte flettes sammen til en snedig finale.
-        p TYSTEREN er en parallellhistorie som begynner i New York på 1960-tallet. Vincent Giordano tas opp i den beryktede mafiafamilien Locatelli og får sin ilddåp: å henrette en tyster. I nåtid i Fredrikstad drepes byens rikeste mann. Det er grunn til å tro at drapet er økonomisk moztivert.
-        p Skapsprengere kommer og sprenger penger.æøå
+        p #{review[:review_text]}
+        - p "anmeldt i #{review[:review_source]}" if review[:review_source]
 
     div style="clear:both"
     div id="omtale-kilder"
@@ -58,7 +46,7 @@ div id="contents"
       button[class="kilde kilde-right kilde-inaktiv"]:span Kilde
       
   div id="content-left"
-      img src="/img/bok.jpg" class="omtalt-bok"
+      img src="#{book.cover_url}" class="omtalt-bok"
       img src="/img/rating.png" class="rating"
       p Basert på 5 anmeldelser fra bokelskere
 
