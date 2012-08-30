@@ -35,15 +35,15 @@ div id="contents"
       
     div id="omtale-tekst"
       div id="scrollable"
-        p #{review[:review_text]}
-        - p "anmeldt i #{review[:review_source]}" if review[:review_source]
+        p #{reviews.fetch(0)[:review_text].to_s}
+        p #{"\nanmeldt i #{reviews.fetch(0)[:review_source].to_s}" if reviews.fetch(0)[:review_source]}
 
     div style="clear:both"
     div id="omtale-kilder"
       button[class="kilde kilde-valgt kilde-left"]:span Omtale
-      button[class="kilde kilde-mid kilde-uvalgt"]:span Kilde
-      button[class="kilde kilde-mid kilde-uvalgt"]:span Kilde
-      button[class="kilde kilde-right kilde-inaktiv"]:span Kilde
+      button[class="kilde kilde-mid kilde-uvalgt"]:span #{reviews.fetch(1)[:review_source].to_s}
+      button[class="kilde kilde-mid kilde-uvalgt"]:span Kilde3
+      button[class="kilde kilde-right kilde-inaktiv"]:span Kilde4
       
   div id="content-left"
       img src="#{book.cover_url}" class="omtalt-bok"

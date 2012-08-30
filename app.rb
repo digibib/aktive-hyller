@@ -115,7 +115,33 @@ class Book
     found[:same_language_image] ? @cover_url = found[:same_language_image] : @cover_url = found[:any_image]
     return @cover_url
   end
+  
+  def fetch_reviews(limit=nil)
+    reviewgraph = RDF::URI('http://data.deichman.no/reviews') 
+    # her henter vi omtale
+    query = QUERY.select(:review_id, :review_title, :review_text, :review_source, :reviewer)
+      query.distinct  
+      query.from(reviewgraph)
+      if self.work_id
+        query.where([:review_id, RDF::DC.subject, self.work_id])
+      else
+        query.where([:review_id, RDF::DEICHMAN.basedOnManifestation, self.book_id])
+      end
+      query.where([:review_id, RDF::REV.title, :review_title],
+         [:review_id, RDF::REV.text, :review_text])
+      query.optional([:review_id, RDF::DC.source, :source_id],
+                     [:source_id, RDF::RDFS.label, :review_source])
+      query.optional([:review_id, RDF::REV.reviewer, :reviewer])
+      query.filter('lang(?review_text) != "nn"')
+      
+    puts query
+    solutions = REPO.select(query)
+    reviews = solutions
+    reviews.limit(limit) if limit
+    return reviews
+  end
 end
+
 
   set :server, 'thin'
   set :sockets, []
@@ -151,35 +177,15 @@ get '/omtale' do
 end
 
 get '/omtale/:tnr' do
-=begin
-  her henter vi omtale
 
-=end  
   book = Book.new(params[:tnr].to_i)
   book.fetch_cover_url unless book.cover_url
   puts book.inspect
-  reviewgraph = RDF::URI('http://data.deichman.no/reviews') 
   
-  query = QUERY.select(:review_id, :review_title, :review_text, :reviewer)
-    .from(reviewgraph)
-    if book.work_id
-      query.where([:review_id, RDF::DC.subject, book.work_id])
-    else
-      query.where([:review_id, RDF::DEICHMAN.basedOnManifestation, book.book_id])
-    end
-    query.where([:review_id, RDF::REV.title, :review_title],
-       [:review_id, RDF::REV.text, :review_text])
-    .optional([:review_id, RDF::DC.source, :review_source])
-    .optional([:review_id, RDF::REV.reviewer, :reviewer])
-    .filter('lang(?review_text) != "nn"')
-    
-  puts query
-  results = REPO.select(query)
-  review = results.bindings
-  puts review
-#  puts result.bindings
+  reviews = book.fetch_reviews
+  # puts results.bindings
   
-  slim :omtale, :locals => {:book => book, :review => review}
+  slim :omtale, :locals => {:book => book, :reviews => reviews}
 end
 
 get '/flere' do
