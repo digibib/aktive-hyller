@@ -35,15 +35,24 @@ div id="contents"
       
     div id="omtale-tekst"
       div id="scrollable"
-        p #{reviews.fetch(0)[:review_text].to_s}
-        p #{"\nanmeldt i #{reviews.fetch(0)[:review_source].to_s}" if reviews.fetch(0)[:review_source]}
+        - if reviews
+          p #{reviews[0][:review_text].to_s}
+          hr
+          p #{"anmeldt i #{reviews[0][:review_source].to_s}" if reviews[0][:review_source]}
+        - else
+          p Ingen anmeldelser funnet
 
     div style="clear:both"
     div id="omtale-kilder"
-      button[class="kilde kilde-valgt kilde-left"]:span Omtale
-      button[class="kilde kilde-mid kilde-uvalgt"]:span #{reviews.fetch(1)[:review_source].to_s}
-      button[class="kilde kilde-mid kilde-uvalgt"]:span Kilde3
-      button[class="kilde kilde-right kilde-inaktiv"]:span Kilde4
+      - if reviews
+        - reviews.each_index do |index|
+          - if index == 0
+            button[class="kilde kilde-mid kilde-valgt"]:span #{reviews[index][:review_source].to_s}
+          - else
+            button[class="kilde kilde-mid kilde-uvalgt"]:span #{reviews[index][:review_source].to_s}
+      - else
+        - 4.times do 
+          button[class="kilde kilde-mid kilde-inaktiv"]:span Kilde
       
   div id="content-left"
       img src="#{book.cover_url}" class="omtalt-bok"
