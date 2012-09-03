@@ -1,4 +1,5 @@
 source :rubygems
+gem "faraday"
 gem "sinatra"
 gem "slim"
 gem 'sinatra-websocket'
