@@ -48,7 +48,7 @@ class Book
       @format     = results.first[:format]
       @cover_url  = results.first[:cover_url]
       @isbn       = results.first[:isbn]
-      #@isbn_array = results[:isbn]
+      @isbn_array = results.bindings[:isbn].to_a
       @work_id    = results.first[:work_id]
       @creator_id = results.first[:creator_id]  
       @creatorName = results.first[:creatorName] unless results.first[:creatorName].to_s.empty?
@@ -62,7 +62,10 @@ class Book
     
     fetch_local_reviews(limit=4)
     fetch_remote_reviews()
+    puts "isbn_array.size: ", @isbn_array.size
   end
+
+  private
   
   def fetch_cover_url
     # cover_url accessor already set? return before query is made
