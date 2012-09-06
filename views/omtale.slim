@@ -28,10 +28,10 @@ div id="contents"
     div id="omtale-scroll"
       div id="scroll-actions"
         |<a class="prev">
-        |<img src="/img/up.png" style="margin-top:20px"></a>
+        |<img src="/img/up.png" class="scroll-icon" style="margin-top:20px"></a>
         |<br/>
         |<a class="next">
-        |<img src="/img/down.png" style="margin-top:480px"></a>
+        |<img src="/img/down.png" class="scroll-icon" style="margin-top:460px"></a>
       
     div id="omtale-wrapper"
       div id="omtale-tekst"
@@ -54,9 +54,16 @@ div id="contents"
       button[class="kilde kilde-right kilde-uvalgt"]:span #{book.review_collection[3] ? book.review_collection[3][:source] : "kilde" }
       
   div id="content-left"
+    - if book.cover_url
       img src="#{book.cover_url}" class="omtalt-bok"
-      img src="/img/rating.png" class="rating"
-      p Basert på 5 anmeldelser fra bokelskere
+    - else
+      div id="omtale-bilde"
+        div id="inner-border"
+          div.book-author #{book.creatorName}
+          div.book-title #{book.title}
+          p ~
+    img src="/img/rating.png" class="rating"
+    p Basert på 5 anmeldelser fra bokelskere
 
 javascript:
   if (window.WebSocket) {
