@@ -36,7 +36,7 @@ get '/omtale/:tnr' do
   # lag bok fra tittelnummer og hent max fire anmeldelser
   session[:book] = Book.new(params[:tnr].strip.to_i)
  
-  slim :omtale, :locals => {:book => session[:book], :reviews => session[:book].review_collection }
+  slim :omtale, :locals => {:book => session[:book]}
 end
 
 get '/flere' do
