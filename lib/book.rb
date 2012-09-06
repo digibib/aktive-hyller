@@ -3,8 +3,8 @@ require "nokogiri"
 require "faraday"
 
 class Book
-  attr_accessor :book_id, :title, :format, :cover_url, :isbn, :work_id, :creator_id,
-                :creatorName, :responsible, :review_collection, :isbn_array
+  attr_accessor :book_id, :title, :format, :cover_url, :isbn, :creator_id,
+                :creatorName, :responsible, :review_collection, :work_id, :work_isbn
 
   def initialize(tnr)
 =begin
@@ -14,11 +14,12 @@ class Book
      @title       : tittel (literal)
      @format      : fysisk format (uri)
      @cover_url   : bilde (uri) hvis på manifestasjon
-     @isbn        : Array (literal)
+     @isbn        : (literal)
      @creator     : forfatterid (uri)
      @creatorName : forfatter (literal)
      @responsible : redaktørtekst (literal)
      @work_id     : verksid (uri)
+     @work_isbns  : array of isbn uris
 =end
     
     @review_collection = []
@@ -27,7 +28,7 @@ class Book
     
     url      = 'http://data.deichman.no/resource/tnr_' + tnr.to_s
     @book_id = RDF::URI(url)
-    query    = QUERY.select(:title, :format, :isbn, :work_id, :creator_id, :responsible)
+    query    = QUERY.select(:title, :format, :isbn, :work_id, :work_isbns, :creator_id, :responsible)
     query.from(DEFAULT_GRAPH)
       .sample(:cover_url)
       .group_digest(:creatorName, ', ', 1000, 1)
@@ -39,18 +40,19 @@ class Book
                 [:creator_id, RDF::FOAF.name, :creatorName])
       .optional([@book_id, RDF::RDA.statementOfResponsibility, :responsible])
       .optional([:work_id, RDF::FABIO.hasManifestation, @book_id])
+      .optional([:work_id, RDF::BIBO.isbn, :work_isbns])
     
     puts "#{query}"
     results       = REPO.select(query)
     
     unless results.empty?
-      @title      = results.first[:title]
-      @format     = results.first[:format]
-      @cover_url  = results.first[:cover_url]
-      @isbn       = results.first[:isbn]
-      @isbn_array = results.bindings[:isbn].to_a
-      @work_id    = results.first[:work_id]
-      @creator_id = results.first[:creator_id]  
+      @title       = results.first[:title]
+      @format      = results.first[:format]
+      @cover_url   = results.first[:cover_url]
+      @isbn        = results.first[:isbn]
+      @work_isbns  = results.bindings[:work_isbns].to_a.uniq
+      @work_id     = results.first[:work_id]
+      @creator_id  = results.first[:creator_id]  
       @creatorName = results.first[:creatorName] unless results.first[:creatorName].to_s.empty?
       @responsible = results.first[:responsible]
     else
@@ -62,7 +64,7 @@ class Book
     
     fetch_local_reviews(limit=4)
     fetch_remote_reviews()
-    puts "isbn_array.size: ", @isbn_array.size
+    puts "isbn_array.size: ", @work_isbns.size
   end
 
   private
@@ -163,13 +165,13 @@ class Book
   end
 
   def getBokkildenIngress
-    @isbn_array = [@isbn] unless @isbn_array 
-    return nil if @isbn_array.empty?
+    @work_isbns = [@isbn] unless @work_isbns 
+    return nil if @work_isbns.empty?
 
     conn = Faraday.new "http://partner.bokkilden.no"
     bk_ingress = ""
  
-    @isbn_array.each do |isbn|
+    @work_isbns.each do |isbn|
       res = conn.get do |req|
         req.url '/SamboWeb/partner.do'
         req.params['format'] = 'XML'
