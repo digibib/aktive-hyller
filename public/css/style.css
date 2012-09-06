@@ -69,7 +69,7 @@ div.circle-gray     { display:inline-block; width: 45px; height: 38px; border-ra
 
 div#omtale-tittel  { }
 div#omtale-wrapper { width: 870px; overflow:hidden;}
-div#omtale-tekst   { border:10px solid white; background-color: #fff; height: 555px; width: 855px;
+div#omtale-tekst   { border:10px solid white; background-color: #fff; height: 555px; width: 836px;
                      padding: 20px 20px 20px 20px; font-size: 1.3em; float:left; overflow: auto;}
 div#omtale-kilder  { margin-top:20px; }
 div#omtale-scroll  { float: right; margin-right:20px; }
