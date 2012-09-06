@@ -41,8 +41,7 @@ end
 
 get '/flere' do
   # Flere bøker av forfatteren
-  books = ["Bok En", "Bok to", "Bok tre", "Bok 4", "Bok5", "Bok 6", "Bok 7", "Bok 8"]
-  slim :flere, :locals => {:books => books}
+  slim :flere, :locals => {:book => session[:book]}
 end
 
 get '/relaterte' do

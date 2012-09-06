@@ -19,15 +19,14 @@ div id="leftmenu"
 
 div id="contents"
   ul class="listevisning"
-    - books.each_with_index do |book, index|
+    - book.same_author_collection.each_with_index do |same_author_book, index|
       a href="/omtale" class="liste-link"
         li
-          p class="liste-forfatter" Forfatternavn
-          p class="liste-tittel" #{book}
+          p class="liste-forfatter" #{same_author_book[:creatorName]}
+          p class="liste-tittel" #{same_author_book[:title]}
           hr style="width:100%;"
-          /img src="/img/bok.jpg" class="listevisning"
           div class="liste-bilde"
-            img src="/img/#{index+1}.jpg" class="listevisning"
+            img src="#{same_author_book[:cover_url]}" class="listevisning"
 div id="vi-leter"
   p Vi leter etter boka, vennligst vent
   div id="avbryt"

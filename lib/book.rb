@@ -4,7 +4,7 @@ require "faraday"
 
 class Book
   attr_accessor :book_id, :title, :format, :cover_url, :isbn, :creator_id,
-                :creatorName, :responsible, :review_collection, :work_id, :work_isbn
+                :creatorName, :responsible, :work_id, :work_isbn, :review_collection, :same_author_collection
 
   def initialize(tnr)
 =begin
@@ -20,9 +20,12 @@ class Book
      @responsible : redaktørtekst (literal)
      @work_id     : verksid (uri)
      @work_isbns  : array of isbn uris
+     @review_collection       : array of reviews on book
+     @same_author_collection  : array of books by same author
 =end
     
-    @review_collection = []
+    @review_collection      = []
+    @same_author_collection = []
     
     accepted_formats = ["http://data.deichman.no/format/Book", "http://data.deichman.no/format/Audiobook"]
     
@@ -60,16 +63,18 @@ class Book
     end
 
 
-    fetch_cover_url unless self.cover_url
+    fetch_cover_url(self.book_id) unless self.cover_url
     
     fetch_local_reviews(limit=4)
     fetch_remote_reviews()
+    fetch_same_author_books
+    
     puts "isbn_array.size: ", @work_isbns.size
   end
 
-  private
+  #private
   
-  def fetch_cover_url
+  def fetch_cover_url(book_id = self.book_id)
     # cover_url accessor already set? return before query is made
     return @cover_url if @cover_url
           
@@ -79,9 +84,9 @@ class Book
 
     query = QUERY.select(:cover_url, :same_language_image, :any_image)
       .from(DEFAULT_GRAPH)
-      .where([self.book_id, RDF::DC.language, :lang],
-             [self.book_id, RDF::DC.format, self.format])
-      .optional([:work, RDF::FABIO.hasManifestation, self.book_id])
+      .where([book_id, RDF::DC.language, :lang],
+             [book_id, RDF::DC.format, self.format])
+      .optional([:work, RDF::FABIO.hasManifestation, book_id])
       .optional([:work, RDF::FABIO.hasManifestation, :another_book],
            [:another_book, RDF::DC.language, :lang],
            [:another_book, RDF::FOAF.depiction, :same_language_image],
@@ -195,5 +200,36 @@ class Book
     return nil if bk_ingress.empty?
     {:text => bk_ingress, :source => "Bokkilden"}
   end
+  
+  def fetch_same_author_books
+    # this query fetches other books by same author
+    query = QUERY.select(:book, :title, :cover_url)
+      .group_digest(:creatorName, ', ', 1000, 1)
+      .distinct
+      .where(
+        [self.book_id, RDF::DC.creator, :creator],
+        [:work, RDF::FABIO.hasManifestation, self.book_id],
+        [:book, RDF::DC.format, RDF::URI('http://data.deichman.no/format/Book')],
+        [:book, RDF::DC.creator, :creator],
+        [:creator, RDF::FOAF.name, :creatorName],
+        [:book, RDF::DC.title, :title])
+      .optional([:book, RDF::FOAF.depiction, :cover_url])
+      .minus([:work, RDF::FABIO.hasManifestation, :book])
+    
+    puts "#{query}"
+    results = REPO.select(query)
+    unless results.empty?
+      results.each do |book| 
+      @same_author_collection.push({
+        :book => book[:book], 
+        :title => book[:title], 
+        :cover_url => book[:cover_url] ? book[:cover_url] : fetch_cover_url(book[:book]), 
+        :creatorName => book[:creatorName]
+        })
+      end
+    end
+    
+  end
+  
   
 end

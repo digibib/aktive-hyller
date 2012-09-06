@@ -35,8 +35,8 @@ div id="contents"
       
     div id="omtale-wrapper"
       div id="omtale-tekst"
-        - if reviews
-          - reviews.each_with_index do |r, i|
+        - if book.review_collection
+          - book.review_collection.each_with_index do |r, i|
             div class="review" id="review-#{i.to_s}"
               p #{r[:text]}
               hr
@@ -48,10 +48,10 @@ div id="contents"
 
     div style="clear:both"
     div id="omtale-kilder"
-      button[class="kilde kilde-left kilde-valgt"]:span #{reviews[0] ? reviews[0][:source] : "kilde" }
-      button[class="kilde kilde-mid kilde-uvalgt"]:span #{reviews[1] ? reviews[1][:source] : "kilde"}
-      button[class="kilde kilde-mid kilde-uvalgt"]:span #{reviews[2] ? reviews[2][:source] : "kilde"}
-      button[class="kilde kilde-right kilde-uvalgt"]:span #{reviews[3] ? reviews[3][:source] : "kilde" }
+      button[class="kilde kilde-left kilde-valgt"]:span #{book.review_collection[0] ? book.review_collection[0][:source] : "kilde" }
+      button[class="kilde kilde-mid kilde-uvalgt"]:span #{book.review_collection[1] ? book.review_collection[1][:source] : "kilde"}
+      button[class="kilde kilde-mid kilde-uvalgt"]:span #{book.review_collection[2] ? book.review_collection[2][:source] : "kilde"}
+      button[class="kilde kilde-right kilde-uvalgt"]:span #{book.review_collection[3] ? book.review_collection[3][:source] : "kilde" }
       
   div id="content-left"
       img src="#{book.cover_url}" class="omtalt-bok"
