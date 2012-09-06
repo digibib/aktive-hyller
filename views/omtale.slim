@@ -33,26 +33,25 @@ div id="contents"
         |<a class="next">
         |<img src="/img/down.png" style="margin-top:480px"></a>
       
-    div id="omtale-tekst"
-      div id="scrollable"
+    div id="omtale-wrapper"
+      div id="omtale-tekst"
         - if reviews
-          p #{reviews[0][:review_text].to_s}
-          hr
-          p #{"anmeldt i #{reviews[0][:review_source].to_s}" if reviews[0][:review_source]}
+          - reviews.each_with_index do |r, i|
+            div class="review" id="review-#{i.to_s}"
+              p #{r[:text]}
+              hr
+              p #{"Denne teksten er hentet fra #{r[:source]}" if r[:source]}
+              br
+              p
         - else
           p Ingen anmeldelser funnet
 
     div style="clear:both"
     div id="omtale-kilder"
-      - if reviews
-        - reviews.each_index do |index|
-          - if index == 0
-            button[class="kilde kilde-mid kilde-valgt"]:span #{reviews[index][:review_source].to_s}
-          - else
-            button[class="kilde kilde-mid kilde-uvalgt"]:span #{reviews[index][:review_source].to_s}
-      - else
-        - 4.times do 
-          button[class="kilde kilde-mid kilde-inaktiv"]:span Kilde
+      button[class="kilde kilde-left kilde-valgt"]:span #{reviews[0] ? reviews[0][:source] : "kilde" }
+      button[class="kilde kilde-mid kilde-uvalgt"]:span #{reviews[1] ? reviews[1][:source] : "kilde"}
+      button[class="kilde kilde-mid kilde-uvalgt"]:span #{reviews[2] ? reviews[2][:source] : "kilde"}
+      button[class="kilde kilde-right kilde-uvalgt"]:span #{reviews[3] ? reviews[3][:source] : "kilde" }
       
   div id="content-left"
       img src="#{book.cover_url}" class="omtalt-bok"
@@ -73,6 +72,9 @@ javascript:
     }
   }
   $(document).ready(function () {
+
+    //$('#review-0').siblings("div.review").hide();
+
     $('a.prev').on('click', function() {
       console.log("up!");
       $('#scrollable').animate({scrollTop:-500},'slow');

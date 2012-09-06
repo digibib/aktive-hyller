@@ -1,7 +1,10 @@
 require "rdf/virtuoso"
+require "nokogiri"
+require "faraday"
 
 class Book
-  attr_accessor :book_id, :title, :format, :cover_url, :isbn, :work_id, :creator_id, :creatorName, :responsible
+  attr_accessor :book_id, :title, :format, :cover_url, :isbn, :work_id, :creator_id,
+                :creatorName, :responsible, :review_collection, :isbn_array
 
   def initialize(tnr)
 =begin
@@ -17,7 +20,11 @@ class Book
      @responsible : redaktørtekst (literal)
      @work_id     : verksid (uri)
 =end
+    
+    @review_collection = []
+    
     accepted_formats = ["http://data.deichman.no/format/Book", "http://data.deichman.no/format/Audiobook"]
+    
     url      = 'http://data.deichman.no/resource/tnr_' + tnr.to_s
     @book_id = RDF::URI(url)
     query    = QUERY.select(:title, :format, :isbn, :work_id, :creator_id, :responsible)
@@ -40,7 +47,8 @@ class Book
       @title      = results.first[:title]
       @format     = results.first[:format]
       @cover_url  = results.first[:cover_url]
-      @isbn       = results.first[:isbn] 
+      @isbn       = results.first[:isbn]
+      #@isbn_array = results[:isbn]
       @work_id    = results.first[:work_id]
       @creator_id = results.first[:creator_id]  
       @creatorName = results.first[:creatorName] unless results.first[:creatorName].to_s.empty?
@@ -48,6 +56,12 @@ class Book
     else
       @book_id = nil
     end
+
+
+    fetch_cover_url unless self.cover_url
+    
+    fetch_local_reviews(limit=4)
+    fetch_remote_reviews()
   end
   
   def fetch_cover_url
@@ -78,7 +92,7 @@ class Book
     return @cover_url
   end
 
-  def fetch_reviews(limit=nil)
+  def fetch_local_reviews(limit=nil)
     reviewgraph = RDF::URI('http://data.deichman.no/reviews') 
     # her henter vi omtale
     query = QUERY.select(:review_id, :review_title, :review_text, :review_source, :reviewer)
@@ -103,7 +117,78 @@ class Book
     # can use filter, count, offset, limit, distinct, etc. as on a SPARQL QUERY
     # can also be iterated as RDF::Query::Solution with bindings from query
     reviews.limit(limit) if limit
-    return reviews
+    for r in reviews
+      @review_collection.push({:title => r[:review_title].to_s, :text => r[:review_text].to_s,
+        :source => r[:review_source].to_s})
+    end
+    return @review_collection
+  end
+
+  def fetch_remote_reviews
+    for remote in %w[getNovelistDescription getBokkildenIngress]
+      #break if @review_collection.size >= 4
+      temp = self.send(remote.to_sym)
+      @review_collection.push(temp) unless temp.nil?
+    end
+  end
+
+  def getNovelistDescription
+    return nil unless @isbn
+  
+    #TODO undersøke andre muligheter for å få dns til ebscohost
+    #     hardkoder ip foreløpig for å ungå treg respons..
+    conn = Faraday.new "http://140.234.254.43"
+
+    result = conn.get do |req|
+      req.url '/Services/SearchService.asmx/Search'
+      req.params['prof'] = 's9001444.main.eit'
+      req.params['pwd'] = 'ebs6239'
+      req.params['db'] = 'noh'
+      req.params['query'] = @isbn
+      req.options[:timeout] = 1
+    end
+
+    return nil unless result.body
+
+    xml = Nokogiri::XML result.body
+    if xml.xpath('//ab').size() >= 1
+      nl_description = xml.xpath('//ab').first.content
+    end
+
+    return nil unless nl_description
+    {:source => "Novelist", :text => nl_description}
+  end
+
+  def getBokkildenIngress
+    @isbn_array = [@isbn] unless @isbn_array 
+    return nil if @isbn_array.empty?
+
+    conn = Faraday.new "http://partner.bokkilden.no"
+    bk_ingress = ""
+ 
+    @isbn_array.each do |isbn|
+      res = conn.get do |req|
+        req.url '/SamboWeb/partner.do'
+        req.params['format'] = 'XML'
+        req.params['uttrekk'] = 5
+        req.params['pid'] = 0
+        req.params['ept'] = 3
+        req.params['xslId'] = 117
+        req.params['enkeltsok'] = isbn
+        req.options[:timeout] = 1
+      end
+
+      if res.body
+        xml = Nokogiri::XML res.body
+        if xml.xpath('//Ingress').size() >= 1
+          bk_ingress = xml.xpath('//Ingress').first.content
+        end
+        break unless bk_ingress.empty?
+      end
+    end
+
+    return nil if bk_ingress.empty?
+    {:text => bk_ingress, :source => "Bokkilden"}
   end
   
 end

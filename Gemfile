@@ -1,5 +1,6 @@
 source :rubygems
 gem "faraday"
+gem "nokogiri"
 gem "sinatra"
 gem "slim"
 gem 'sinatra-websocket'
