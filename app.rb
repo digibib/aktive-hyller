@@ -17,7 +17,7 @@ QUERY         = RDF::Virtuoso::Query
 DEFAULT_GRAPH = RDF::URI('http://data.deichman.no/books')
 
 # Sinatra configs
-enable :sessions
+session = {}
 set :server, 'thin'
 set :sockets, []
 
