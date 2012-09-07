@@ -34,7 +34,7 @@ div#top-buttons    { float: right; margin: 24px;}
 div#leftmenu       { float: left; width: 235px; height: 100%; }
 div#contents       { padding-left: 25px; padding-top: 35px;
                      float: left; background-color: #fff; width: 1400px }
-div#content-left   { width: 300px; height:520px; background-color: #ddd;
+div#content-left   { width: 300px; background-color: #ddd;
                      border-radius: 5px; float: left; padding: 30px; color:#444;}
 div#content-right  { float: right; width:970px; height: 822px; padding: 20px;
                      background-color: #ddd; border-radius: 5px;}

@@ -71,7 +71,7 @@ class Book
     fetch_remote_data()
     fetch_same_author_books
     
-    puts "isbn_array.size: ", @work_isbns.size
+    puts "isbn_array: ", @work_isbns
   end
 
   #private
@@ -189,11 +189,11 @@ class Book
     puts "fant noe hos bokelskere"
     puts result.body
     jsonres = JSON.parse(result.body) 
-    be_rating = jsonres['gjennomsnittelig_terningkast']
-    be_num_raters = jsonres['antall_terningkast']
-    @ratings.push( {:rating => be_rating, :num_raters => be_num_raters, :source => "Bokelskere"})
-    puts "Fra Bokelskere: "
-    puts "rating:", be_rating
+    if jsonres['antall_terningkast'].to_i > 0
+      be_rating = jsonres['gjennomsnittelig_terningkast']
+      be_num_raters = jsonres['antall_terningkast']
+      @ratings.push( {:rating => be_rating, :num_raters => be_num_raters, :source => "Bokelskere"})
+    end
   end
 
   def Novelist

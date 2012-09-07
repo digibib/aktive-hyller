@@ -62,11 +62,28 @@ div id="contents"
           div.book-author #{book.creatorName}
           div.book-title #{book.title}
           p ~
-    /img src="/img/rating.png" class="rating"
     - for rating in book.ratings
-      p kilde: #{rating[:source]}
-      p rating:#{rating[:rating]}
-      p num_raters:#{rating[:num_raters]}
+      -if rating[:source] =~ /GoodReads/
+        - red_stars = (rating[:rating]/rating[:num_raters]).to_i
+        - red_stars.times do
+          img src="/img/star_red.png" class="star"
+        - if red_stars != (rating[:rating]/rating[:num_raters].to_f).round
+          - red_stars += 1
+          img src="/img/star_half.png" class="star"
+        - (5-red_stars).times do
+          img src="/img/star_gray.png" class="star"
+        p Basert på #{rating[:num_raters]} rangeringer fra #{rating[:source]}
+      -if rating[:source] =~ /Bokelskere/
+        - red_stars = rating[:rating].to_i
+        - red_stars.times do
+          img src="/img/star_red.png" class="star"
+        - if red_stars != rating[:rating].round
+          - red_stars += 1
+          img src="/img/star_half.png" class="star"
+        - (6-red_stars).times do
+          img src="/img/star_gray.png" class="star"
+        p Basert på #{rating[:num_raters]} rangeringer fra #{rating[:source]}
+
 
 
 javascript:
