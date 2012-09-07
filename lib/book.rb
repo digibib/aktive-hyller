@@ -3,7 +3,7 @@ require "nokogiri"
 require "faraday"
 
 class Book
-  attr_accessor :book_id, :title, :format, :cover_url, :isbn, :creator_id,
+  attr_accessor :book_id, :title, :format, :cover_url, :isbn, :creator_id, :ratings,
                 :creatorName, :responsible, :work_id, :work_isbn, :review_collection, :same_author_collection
 
   def initialize(tnr)
@@ -22,10 +22,12 @@ class Book
      @work_isbns  : array of isbn uris
      @review_collection       : array of reviews on book
      @same_author_collection  : array of books by same author
+     @ratings                 : array of ratings
 =end
     
     @review_collection      = []
     @same_author_collection = []
+    @ratings                = [] # ratings format {:source, :num_raters, :rating}
     
     accepted_formats = ["http://data.deichman.no/format/Book", "http://data.deichman.no/format/Audiobook"]
     
@@ -52,7 +54,7 @@ class Book
       @title       = results.first[:title]
       @format      = results.first[:format]
       @cover_url   = results.first[:cover_url]
-      @isbn        = results.first[:isbn]
+      @isbn        = results.first[:isbn].to_s
       @work_isbns  = results.bindings[:work_isbns].to_a.uniq
       @work_id     = results.first[:work_id]
       @creator_id  = results.first[:creator_id]  
@@ -66,7 +68,7 @@ class Book
     fetch_cover_url(self.book_id) unless self.cover_url
     
     fetch_local_reviews(limit=4)
-    fetch_remote_reviews()
+    fetch_remote_data()
     fetch_same_author_books
     
     puts "isbn_array.size: ", @work_isbns.size
@@ -134,15 +136,67 @@ class Book
     return @review_collection
   end
 
-  def fetch_remote_reviews
-    for remote in %w[getNovelistDescription getBokkildenIngress]
+  def fetch_remote_data
+    for remote in %w[Novelist Bokkilden Goodreads Bokelskere]
       #break if @review_collection.size >= 4
-      temp = self.send(remote.to_sym)
-      @review_collection.push(temp) unless temp.nil?
+      self.send(remote.to_sym)
     end
   end
 
-  def getNovelistDescription
+  def Goodreads
+    return nil unless @isbn
+
+    conn = Faraday.new "http://www.goodreads.com"
+    gr_description = nil
+
+    result = conn.get do |req|
+      req.url '/book/isbn'
+      req.params['isbn'] = @isbn
+      req.params['key'] = "wDjpR0GY1xXIqTnx2QL37A"
+      req.params['format'] = 'xml'
+      req.options[:timeout] = 2
+    end
+
+    return nil unless result.body
+    return nil if result.body =~ /book not found/
+    xml = Nokogiri::XML result.body
+    gr_description = xml.xpath('//description').first.content unless xml.xpath('//description').first.content.strip.empty?
+    gr_num_raters = xml.xpath('//ratings_count').first.content.to_i
+    gr_rating = xml.xpath('//ratings_sum').first.content.to_i
+
+    @ratings.push({:rating => gr_rating, :num_raters => gr_num_raters, :source=>"GoodReads"}) if gr_rating
+    @review_collection.push({:source => "GoodReads", :text => gr_description.gsub("<br />","\n")}) if gr_description
+    puts "from Goodreads: "
+    puts "description", gr_description
+    puts "rating", gr_rating
+  end
+
+  def Bokelskere
+    return nil unless @isbn
+    puts "isbn til bokelskere: ", @isbn
+    
+    conn = Faraday.new "http://bokelskere.no"
+    result = conn.get do |req|
+      req.url '/api/1.0/boker/info/' + @isbn.to_s + '/'
+      #req.params['format'] = 'json'
+      req.options[:timeout] = 4
+    end
+    
+    return nil unless result.body
+    return nil if result.body.strip.empty?
+    return nil if result.body =~ /Not Found/
+
+    puts "fant noe hos bokelskere"
+    puts result.body
+    jsonres = JSON.parse(result.body) 
+    be_rating = jsonres['gjennomsnittelig_terningkast']
+    be_num_raters = jsonres['antall_terningkast']
+    @ratings.push( {:rating => be_rating, :num_raters => be_num_raters, :source => "Bokelskere"})
+    puts "Fra Bokelskere: "
+    puts "rating:", be_rating
+  end
+
+  def Novelist
     return nil unless @isbn
   
     #TODO undersøke andre muligheter for å få dns til ebscohost
@@ -166,10 +220,10 @@ class Book
     end
 
     return nil unless nl_description
-    {:source => "Novelist", :text => nl_description}
+    @review_collection.push({:source => "Novelist", :text => nl_description})
   end
 
-  def getBokkildenIngress
+  def Bokkilden
     @work_isbns = [@isbn] unless @work_isbns 
     return nil if @work_isbns.empty?
 
@@ -185,7 +239,7 @@ class Book
         req.params['ept'] = 3
         req.params['xslId'] = 117
         req.params['enkeltsok'] = isbn
-        req.options[:timeout] = 1
+        req.options[:timeout] = 2
       end
 
       if res.body
@@ -198,7 +252,7 @@ class Book
     end
 
     return nil if bk_ingress.empty?
-    {:text => bk_ingress, :source => "Bokkilden"}
+    @review_collection.push({:text => bk_ingress, :source => "Bokkilden"})
   end
   
   def fetch_same_author_books

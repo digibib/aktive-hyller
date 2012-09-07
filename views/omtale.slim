@@ -62,8 +62,12 @@ div id="contents"
           div.book-author #{book.creatorName}
           div.book-title #{book.title}
           p ~
-    img src="/img/rating.png" class="rating"
-    p Basert på 5 anmeldelser fra bokelskere
+    /img src="/img/rating.png" class="rating"
+    - for rating in book.ratings
+      p kilde: #{rating[:source]}
+      p rating:#{rating[:rating]}
+      p num_raters:#{rating[:num_raters]}
+
 
 javascript:
   if (window.WebSocket) {

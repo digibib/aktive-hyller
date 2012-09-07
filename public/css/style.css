@@ -100,7 +100,7 @@ ul.listevisning    { list-style-type: none }
 ul.listevisning li { display: inline-block; width: 250px; height: 365px;
                      background-color: #ccc; margin: 0 60px 35px 0; padding: 20px;
                      border-radius: 5px; box-shadow: 1px  2px 20px 5px rgba(0,0,0,0.1);
-                     text-align: center;}
+                     text-align: center; overflow:hidden;}
 img.listevisning   { height: 260px;}
 p.liste-forfatter  { text-align: left; font-size:18px; font-weight: bold; margin-bottom: 5px; margin-left: 20px;}
 p.liste-tittel     { text-align: left; font-size:18px; margin-left:20px;}
