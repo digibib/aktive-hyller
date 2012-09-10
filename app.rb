@@ -29,7 +29,7 @@ end
 
 get '/omtale' do
   # Ikke i bruk
-  slim :omtale_dummy
+  redirect '/omtale/' + session[:book].book_id.to_s.match(/tnr_(.*)/)[1]
 end
 
 get '/omtale/:tnr' do

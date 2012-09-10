@@ -11,10 +11,10 @@ div id="leftmenu"
     div[class="left-button"]
       |Flere bøker<br/>av forfatteren
       img src="/img/flere_gray.png" class="menu-icon"
-  div[class="left-button"]
-    |Noe som ligner
-    img src="/img/relaterte_gray.png" class="menu-icon"
-
+  a href="/relaterte"
+    div[class="left-button"]
+      |Noe som ligner
+      img src="/img/relaterte_gray.png" class="menu-icon"
   div[class="left-button-s"]
     div class="circle-gray" 1
     |<br/>Historikk
@@ -62,8 +62,29 @@ div id="contents"
           div.book-author #{book.creatorName}
           div.book-title #{book.title}
           p ~
-    img src="/img/rating.png" class="rating"
-    p Basert på 5 anmeldelser fra bokelskere
+    - for rating in book.ratings
+      -if rating[:source] =~ /GoodReads/
+        - red_stars = (rating[:rating]/rating[:num_raters]).to_i
+        - red_stars.times do
+          img src="/img/star_red.png" class="star"
+        - if red_stars != (rating[:rating]/rating[:num_raters].to_f).round
+          - red_stars += 1
+          img src="/img/star_half.png" class="star"
+        - (5-red_stars).times do
+          img src="/img/star_gray.png" class="star"
+        p Basert på #{rating[:num_raters]} rangeringer fra #{rating[:source]}
+      -if rating[:source] =~ /Bokelskere/
+        - red_stars = rating[:rating].to_i
+        - red_stars.times do
+          img src="/img/star_red.png" class="star"
+        - if red_stars != rating[:rating].round
+          - red_stars += 1
+          img src="/img/star_half.png" class="star"
+        - (6-red_stars).times do
+          img src="/img/star_gray.png" class="star"
+        p Basert på #{rating[:num_raters]} rangeringer fra #{rating[:source]}
+
+
 
 javascript:
   if (window.WebSocket) {
