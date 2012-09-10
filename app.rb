@@ -46,7 +46,7 @@ end
 
 get '/relaterte' do
   # Noe som ligner, relaterte bøker
-  'Noe som ligner'
+  slim :relaterte, :locals => {:book => session[:book]}
 end
 
 get '/historikk' do

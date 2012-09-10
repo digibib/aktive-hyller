@@ -1,0 +1,73 @@
+== render :slim, :'header'
+
+div id="leftmenu"
+  a href="/omtale"
+    div[class="left-button"]
+      |Omtale<br/>
+      img src="/img/omtale_gray.png" class="menu-icon"
+  div class="left-button"
+    span style="font-weight:bold" Flere bøker<br/>av forfatteren
+    div class="arrow"
+    div class="arrow-border"
+    img src="/img/flere_red.png" class="menu-icon"
+  div[class="left-button"]
+    |Noe som ligner
+    img src="/img/relaterte_gray.png" class="menu-icon"
+  div[class="left-button-s"]
+    div class="circle-gray" 4
+    |<br/>Historikk
+
+div id="contents"
+  ul class="listevisning"
+    - book.related_books_collection.each_with_index do |related_book, index|
+      a href="/omtale" class="liste-link"
+        li
+          p class="liste-forfatter" #{related_book[:creatorName]}
+          p class="liste-tittel" #{related_book[:title]}
+          hr style="width:100%;"
+          div class="liste-bilde"
+            img src="#{related_book[:cover_url]}" class="listevisning"
+div id="vi-leter"
+  p Vi leter etter boka, vennligst vent
+  div id="avbryt"
+    button[class="top-button" id="avbryt-knapp"] Avbryt
+div[id="overlay"]
+
+javascript:
+  if (window.WebSocket) {
+    var ws = new WebSocket('ws://localhost:3000/example');
+    ws.onopen = function() {
+      console.log("ws connected!");
+    }
+    ws.onclose = function() {
+      console.log("ws closed.");
+    }
+    ws.onmessage = function(msg) {
+      alert(msg);
+    }
+  }
+  $(document).ready(function () {
+
+   $('button#avbryt-knapp').on('click', function() {
+      $('#overlay').hide();
+      $('#vi-leter').hide();
+    });
+
+    // loading animation
+    i = 0;
+    setInterval(function() {
+      i = ++i % 4;
+      $("#loading").html(""+Array(i+1).join("."));
+    }, 500);
+
+    $('a.liste-link').on('click', function(evt) {
+      evt.preventDefault();
+        // show overlay
+        $('#overlay').show();
+        $('button#avbryt-knapp').html('Avbryt');
+        $('div#vi-leter p').html('Henter informasjon om "' + "BOKTITTEL" + '" <span id="loading"></span>' );
+        $('#vi-leter').show();
+
+    });
+
+  });
