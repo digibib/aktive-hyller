@@ -35,7 +35,7 @@ div id="contents"
       
     div id="omtale-wrapper"
       div id="omtale-tekst"
-        - if book.review_collection
+        - if not book.review_collection.empty?
           - book.review_collection.each_with_index do |r, i|
             div class="review" id="review-#{i.to_s}"
               p #{r[:text]}
@@ -44,7 +44,18 @@ div id="contents"
               br
               p
         - else
-          p Ingen anmeldelser funnet
+          div class="no-review"
+            p Her finnes det dessverre ingen omtaler!
+            p
+              |<br />
+            p Husk at du også kan:
+            ul
+              li Se flere bøker av samme forfatter
+              li Sjekke relaterte bøker
+              li Legge på en ny bok
+            p
+              |<br />
+            p Ta gjerne kontakt med en bibliotekar hvis du lurer på noe!
 
     div style="clear:both"
     div id="omtale-kilder"

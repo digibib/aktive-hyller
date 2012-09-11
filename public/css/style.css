@@ -22,6 +22,9 @@ div#inner-border   { padding: 20px; border:2px solid gray; background: #eee; hei
 div.book-title     { color:#333; font-family: Times; font-size: 2.3em; margin-bottom: 60px; font-style: italic;}
 div.book-author     { color:#333; font-family: Arial; font-size: 1.5em; margin: 20px;}
 
+div.no-review      { padding:1em; font-size: 1.5em;}
+div.no-review p     { line-height: 1.2em;}
+div.no-review li    { margin-left: 1em; padding: 0.2em;}
 
 div#debug          { background-color:yellow; border: 1px solid black; border-radius: 2px;}
 div#container      { width: 1680px; height:910px; color: #222; }
