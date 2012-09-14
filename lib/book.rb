@@ -167,7 +167,7 @@ class Book
     gr_rating = xml.xpath('//ratings_sum').first.content.to_i
 
     @ratings.push({:rating => gr_rating, :num_raters => gr_num_raters, :source=>"GoodReads"}) if gr_rating
-    @review_collection.push({:source => "GoodReads", :text => gr_description.gsub("<br />","\n")}) if gr_description
+    @review_collection.push({:source => "GoodReads", :text => gr_description)}) if gr_description
     puts "from Goodreads: "
     puts "description", gr_description
     puts "rating", gr_rating
