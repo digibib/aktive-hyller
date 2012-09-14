@@ -345,16 +345,14 @@ class Book
     
     solutions.each do | solution |
       unless results.any? {|res| res[:similar_work] == solution[:similar_work]}
-        case solution
-        when (:lang => RDF::URI("http://lexvo.org/id/iso639-3/nob") || :lang => RDF::URI("http://lexvo.org/id/iso639-3/nno")
+        if solution[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/nob") 
           results << solution
-        when :original_language => RDF::URI("http://lexvo.org/id/iso639-3/eng") || 
-             :original_language => RDF::URI("http://lexvo.org/id/iso639-3/swe") ||
-             :original_language => RDF::URI("http://lexvo.org/id/iso639-3/dan")
-          results << solution 
-        when :lang => RDF::URI("http://lexvo.org/id/iso639-3/swe")
+        elsif solution[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/eng") || 
+              solution[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/swe") || 
+              solution[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/dan") 
           results << solution
-        when :lang => RDF::URI("http://lexvo.org/id/iso639-3/dan")
+        elsif solution[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/swe") ||
+              solution[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/dan")
           results << solution
         end
       end
