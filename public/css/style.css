@@ -74,7 +74,7 @@ div#omtale-tittel  { }
 div#omtale-wrapper { width: 870px; overflow:hidden;}
 div#omtale-tekst   { border:10px solid white; background-color: #fff; height: 555px; width: 836px;
                      padding: 20px 20px 20px 20px; font-size: 1.3em; float:left; overflow: auto;}
-div#omtale-kilder  { margin-top:20px; }
+div#omtale-kilder  { margin-top:20px; height:80px; }
 div#omtale-scroll  { float: right; margin-right:20px; }
 
 #scrollable        { position:relative; overflow:hidden; height: 575px; }
@@ -84,7 +84,7 @@ img.omtalt-bok     { width: 280px; border: 10px solid white;}
 img.rating         { margin-top: 20px; margin-bottom: 10px;}
 img.scroll-icon    { width: 60px;}
 
-button.kilde       { width: 220px; height: 80px; font-size: 1.2em;
+button.kilde       { float:left; width: 220px; height: 80px; font-size: 1.2em;
                      border-left: 1px solid gray; border-top: 1px solid gray;
                      border-bottom: 1px solid gray; box-shadow: 1px  2px 30px 10px rgba(0,0,0,0.1);}
 .kilde-mid         { } 
