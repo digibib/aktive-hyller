@@ -38,7 +38,7 @@ div id="contents"
         - if not book.review_collection.empty?
           - book.review_collection.each_with_index do |r, i|
             div class="review" id="review-#{i.to_s}"
-              p #{r[:text]}
+              p #{{r[:text]}}
               hr
               p #{"Denne teksten er hentet fra #{r[:source]}" if r[:source]}
               br
