@@ -83,7 +83,7 @@ div id="contents"
           img src="/img/star_half.png" class="star"
         - (5-red_stars).times do
           img src="/img/star_gray.png" class="star"
-        p Basert på #{rating[:num_raters]} rangeringer fra #{rating[:source]}
+        p Basert på #{rating[:num_raters]} vurderinger fra #{rating[:source]}
       -if rating[:source] =~ /Bokelskere/
         - rating[:rating] = rating[:rating] / 1.2
         - red_stars = rating[:rating].to_i
@@ -94,7 +94,7 @@ div id="contents"
           img src="/img/star_half.png" class="star"
         - (5-red_stars).times do
           img src="/img/star_gray.png" class="star"
-        p Basert på #{rating[:num_raters]} rangeringer fra #{rating[:source]}
+        p Basert på #{rating[:num_raters]} vurderinger fra #{rating[:source]}
 
 
 
