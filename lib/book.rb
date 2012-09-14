@@ -73,7 +73,7 @@ class Book
     fetch_same_author_books
     fetch_similar_works
     
-    puts "isbn_array: ", @work_isbns
+    #puts "isbn_array: ", @work_isbns
   end
 
   #private
@@ -97,7 +97,7 @@ class Book
            [:any_book, RDF::DC.format, self.format])               
       
     results = REPO.select(query)
-    puts results
+    #puts results
     if results.any?
       # return either same_language_image or any_image
       results.first[:same_language_image] ? @cover_url = results.first[:same_language_image] : @cover_url = results.first[:any_image]
@@ -124,7 +124,7 @@ class Book
       query.optional([:review_id, RDF::REV.reviewer, :reviewer])
       query.filter('lang(?review_text) != "nn"')
       
-    puts query
+    #puts query
     reviews = REPO.select(query)
     # reviews is a graph RDF object, RDF::Query::Solutions
     # http://rdf.rubyforge.org/RDF/Query/Solutions.html
@@ -335,20 +335,28 @@ class Book
     return nil if solutions.empty?
     
     results = []
-    solutions.filter do | solution |
-      solution.lang == RDF::URI("http://lexvo.org/id/iso639-3/nob") || 
-      solution.lang == RDF::URI("http://lexvo.org/id/iso639-3/nno") || 
-      solution.lang == RDF::URI("http://lexvo.org/id/iso639-3/eng") || 
-      solution.lang == RDF::URI("http://lexvo.org/id/iso639-3/dan") ||
-      solution.lang == RDF::URI("http://lexvo.org/id/iso639-3/swe") 
-    end
-
-    # filter out distinct works 
-    solutions.order_by(:similar_work)
+    # We only want one manifestation of each work
+    # Iterate solutions and choose by priorities:
+    # 1. lang = nob/nno
+    # 2. originalLanguage = eng/swe/dan
+    # 3. lang = eng
+    # 4. lang = swe
+    # 5. lang = dan 
     
     solutions.each do | solution |
-      if solution.lang== RDF::URI("http://lexvo.org/id/iso639-3/eng")
-        results << solution
+      unless results.any? {|res| res[:similar_work] == solution[:similar_work]}
+        case solution
+        when (:lang => RDF::URI("http://lexvo.org/id/iso639-3/nob") || :lang => RDF::URI("http://lexvo.org/id/iso639-3/nno")
+          results << solution
+        when :original_language => RDF::URI("http://lexvo.org/id/iso639-3/eng") || 
+             :original_language => RDF::URI("http://lexvo.org/id/iso639-3/swe") ||
+             :original_language => RDF::URI("http://lexvo.org/id/iso639-3/dan")
+          results << solution 
+        when :lang => RDF::URI("http://lexvo.org/id/iso639-3/swe")
+          results << solution
+        when :lang => RDF::URI("http://lexvo.org/id/iso639-3/dan")
+          results << solution
+        end
       end
     end
     
