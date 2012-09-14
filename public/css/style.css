@@ -20,7 +20,7 @@ div#avbryt         { z-index: 1000; position: fixed; top: 450px; left: 1130px;}
 div#omtale-bilde   { display: block; width: 255px; height: 380px; background:#eee; padding:20px;}
 div#inner-border   { padding: 20px; border:2px solid gray; background: #eee; height:338px; text-align: center;}
 div.book-title     { color:#333; font-family: Times; font-size: 2.3em; margin-bottom: 60px; font-style: italic;}
-div.book-author     { color:#333; font-family: Arial; font-size: 1.5em; margin: 20px;}
+div.book-author    { color:#333; font-family: Arial; font-size: 1.5em; margin: 20px;}
 
 div.no-review      { padding:1em; font-size: 1.5em;}
 div.no-review p     { line-height: 1.2em;}
@@ -97,6 +97,10 @@ button.kilde       { width: 220px; height: 80px; font-size: 1.2em;
 .kilde-uvalgt:active span { position:relative; top: 3px;}
 .kilde-inaktiv     { background-color: #ccc; color: gray;}
 
+div#omtale-bilde-liste   { display: block; height: 260px; width: 220px; background:#eee; padding:20px;}
+div#inner-border-liste   { padding: 10px; border:2px solid gray; background: #eee; height: 200px ; width: 160px; text-align: center;}
+div.book-title-liste     { color:#333; font-family: Times; font-size: 1.3em; margin-bottom: 60px; font-style: italic;}
+div.book-author-liste    { color:#333; font-family: Arial; font-size: 0.9em; margin: 20px;}
 div.liste-bilde    { height:260px; width: 220px; margin: auto; overflow:hidden;
                      padding: 0; border:0px solid white; }
 ul.listevisning    { list-style-type: none }
