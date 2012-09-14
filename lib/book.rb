@@ -280,6 +280,8 @@ class Book
     puts "#{query}"
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
+
+    return nil unless results
     
     results.each do |same_author_books| 
     @same_author_collection.push({
@@ -321,6 +323,8 @@ class Book
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
     
+    return nil unless results
+
     results.each do |similar_book| 
       @similar_works_collection.push({
         :book => similar_book[:book], 
