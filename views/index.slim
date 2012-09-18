@@ -1,6 +1,8 @@
 == render :slim, :'header'
 
 div[id="nysgjerrig-tittel"] Nysgjerrig på boka?
+== render :slim, :'barcode_form'
+
 div[id="nysgjerrig-undertittel"] Legg den her og finn ut mer!
 div id="vi-leter"
   p Vi leter etter boka, vennligst vent
@@ -11,7 +13,10 @@ div[id="overlay"]
 
 javascript:
   $(document).ready(function() {
-
+    
+    // barcode form in focus
+    document.getElementById('barcode').focus();
+    
     // Initialize
     var ws = new WebSocket("ws://localhost:4567/ws");
     

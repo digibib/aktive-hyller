@@ -32,6 +32,13 @@ get '/omtale' do
   redirect '/omtale/' + session[:book].book_id.to_s.match(/tnr_(.*)/)[1]
 end
 
+post '/omtale' do
+  # strekkode inn:
+  tnr = params[:barcode][4,7]
+  puts tnr
+  redirect '/omtale/' + tnr
+end
+
 get '/omtale/:tnr' do
   # lag bok fra tittelnummer og hent max fire anmeldelser
   session[:book] = Book.new(params[:tnr].strip.to_i)

@@ -301,8 +301,6 @@ class Book
     puts "#{query}"
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
-
-    return nil unless results
     
     results.each do |same_author_books| 
     @same_author_collection.push({
@@ -311,7 +309,7 @@ class Book
       :cover_url => same_author_books[:cover_url] ? same_author_books[:cover_url] : fetch_cover_url(same_author_books[:book]), 
       :creatorName => same_author_books[:creatorName]
       })
-    end    
+    end
   end
 
   def fetch_similar_works
