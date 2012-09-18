@@ -69,11 +69,11 @@ class Book
     fetch_cover_url(self.book_id) unless self.cover_url
     
     fetch_local_reviews(limit=4)
-    #fetch_remote_data
+    fetch_remote_data
     fetch_same_author_books
     fetch_similar_works
     
-    #puts "isbn_array: ", @work_isbns
+    puts "isbn_array: ", @work_isbns
   end
 
   #private
@@ -148,16 +148,23 @@ class Book
   def Goodreads
     return nil unless @isbn
 
+    timing_start = Time.now
     conn = Faraday.new "http://www.goodreads.com"
     gr_description = nil
 
-    result = conn.get do |req|
-      req.url '/book/isbn'
-      req.params['isbn'] = @isbn
-      req.params['key'] = "wDjpR0GY1xXIqTnx2QL37A"
-      req.params['format'] = 'xml'
-      req.options[:timeout] = 2
+    begin
+      result = conn.get do |req|
+        req.url '/book/isbn'
+        req.params['isbn'] = @isbn
+        req.params['key'] = "wDjpR0GY1xXIqTnx2QL37A"
+        req.params['format'] = 'xml'
+        req.options[:timeout] = 2
+        req.options[:open_timeout] = 2
+      end
+    rescue Faraday::Error::TimeoutError
+      puts "\nDEBUG:timeout getting data from GoodReads after #{Time.now - timing_start} seconds\n"
     end
+    
 
     return nil unless result.body
     return nil if result.body =~ /book not found/
@@ -168,28 +175,29 @@ class Book
 
     @ratings.push({:rating => gr_rating, :num_raters => gr_num_raters, :source=>"GoodReads"}) if gr_rating
     @review_collection.push({:source => "GoodReads", :text => gr_description}) if gr_description
-    puts "from Goodreads: "
-    puts "description", gr_description
-    puts "rating", gr_rating
   end
 
   def Bokelskere
     return nil unless @isbn
     puts "isbn til bokelskere: ", @isbn
     
+    timing_start = Time.now
     conn = Faraday.new "http://bokelskere.no"
-    result = conn.get do |req|
-      req.url '/api/1.0/boker/info/' + @isbn.to_s + '/'
-      #req.params['format'] = 'json'
-      req.options[:timeout] = 4
+    begin
+      result = conn.get do |req|
+        req.url '/api/1.0/boker/info/' + @isbn.to_s + '/'
+        #req.params['format'] = 'json'
+        req.options[:timeout] = 2
+        req.options[:open_timeout] = 2
+      end
+    rescue Faraday::Error::TimeoutError
+      puts "\nDEBUG:timeout getting data from Bokelskere after #{Time.now - timing_start} seconds\n"
     end
     
     return nil unless result.body
     return nil if result.body.strip.empty?
     return nil if result.body =~ /Not Found/
 
-    puts "fant noe hos bokelskere"
-    puts result.body
     jsonres = JSON.parse(result.body) 
     if jsonres['antall_terningkast'].to_i > 0
       be_rating = jsonres['gjennomsnittelig_terningkast']
@@ -201,17 +209,24 @@ class Book
   def Novelist
     return nil unless @isbn
   
+    timing_start = Time.now
+
     #TODO undersøke andre muligheter for å få dns til ebscohost
     #     hardkoder ip foreløpig for å ungå treg respons..
     conn = Faraday.new "http://140.234.254.43"
 
-    result = conn.get do |req|
-      req.url '/Services/SearchService.asmx/Search'
-      req.params['prof'] = 's9001444.main.eit'
-      req.params['pwd'] = 'ebs6239'
-      req.params['db'] = 'noh'
-      req.params['query'] = @isbn
-      req.options[:timeout] = 1
+    begin
+      result = conn.get do |req|
+        req.url '/Services/SearchService.asmx/Search'
+        req.params['prof'] = 's9001444.main.eit'
+        req.params['pwd'] = 'ebs6239'
+        req.params['db'] = 'noh'
+        req.params['query'] = @isbn
+        req.options[:timeout] = 1
+        req.options[:open_timeout] = 2
+      end
+    rescue Faraday::Error::TimeoutError
+      puts "\nDEBUG:timeout getting data from Novelist after #{Time.now - timing_start} seconds\n"
     end
 
     return nil unless result.body
@@ -229,28 +244,34 @@ class Book
     @work_isbns = [@isbn] unless @work_isbns 
     return nil if @work_isbns.empty?
 
+    timing_start = Time.now
     conn = Faraday.new "http://partner.bokkilden.no"
     bk_ingress = ""
  
-    @work_isbns.each do |isbn|
-      res = conn.get do |req|
-        req.url '/SamboWeb/partner.do'
-        req.params['format'] = 'XML'
-        req.params['uttrekk'] = 5
-        req.params['pid'] = 0
-        req.params['ept'] = 3
-        req.params['xslId'] = 117
-        req.params['enkeltsok'] = isbn
-        req.options[:timeout] = 2
-      end
-
-      if res.body
-        xml = Nokogiri::XML res.body
-        if xml.xpath('//Ingress').size() >= 1
-          bk_ingress = xml.xpath('//Ingress').first.content
+    begin
+      @work_isbns.each do |isbn|
+        res = conn.get do |req|
+          req.url '/SamboWeb/partner.do'
+          req.params['format'] = 'XML'
+          req.params['uttrekk'] = 5
+          req.params['pid'] = 0
+          req.params['ept'] = 3
+          req.params['xslId'] = 117
+          req.params['enkeltsok'] = isbn
+          req.options[:timeout] = 2
+          req.options[:open_timeout] = 4
         end
-        break unless bk_ingress.empty?
+
+        if res.body
+          xml = Nokogiri::XML res.body
+          if xml.xpath('//Ingress').size() >= 1
+            bk_ingress = xml.xpath('//Ingress').first.content
+          end
+          break unless bk_ingress.empty?
+        end
       end
+    rescue Faraday::Error::TimeoutError
+      puts "\nDEBUG:timeout getting data from Bokkilden after #{Time.now - timing_start} seconds\n"
     end
 
     return nil if bk_ingress.empty?
