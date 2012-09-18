@@ -7,6 +7,8 @@ gem 'sinatra-websocket'
 gem "sinatra-contrib"
 gem "rdf"
 gem "rdf-virtuoso", :git => "https://github.com/digibib/rdf-virtuoso.git"
+gem 'capistrano'
+gem 'rvm-capistrano'
 
 group :development do
   gem "pry"
