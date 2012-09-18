@@ -10,8 +10,6 @@ set :branch, 'develop'
 set :deploy_via, :remote_cache
 set :keep_releases, 5     # How many fallback releases are kept in :deploy_to/releases
 
-role :web, "aktivehyller.deichman.no"                          # Your HTTP server, Apache/etc
-role :app, "aktivehyller.deichman.no"                          # This may be the same as your `Web` server
 server "171.23.133.229", :app, :web, :primary => true
 set :deploy_to, "/var/www/#{application}"
 
