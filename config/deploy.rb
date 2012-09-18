@@ -15,6 +15,10 @@ role :app, "aktivehyller.deichman.no"                          # This may be the
 server "171.23.133.229", :app, :web, :primary => true
 set :deploy_to, "/var/www/#{application}"
 
+# RVM integration
+set :rvm_ruby_string, 'ruby-1.9.3-p194'
+set :rvm_type, :system
+
 #role :db,  "your primary db-server here", :primary => true # This is where Rails migrations will run
 #role :db,  "your slave db-server here"
 
@@ -32,3 +36,6 @@ after "deploy:restart", "deploy:cleanup"
 #     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
 #   end
 # end
+
+require 'rvm/capistrano'                                # Load RVM's capistrano plugin.
+require 'bundler/capistrano' 
