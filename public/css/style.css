@@ -18,7 +18,7 @@ div#vi-leter       { color: #fff; position:fixed; display:none;
 div#avbryt         { z-index: 1000; position: fixed; top: 450px; left: 1130px;}
 
 div#barcode_search { text-align: center; padding: 20px;}
-input.barcode_field  { border:1px solid grey; margin-top:150px; padding: 10px; text-align: center; font-style: italic; color:#666;}
+input.barcode_field  { border:1px solid gray; margin-top:150px; padding: 10px; text-align: center; font-style: italic; color:#666;}
 
 div#omtale-bilde   { display: block; width: 255px; height: 380px; background:#eee; padding:20px;}
 div#inner-border   { padding: 20px; border:2px solid gray; background: #eee; height:338px; text-align: center;}
