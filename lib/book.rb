@@ -34,19 +34,27 @@ class Book
     
     url      = 'http://data.deichman.no/resource/tnr_' + tnr.to_s
     @book_id = RDF::URI(url)
-    query    = QUERY.select(:title, :format, :isbn, :work_id, :work_isbns, :creator_id, :responsible)
-    query.from(DEFAULT_GRAPH)
-      .sample(:cover_url)
-      .group_digest(:creatorName, ', ', 1000, 1)
-      .where([@book_id, RDF::DC.title, :title],
-            [@book_id, RDF::DC.format, :format])
-      .optional([@book_id, RDF::FOAF.depiction, :cover_url])
-      .optional([@book_id, RDF::BIBO.isbn, :isbn])
-      .optional([@book_id, RDF::DC.creator, :creator_id],
+    query    = QUERY.select(:title, :format, :isbn, :work_id, :creator_id, :responsible)
+    query.distinct.from(DEFAULT_GRAPH)
+    query.sample(:cover_url, :same_language_image, :any_image)
+    query.group_digest(:creatorName, ', ', 1000, 1)
+    query.where([@book_id, RDF::DC.title, :title],
+             [@book_id, RDF::DC.language, :lang],
+             [@book_id, RDF::DC.format, :format])
+    query.optional([@book_id, RDF::FOAF.depiction, :cover_url])
+    query.optional([@book_id, RDF::BIBO.isbn, :isbn])
+    query.optional([@book_id, RDF::DC.creator, :creator_id],
                 [:creator_id, RDF::FOAF.name, :creatorName])
-      .optional([@book_id, RDF::RDA.statementOfResponsibility, :responsible])
-      .optional([:work_id, RDF::FABIO.hasManifestation, @book_id])
-      .optional([:work_id, RDF::BIBO.isbn, :work_isbns])
+    query.optional([@book_id, RDF::RDA.statementOfResponsibility, :responsible])
+    query.optional([:work_id, RDF::FABIO.hasManifestation, @book_id])
+    # fetch alternative covers from book in same language or any other book from work
+    query.optional([:work_id, RDF::FABIO.hasManifestation, :another_book],
+               [:another_book, RDF::DC.language, :lang],
+               [:another_book, RDF::FOAF.depiction, :same_language_image],
+               [:another_book, RDF::DC.format, :format])
+    query.optional([:work_id, RDF::FABIO.hasManifestation, :any_book],
+               [:any_book, RDF::FOAF.depiction, :any_image],
+               [:any_book, RDF::DC.format, :format]) 
     
     puts "#{query}"
     results       = REPO.select(query)
@@ -56,17 +64,27 @@ class Book
       @format      = results.first[:format]
       @cover_url   = results.first[:cover_url]
       @isbn        = results.first[:isbn].to_s if results.first[:isbn]
-      @work_isbns  = results.bindings[:work_isbns].to_a.uniq
       @work_id     = results.first[:work_id]
       @creator_id  = results.first[:creator_id]  
       @creatorName = results.first[:creatorName] unless results.first[:creatorName].to_s.empty?
       @responsible = results.first[:responsible]
+      # fetch isbns for work into array
+      if @work_id
+        query = QUERY.select(:work_isbns)
+        query.select.where([@work_id, RDF::BIBO.isbn, :work_isbns])
+        puts "#{query}"
+        results     = REPO.select(query)
+        @work_isbns = results.bindings[:work_isbns].to_a.uniq
+      end
+      # return either cover_url, same_language_image or any_image
+      unless @cover_url
+        @cover_url = (results.first[:same_language_image] ? results.first[:same_language_image] : results.first[:any_image] ? results.first[:any_image] : nil)
+      end
     else
       @book_id = nil
     end
 
-
-    fetch_cover_url(self.book_id) unless self.cover_url
+    #fetch_cover_url(self.book_id) unless self.cover_url
     
     fetch_local_reviews(limit=4)
     fetch_remote_data
@@ -83,7 +101,7 @@ class Book
     # 1. other cover from work in same language
     # 2. any other cover from work
     # or return nil
-    query = QUERY.select(:same_language_image, :any_image)
+    query = QUERY.select.sample(:same_language_image, :any_image)
       .from(DEFAULT_GRAPH)
       .where([book_id, RDF::DC.language, :lang],
              [book_id, RDF::DC.format, self.format])
@@ -97,13 +115,9 @@ class Book
            [:any_book, RDF::DC.format, self.format])               
       
     results = REPO.select(query)
-    #puts results
-    if results.any?
-      # return either same_language_image or any_image
-      results.first[:same_language_image] ? @cover_url = results.first[:same_language_image] : @cover_url = results.first[:any_image]
-    else
-      @cover_url = nil
-    end
+    # puts results
+    # return either same_language_image or any_image
+    results.first[:same_language_image] ? results.first[:same_language_image] : results.first[:any_image]
   end
 
   def fetch_local_reviews(limit=nil)
@@ -365,20 +379,39 @@ class Book
     # 3. lang = eng
     # 4. lang = swe
     # 5. lang = dan 
+    distinct_works = Marshal.load(Marshal.dump(solutions)).select(:similar_work).distinct
     
-    solutions.each do | solution |
-      unless results.any? {|res| res[:similar_work] == solution[:similar_work]}
-        if solution[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/nob") 
-          results << solution
-        elsif solution[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/eng") || 
-              solution[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/swe") || 
-              solution[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/dan") 
-          results << solution
-        elsif solution[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/swe") ||
-              solution[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/dan")
-          results << solution
+    distinct_works.each do |ds|
+      catch :found_book do
+        solutions.each do |s|
+          if ds[:similar_work] == s[:similar_work]
+            if s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/nob") || s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/nno")
+              results << s
+              throw :found_book
+            end
+          end
         end
-      end
+        solutions.each do |s|
+          if ds[:similar_work] == s[:similar_work]
+            if s[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/eng") ||
+                s[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/swe") ||
+                s[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/dan")
+              results << s
+              throw :found_book
+            end
+          end
+        end      
+        solutions.each do |s|
+          if ds[:similar_work] == s[:similar_work]
+            if s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/eng") || 
+                s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/swe") ||
+                s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/dan")
+              results << s
+              throw :found_book
+            end
+          end
+        end 
+      end         
     end
     
     return results
