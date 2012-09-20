@@ -23,6 +23,7 @@ div id="contents"
     - book.similar_works_collection.each_with_index do |similar_work, index|
       a href="/omtale" class="liste-link"
         li
+          input[class="tnr_id" type="hidden" value="#{similar_work[:book].to_s.match(/tnr_(.*)/)[1]}"]
           p class="liste-forfatter" #{similar_work[:creatorName]}
           p class="liste-tittel" #{similar_work[:title]}
           hr style="width:100%;"
@@ -70,12 +71,25 @@ javascript:
 
     $('a.liste-link').on('click', function(evt) {
       evt.preventDefault();
+        var title = $(this).find('p.liste-tittel').html();
+        var tnr = $(this).find('input.tnr_id').val();
         // show overlay
         $('#overlay').show();
         $('button#avbryt-knapp').html('Avbryt');
-        $('div#vi-leter p').html('Henter informasjon om "' + "BOKTITTEL" + '" <span id="loading"></span>' );
+        $('div#vi-leter p').html('Henter informasjon om "' + title + '" <span id="loading"></span>' );
         $('#vi-leter').show();
 
+        var request = $.ajax({
+          url: '/populate/'+tnr,
+          type: 'GET'});
+
+        request.done(function(msg) {
+          window.location.replace("/omtale");
+        })
+
+        request.fail(function(jqXHR, textStatus, errorThrown) {
+          return;
+        });
     });
 
   });

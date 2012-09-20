@@ -29,7 +29,9 @@ end
 
 get '/omtale' do
   # Ikke i bruk
-  redirect '/omtale/' + session[:book].book_id.to_s.match(/tnr_(.*)/)[1]
+  #redirect '/omtale/' + session[:book].book_id.to_s.match(/tnr_(.*)/)[1]
+  redirect '/' unless session[:book]
+  slim :omtale, :locals => {:book => session[:book]}
 end
 
 post '/omtale' do
@@ -37,6 +39,11 @@ post '/omtale' do
   tnr = params[:barcode][4,7]
   puts tnr
   redirect '/omtale/' + tnr
+end
+
+get '/populate/:tnr' do
+  session[:book] = Book.new(params[:tnr].strip.to_i)
+  "Success!"
 end
 
 get '/omtale/:tnr' do
