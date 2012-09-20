@@ -69,6 +69,7 @@ div.left-button-s   { padding-top: 10px; display: block; width:210px; height: 90
                      border-bottom: 1px solid gray; text-align: center; font-size: 24px;
                      box-shadow: 1px  10px 20px 5px rgba(0,0,0,0.18);
                      background: -moz-linear-gradient(left, #aaa, #eee);}
+div.grayed          { color:#999;}
 img.menu-icon        { width:100px; margin-top:50px;}
 div.circle-gray     { display:inline-block; width: 45px; height: 38px; border-radius:30px;
                      background-color: #666; padding: 8px 2px 0 1px; margin-bottom:5px;}

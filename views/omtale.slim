@@ -7,14 +7,24 @@ div id="leftmenu"
     div class="arrow-border"
     div style="clear:both"
     img src="/img/omtale_red.png" class="menu-icon"
-  a href="/flere"
-    div[class="left-button"]
+  - if book.same_author_collection.any?
+    a href="/flere"
+      div[class="left-button"]
+        |Flere bøker<br/>av forfatteren
+        img src="/img/flere_gray.png" class="menu-icon"
+  - else
+    div[class="left-button grayed"]
       |Flere bøker<br/>av forfatteren
-      img src="/img/flere_gray.png" class="menu-icon"
-  a href="/relaterte"
-    div[class="left-button"]
+      img src="/img/flere_gray2.png" class="menu-icon"
+  - if book.similar_works_collection.any?
+    a href="/relaterte"
+      div[class="left-button"]
+        |Noe som ligner
+        img src="/img/relaterte_gray.png" class="menu-icon"
+  - else
+    div[class="left-button grayed"]
       |Noe som ligner
-      img src="/img/relaterte_gray.png" class="menu-icon"
+      img src="/img/relaterte_gray2.png" class="menu-icon"
   div[class="left-button-s"]
     div class="circle-gray" 1
     |<br/>Historikk
@@ -59,10 +69,13 @@ div id="contents"
 
     div style="clear:both"
     div id="omtale-kilder"
-      button[class="kilde kilde-left kilde-valgt"]:span #{book.review_collection[0] ? book.review_collection[0][:source] : "kilde" }
-      button[class="kilde kilde-mid kilde-uvalgt"]:span #{book.review_collection[1] ? book.review_collection[1][:source] : "kilde"}
-      button[class="kilde kilde-mid kilde-uvalgt"]:span #{book.review_collection[2] ? book.review_collection[2][:source] : "kilde"}
-      button[class="kilde kilde-right kilde-uvalgt"]:span #{book.review_collection[3] ? book.review_collection[3][:source] : "kilde" }
+      - for i in 0..3
+        - if book.review_collection[i]
+          button[class="kilde #{'kilde-uvalgt' if i != 0} #{'kilde-left kilde-valgt' if i == 0} #{'kilde-right' if i == 3}" id="kilde_#{i}"]: span #{book.review_collection[i][:source]}
+        - else
+          button[class="kilde #{'kilde-left' if i == 0} #{'kilde-right' if i == 3} kilde-inaktiv" id="kilde_#{i}"]: span kilde
+
+
       
   div id="content-left"
     - if book.cover_url
@@ -74,7 +87,7 @@ div id="contents"
           div.book-title #{book.title}
           p ~
     - for rating in book.ratings
-      -if rating[:source] =~ /GoodReads/
+      -if rating[:source] =~ /GoodReads/ and rating[:num_raters] > 0
         - red_stars = (rating[:rating]/rating[:num_raters]).to_i
         - red_stars.times do
           img src="/img/star_red.png" class="star"
@@ -84,7 +97,7 @@ div id="contents"
         - (5-red_stars).times do
           img src="/img/star_gray.png" class="star"
         p Basert på #{rating[:num_raters]} vurderinger fra #{rating[:source]}
-      -if rating[:source] =~ /Bokelskere/
+      -if rating[:source] =~ /Bokelskere/ and rating[:num_raters] > 0
         - rating[:rating] = rating[:rating] / 1.2
         - red_stars = rating[:rating].to_i
         - red_stars.times do
@@ -113,7 +126,14 @@ javascript:
   }
   $(document).ready(function () {
 
-    //$('#review-0').siblings("div.review").hide();
+    $('#review-0').siblings("div.review").hide();
+
+    $('#omtale-kilder').on('click', ".kilde-uvalgt", function() {
+      $('.kilde-valgt').removeClass('kilde-valgt').addClass('kilde-uvalgt');
+      $(this).removeClass('kilde-uvalgt').addClass('kilde-valgt');
+      var nr = $(this).attr('id').slice(6);
+      $('#review-'+nr).show().siblings("div.review").hide();
+    });
 
     $('a.prev').on('click', function() {
       console.log("up!");

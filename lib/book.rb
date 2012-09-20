@@ -315,7 +315,7 @@ class Book
     puts "#{query}"
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
-    
+    return nil unless results
     results.each do |same_author_books| 
     @same_author_collection.push({
       :book => same_author_books[:book], 
