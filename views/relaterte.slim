@@ -5,10 +5,15 @@ div id="leftmenu"
     div[class="left-button"]
       |Omtale<br/>
       img src="/img/omtale_gray.png" class="menu-icon"
-  a href="/flere"
-    div[class="left-button"]
+  - if book.same_author_collection.any?
+    a href="/flere"
+      div[class="left-button"]
+        |Flere bøker<br/>av forfatteren
+        img src="/img/flere_gray.png" class="menu-icon"
+  - else
+    div[class="left-button grayed"]
       |Flere bøker<br/>av forfatteren
-      img src="/img/flere_gray.png" class="menu-icon"
+      img src="/img/flere_gray2.png" class="menu-icon"
   div class="left-button"
     span style="font-weight:bold" Noe som ligner
     div class="arrow"

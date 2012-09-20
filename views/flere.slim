@@ -11,10 +11,15 @@ div id="leftmenu"
     div class="arrow-border"
     div style="clear:both"
     img src="/img/flere_red.png" class="menu-icon"
-  a href="/relaterte"
-    div[class="left-button"]
+  - if book.similar_works_collection.any?
+    a href="/relaterte"
+      div[class="left-button"]
+        |Noe som ligner
+        img src="/img/relaterte_gray.png" class="menu-icon"
+  - else
+    div[class="left-button grayed"]
       |Noe som ligner
-      img src="/img/relaterte_gray.png" class="menu-icon"
+      img src="/img/relaterte_gray2.png" class="menu-icon"
   div[class="left-button-s"]
     div class="circle-gray" 4
     |<br/>Historikk
