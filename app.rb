@@ -34,13 +34,6 @@ get '/omtale' do
   slim :omtale, :locals => {:book => session[:book]}
 end
 
-post '/omtale' do
-  # strekkode inn:
-  tnr = params[:barcode][4,7]
-  puts tnr
-  redirect '/omtale/' + tnr
-end
-
 get '/populate/:tnr' do
   session[:book] = Book.new(params[:tnr].strip.to_i)
   "Success!"
