@@ -272,7 +272,7 @@ class Book
           req.params['ept'] = 3
           req.params['xslId'] = 117
           req.params['enkeltsok'] = isbn
-          req.options[:timeout] = 2
+          req.options[:timeout] = 3
           req.options[:open_timeout] = 4
         end
 
