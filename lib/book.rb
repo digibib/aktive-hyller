@@ -243,7 +243,7 @@ class Book
       puts "\nDEBUG:timeout getting data from Novelist after #{Time.now - timing_start} seconds\n"
     end
 
-    return nil unless result.body
+    return nil if result.nil?
 
     xml = Nokogiri::XML result.body
     if xml.xpath('//ab').size() >= 1

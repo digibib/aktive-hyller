@@ -18,11 +18,13 @@ DEFAULT_GRAPH = RDF::URI('http://data.deichman.no/books')
 
 # Sinatra configs
 session = {}
+session[:history] = []
 set :server, 'thin'
 set :sockets, []
 
 # Routing
 get '/' do
+  session[:history] = []
   # Nysgjerrig på boka?
   slim(:index)  
 end
@@ -31,7 +33,11 @@ get '/omtale' do
   # Ikke i bruk
   #redirect '/omtale/' + session[:book].book_id.to_s.match(/tnr_(.*)/)[1]
   redirect '/' unless session[:book]
-  slim :omtale, :locals => {:book => session[:book]}
+  session[:history].push({:tnr => session[:book].book_id,
+                          :title => session[:book].title,
+                          :cover_url => session[:book].cover_url,
+                          :creatorName => session[:book].creatorName})
+  slim :omtale, :locals => {:book => session[:book], :history => session[:history].uniq}
 end
 
 get '/populate/:tnr' do
@@ -42,23 +48,27 @@ end
 get '/omtale/:tnr' do
   # lag bok fra tittelnummer og hent max fire anmeldelser
   session[:book] = Book.new(params[:tnr].strip.to_i)
-  slim :omtale, :locals => {:book => session[:book]}
+  session[:history].push ({:tnr => session[:book].book_id,
+                          :title => session[:book].title,
+                          :cover_url => session[:book].cover_url,
+                          :creatorName => session[:book].creatorName})
+  slim :omtale, :locals => {:book => session[:book], :history => session[:history].uniq}
 end
 
 get '/flere' do
   # Flere bøker av forfatteren
-  slim :flere, :locals => {:book => session[:book]}
+  slim :flere, :locals => {:book => session[:book], :history => session[:history].uniq}
 end
 
 get '/relaterte' do
   # Noe som ligner, relaterte bøker
-  slim :relaterte, :locals => {:book => session[:book]}
+  slim :relaterte, :locals => {:book => session[:book], :history => session[:history].uniq}
 end
 
 get '/historikk' do
   # Titler som har vært vist i omtalevisning. Nullstilles når man kommer til
   # nysgjerrig på boka-siden.
-  'historikk'
+  slim :historikk, :locals => {:book => session[:book], :history => session[:history].uniq}
 end
 
 get '/ws' do

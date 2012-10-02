@@ -61,12 +61,18 @@ div.arrow          { border-color: transparent transparent transparent gray;
 div.arrow-border   { border-color: transparent transparent transparent #eee;
                      border-style: solid; border-width:16px; height:0; width: 0;
                      position: absolute; top: 120px; left: 210px;}
+div.arrow-s          { border-color: transparent transparent transparent gray;
+                     border-style: solid; border-width:16px; height:0; width: 0;
+                     position: absolute; top: 35px; left: 210px; }
+div.arrow-border-s   { border-color: transparent transparent transparent #eee;
+                     border-style: solid; border-width:16px; height:0; width: 0;
+                     position: absolute; top: 35px; left: 210px;}
 div.left-button     { color: #333; position: relative; display: block; width:210px; height: 245px;
                      border-top: 1px solid gray; border-right: 1px solid gray; padding-top: 25px;
                      text-align: center; font-size: 24px; background-color: #ddd;
                      box-shadow: 1px  10px 20px 5px rgba(0,0,0,0.18);
                      background: -moz-linear-gradient(left, #aaa, #eee); }
-div.left-button-s   { padding-top: 10px; display: block; width:210px; height: 90px; background-color: #ccc;
+div.left-button-s   { position: relative; padding-top: 10px; display: block; width:210px; height: 90px; background-color: #ccc;
                      border-top: 1px solid gray; border-right: 1px solid gray;
                      border-bottom: 1px solid gray; text-align: center; font-size: 24px;
                      box-shadow: 1px  10px 20px 5px rgba(0,0,0,0.18);

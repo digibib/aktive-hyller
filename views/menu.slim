@@ -42,7 +42,14 @@ div id="leftmenu"
     div[class="left-button grayed"]
       |Noe som ligner
       img src="/img/relaterte_gray2.png" class="menu-icon"
-
-  div[class="left-button-s"]
-    div class="circle-gray" 4
-    |<br/>Historikk
+  - if request.env['REQUEST_URI'] != '/historikk' 
+    div[class="left-button-s"]
+      a href="/historikk"
+        div class="circle-gray" #{history.size}
+        |<br/>Historikk
+  - else
+    div[class="left-button-s"]
+      div class="circle-gray" #{history.size}
+      div style="font-weight:bold" Historikk
+      div class="arrow-s"
+      div class="arrow-border-s"
