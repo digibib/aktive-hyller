@@ -73,7 +73,7 @@ div id="contents"
         - if book.review_collection[i]
           button[class="kilde #{'kilde-uvalgt' if i != 0} #{'kilde-left kilde-valgt' if i == 0} #{'kilde-right' if i == 3}" id="kilde_#{i}"]: span #{book.review_collection[i][:source]}
         - else
-          button[class="kilde #{'kilde-left' if i == 0} #{'kilde-right' if i == 3} kilde-inaktiv" id="kilde_#{i}"]: span kilde
+          button[class="kilde #{'kilde-left' if i == 0} #{'kilde-right' if i == 3} kilde-inaktiv" id="kilde_#{i}"]
 
 
       
