@@ -9,7 +9,9 @@ hr                 { border: 1px solid gray; width: 91%; margin-top: 20px; margi
 a:link             { text-decoration: none; color: #444;}
 a:visited          { color: #444;}
 a:active, a:focus  { outline-style: none; outline: 0; }
-           
+
+img#frontarrow    { position:fixed; left:900px; top:650px;}     
+img#frontbook     { position:fixed; left:1280px; top: 400px;}     
 div#overlay        { position: fixed; width:100%; height: 100%; top:0; left: 0;
                      z-index: 50; background: #000; opacity: 0.8; display:none;}
 div#vi-leter       { color: #fff; position:fixed; display:none;
