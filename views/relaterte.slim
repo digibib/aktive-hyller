@@ -1,27 +1,6 @@
 == render :slim, :'header'
 
-div id="leftmenu"
-  a href="/omtale"
-    div[class="left-button"]
-      |Omtale<br/>
-      img src="/img/omtale_gray.png" class="menu-icon"
-  - if book.same_author_collection.any?
-    a href="/flere"
-      div[class="left-button"]
-        |Flere bøker<br/>av forfatteren
-        img src="/img/flere_gray.png" class="menu-icon"
-  - else
-    div[class="left-button grayed"]
-      |Flere bøker<br/>av forfatteren
-      img src="/img/flere_gray2.png" class="menu-icon"
-  div class="left-button"
-    span style="font-weight:bold" Noe som ligner
-    div class="arrow"
-    div class="arrow-border"  
-    img src="/img/relaterte_red.png" class="menu-icon"
-  div[class="left-button-s"]
-    div class="circle-gray" 4
-    |<br/>Historikk
+== render :slim, :'menu', locals: {book: book}
 
 div id="contents"
   ul class="listevisning"
