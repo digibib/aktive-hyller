@@ -81,6 +81,9 @@ div.grayed          { color:#999;}
 img.menu-icon        { width:100px; margin-top:50px;}
 div.circle-gray     { display:inline-block; width: 45px; height: 38px; border-radius:30px;
                      background-color: #666; padding: 8px 2px 0 1px; margin-bottom:5px;}
+div.circle-red     { display:inline-block; width: 45px; height: 38px; border-radius:30px;
+                     background-color: #e65740; padding: 8px 2px 0 1px; margin-bottom:5px;}
+
 
 div#omtale-tittel  { }
 div#omtale-wrapper { width: 870px; overflow:hidden;}
