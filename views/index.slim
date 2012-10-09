@@ -36,10 +36,10 @@ javascript:
       // show overlay
       $('#overlay').show();
       $('button#avbryt-knapp').html('Avbryt');
-      $('#vi-leter p').html('Vi leter etter boka, vennligst vent <span id="loading"></span>')
+      $('#vi-leter p').html('Vi leter etter boka, vennligst vent <span id="loading"></span>');
       $('#vi-leter').show();
       
-      check_format = $.get('/checkformat/'+evt.data);
+      check_format = $.getJSON('/checkformat/'+evt.data);
       check_format.done(function(data) {
         if (data.accepted_format) {
           $('div#vi-leter p').html('Henter informasjon om "' + data.title + '" <span id="loading"></span>' );
@@ -61,7 +61,7 @@ javascript:
         } else {
           $('div#vi-leter p').html('Beklager! Foreløpig kan jeg bare hjelpe deg<br/>med bøker og lydbøker');
           $('button#avbryt-knapp').html('OK');
-        }          
+        };          
           
       });
     }
