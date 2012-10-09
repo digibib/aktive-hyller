@@ -43,8 +43,8 @@ div id="leftmenu"
       |Noe som ligner
       img src="/img/relaterte_gray2.png" class="menu-icon"
   - if request.env['REQUEST_URI'] != '/historikk' 
-    div[class="left-button-s"]
-      a href="/historikk"
+    a href="/historikk"
+      div[class="left-button-s"]
         div class="circle-gray" #{history.size}
         |<br/>Historikk
   - else
