@@ -42,7 +42,7 @@ end
 
 get '/populate/:tnr' do
   session[:book] = Book.new(params[:tnr].strip.to_i)
-  "Success!"
+  "success!"
 end
 
 get '/omtale/:tnr' do
