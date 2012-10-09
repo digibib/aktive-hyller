@@ -30,8 +30,6 @@ class Book
     @same_author_collection   = []
     @similar_works_collection = []
     
-    accepted_formats = ["http://data.deichman.no/format/Book", "http://data.deichman.no/format/Audiobook"]
-    
     url      = 'http://data.deichman.no/resource/tnr_' + tnr.to_s
     @book_id = RDF::URI(url)
     query    = QUERY.select(:title, :format, :isbn, :work_id, :creator_id, :responsible)

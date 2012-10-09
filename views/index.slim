@@ -39,24 +39,30 @@ javascript:
       $('#vi-leter p').html('Vi leter etter boka, vennligst vent <span id="loading"></span>')
       $('#vi-leter').show();
       
-      request = $.get('/populate/'+evt.data);
-
-      request.done(function(data) {
-        window.location.replace("/omtale");
-        //console.log(data);
-        //if (data.accepted_format) {
-        //  $('div#vi-leter p').html('Henter informasjon om "' + data.title + '" <span id="loading"></span>' );
-          // hent all info til omtalevisning her
-        //} else {
-        //  $('div#vi-leter p').html('Beklager! Foreløpig kan jeg bare hjelpe deg<br/>med bøker og lydbøker');
-      //    $('button#avbryt-knapp').html('OK');
-        //}
-      });
-
-      request.fail(function(message) {
-        console.log(message);
-        $('div#vi-leter p').html('Ops! Klarte ikke å finne noe om denne.');
-        $('button#avbryt-knapp').html('OK');
+      check_format = $.get('/checkformat/'+evt.data);
+      check_format.done(function(data) {
+        if (data.accepted_format) {
+          $('div#vi-leter p').html('Henter informasjon om "' + data.title + '" <span id="loading"></span>' );
+          
+          //hent all info til omtalevisning her
+          request = $.get('/populate/'+evt.data);
+    
+          request.done(function(data) {
+            window.location.replace("/omtale");
+            console.log(data);
+          });
+    
+          request.fail(function(message) {
+            console.log(message);
+            $('div#vi-leter p').html('Ops! Klarte ikke å finne noe om denne.');
+            $('button#avbryt-knapp').html('OK');
+          });
+                    
+        } else {
+          $('div#vi-leter p').html('Beklager! Foreløpig kan jeg bare hjelpe deg<br/>med bøker og lydbøker');
+          $('button#avbryt-knapp').html('OK');
+        }          
+          
       });
     }
 
