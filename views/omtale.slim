@@ -82,22 +82,18 @@ div id="contents"
           img src="/img/star_gray.png" class="star"
         p Basert på #{rating[:num_raters]} vurderinger fra #{rating[:source]}
 
+div id="vi-leter"
+  p Vi leter etter boka, vennligst vent
+    span[id="loading"]
+  div id="avbryt"
+    button[class="top-button" id="avbryt-knapp"] Avbryt
+div[id="overlay"]
 
+== render :slim, :'websocket'
 
 javascript:
-  if (window.WebSocket) {
-    var ws = new WebSocket('ws://localhost:3000/example');
-    ws.onopen = function() {
-      console.log("ws connected!");
-    }
-    ws.onclose = function() {
-      console.log("ws closed.");
-    }
-    ws.onmessage = function(msg) {
-      alert(msg);
-    }
-  }
   $(document).ready(function () {
+
 
     $('#review-0').siblings("div.review").hide();
 
@@ -117,5 +113,6 @@ javascript:
       console.log("down!");
       $('#scrollable').animate({scrollTop:500},'slow');
     });
+
 
   });

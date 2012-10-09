@@ -26,19 +26,8 @@ div id="vi-leter"
     button[class="top-button" id="avbryt-knapp"] Avbryt
 div[id="overlay"]
 
+== render :slim, :'websocket'
 javascript:
-  if (window.WebSocket) {
-    var ws = new WebSocket('ws://localhost:3000/example');
-    ws.onopen = function() {
-      console.log("ws connected!");
-    }
-    ws.onclose = function() {
-      console.log("ws closed.");
-    }
-    ws.onmessage = function(msg) {
-      alert(msg);
-    }
-  }
   $(document).ready(function () {
 
    $('button#avbryt-knapp').on('click', function() {
