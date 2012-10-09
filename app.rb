@@ -44,7 +44,7 @@ get '/checkformat/:tnr' do
   content_type :json
   accepted_formats = ["http://data.deichman.no/format/Book", "http://data.deichman.no/format/Audiobook"]
     
-  url      = 'http://data.deichman.no/resource/tnr_' + params[:tnr].strip.to_s
+  url      = 'http://data.deichman.no/resource/tnr_' + params[:tnr].strip.to_i.to_s
   @book_id = RDF::URI(url)
   query    = QUERY.select(:title, :format).from(DEFAULT_GRAPH)
   query.where([@book_id, RDF::DC.title, :title],
