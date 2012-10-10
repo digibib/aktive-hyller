@@ -9,6 +9,8 @@
 Aktive Hyller er laget og testet for Firefox.
 
 Set følgende instillinger ved å skirve `about:config` i adressefeltet til Firefox:
+
+
 ```nglayout.enable_drag_images til false```
 
 ### Firefox plugins ###
