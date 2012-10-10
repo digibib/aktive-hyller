@@ -8,6 +8,9 @@
 ## Oppsett av nettleser ##
 Aktive Hyller er laget og testet for Firefox.
 
+Set følgende instillinger ved å skirve `about:config` i adressefeltet til Firefox:
+```nglayout.enable_drag_images til false```
+
 ### Firefox plugins ###
 For å skjule URL tooltip som dukker opp i nedre venstre hjørne ved hver sidelasting, kan man installere programtillegget [Status-4-Evar] og deaktivere alle statusmeldinger (Vis nettverksstatus, vis standardstatus osv)
 
