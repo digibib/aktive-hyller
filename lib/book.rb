@@ -192,10 +192,11 @@ class Book
         req.url '/api/1.0/boker/info/' + @isbn.to_s + '/'
         #req.params['format'] = 'json'
         req.options[:timeout] = 2
-        req.options[:open_timeout] = 2
+        req.options[:open_timeout] = 4
       end
     rescue Faraday::Error::TimeoutError
       puts "\nDEBUG:timeout getting data from Bokelskere after #{Time.now - timing_start} seconds\n"
+      result = nil
     end
     
     return nil unless result.body
