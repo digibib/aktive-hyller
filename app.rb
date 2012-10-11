@@ -6,9 +6,16 @@ require "sinatra-websocket"
 require "sinatra/reloader" if development?
 require "slim"
 require "json"
-
+require "logger"
 require_relative "./lib/vocabularies.rb"
 require_relative "./lib/book.rb"
+
+# Loggin setup
+root = ::File.dirname(__FILE__)
+logfile = ::File.join(root,'logs','requests.log')
+class ::Logger; alias_method :write, :<<; end
+logger  = ::Logger.new(logfile,'weekly')
+use Rack::CommonLogger, logger
 
 # Global constants
 url           = 'http://data.deichman.no/sparql'
@@ -22,10 +29,12 @@ session[:history] = []
 set :server, 'thin'
 set :sockets, []
 
+
 # Routing
 get '/' do
   session[:history] = []
   # Nysgjerrig på boka?
+  logger.info("Start av ny sesjon.")
   slim(:index)  
 end
 
@@ -37,6 +46,7 @@ get '/omtale' do
                           :title => session[:book].title,
                           :cover_url => session[:book].cover_url,
                           :creatorName => session[:book].creatorName})
+  logger.info("Omtalevisning på bok: #{session[:book].book_id}")
   slim :omtale, :locals => {:book => session[:book], :history => session[:history].uniq}
 end
 
