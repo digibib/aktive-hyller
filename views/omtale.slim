@@ -72,7 +72,7 @@ div id="contents"
         p Basert på #{rating[:num_raters]} vurderinger fra #{rating[:source]}
       -if rating[:source] =~ /Bokelskere/ and rating[:num_raters] > 0
         - rating_converted = rating[:rating] / 1.2
-        - red_stars = rating_coverted.to_i
+        - red_stars = rating_converted.to_i
         - red_stars.times do
           img src="/img/star_red.png" class="star"
         - if red_stars != rating_converted.round
