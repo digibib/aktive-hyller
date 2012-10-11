@@ -34,7 +34,7 @@ class Book
     @book_id = RDF::URI(url)
     query    = QUERY.select(:title, :format, :isbn, :work_id, :creator_id, :responsible)
     query.distinct.from(DEFAULT_GRAPH)
-    query.sample(:cover_url, :same_language_image, :any_image)
+    query.sample(:cover_url)
     query.group_digest(:creatorName, ', ', 1000, 1)
     query.where([@book_id, RDF::DC.title, :title],
              [@book_id, RDF::DC.language, :lang],
@@ -45,14 +45,6 @@ class Book
                 [:creator_id, RDF::FOAF.name, :creatorName])
     query.optional([@book_id, RDF::RDA.statementOfResponsibility, :responsible])
     query.optional([:work_id, RDF::FABIO.hasManifestation, @book_id])
-    # fetch alternative covers from book in same language or any other book from work
-    query.optional([:work_id, RDF::FABIO.hasManifestation, :another_book],
-               [:another_book, RDF::DC.language, :lang],
-               [:another_book, RDF::FOAF.depiction, :same_language_image],
-               [:another_book, RDF::DC.format, :format])
-    query.optional([:work_id, RDF::FABIO.hasManifestation, :any_book],
-               [:any_book, RDF::FOAF.depiction, :any_image],
-               [:any_book, RDF::DC.format, :format]) 
     
     puts "#{query}"
     results       = REPO.select(query)
@@ -76,7 +68,7 @@ class Book
       end
       # return either cover_url, same_language_image or any_image
       unless @cover_url
-        @cover_url = (results.first[:same_language_image] ? results.first[:same_language_image] : results.first[:any_image] ? results.first[:any_image] : nil)
+        @cover_url = fetch_cover_url(@book_id)
       end
     else
       @book_id = nil
