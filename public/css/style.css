@@ -1,9 +1,9 @@
-*                  { margin:0; padding:0; border:0; /*cursor: none;*/ }
+*                  { margin:0; padding:0; border:0; cursor: none; }
 .select-disable     { -khtml-user-select: none; -moz-user-select: none;
                     -o-user-select: none;  user-select: none; }
 button::-moz-focus-inner { border: 0; }
 
-body               { font-family: Arial; font-size:100%; }
+body               { font-family: Arial; font-size:100%; overflow:hidden}
 h2                 { font-size: 2em; color: #222; letter-spacing: 2px; line-height: 1.1em ;}
 hr                 { border: 1px solid gray; width: 91%; margin-top: 20px; margin-bottom: 20px;}
 a:link             { text-decoration: none; color: #444;}
@@ -117,11 +117,11 @@ div#inner-border-liste   { padding: 10px; border:2px solid gray; background: #ee
 div.book-title-liste     { color:#333; font-family: Times; font-size: 1.3em; margin-bottom: 60px; font-style: italic;}
 div.book-author-liste    { color:#333; font-family: Arial; font-size: 0.9em; margin: 20px;}
 
-div#liste-wrapper { overflow:auto; width:1430px; height: 880px;}
+div#liste-wrapper { overflow:auto; width:1430px; height: 882px;}
 div.liste-bilde    { height:260px; width: 220px; margin: auto; overflow:hidden;
                      padding: 0; border:0px solid white; }
 ul.listevisning    { list-style-type: none }
-ul.listevisning li { display: inline-block; width: 250px; height: 365px;
+ul.listevisning li { display: inline-block; width: 250px; height: 362px;
                      background-color: #ccc; margin: 0 60px 35px 0; padding: 20px;
                      border-radius: 5px; box-shadow: 1px  2px 20px 5px rgba(0,0,0,0.1);
                      text-align: center; overflow:hidden;}
