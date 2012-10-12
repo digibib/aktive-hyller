@@ -41,7 +41,7 @@ div#header         { height: 130px; width: 100%; background: #e65740; }
 div#top-buttons    { float: right; margin: 24px;}
 div#leftmenu       { float: left; width: 235px; height: 100%; }
 div#contents       { padding-left: 25px; padding-top: 35px;
-                     float: left; background-color: #fff; width: 1400px }
+                     float: left; background-color: #fff; width: 1400px; overflow:hidden;}
 div#content-left   { width: 300px; background-color: #ddd;
                      border-radius: 5px; float: left; padding: 30px; color:#444;}
 div#content-right  { float: right; width:970px; height: 822px; padding: 20px;
@@ -116,6 +116,8 @@ div#omtale-bilde-liste   { display: block; height: 260px; width: 220px; backgrou
 div#inner-border-liste   { padding: 10px; border:2px solid gray; background: #eee; height: 200px ; width: 160px; text-align: center;}
 div.book-title-liste     { color:#333; font-family: Times; font-size: 1.3em; margin-bottom: 60px; font-style: italic;}
 div.book-author-liste    { color:#333; font-family: Arial; font-size: 0.9em; margin: 20px;}
+
+div#liste-wrapper { overflow:auto; width:1430px; height: 880px;}
 div.liste-bilde    { height:260px; width: 220px; margin: auto; overflow:hidden;
                      padding: 0; border:0px solid white; }
 ul.listevisning    { list-style-type: none }

@@ -3,23 +3,23 @@
 == render :slim, :'menu', locals: {book: book, history: history}
 
 div id="contents"
-  ul class="listevisning"
-    - book.similar_works_collection.each_with_index do |similar_work, index|
-      a href="/omtale" class="liste-link"
-        li
-          input[class="tnr_id" type="hidden" value="#{similar_work[:book].to_s.match(/tnr_(.*)/)[1]}"]
-          p class="liste-forfatter" #{similar_work[:creatorName]}
-          p class="liste-tittel" #{similar_work[:title]}
-          hr style="width:100%;"
-          div class="liste-bilde"
-            - if similar_work[:cover_url]
-              img src="#{similar_work[:cover_url]}" class="listevisning"
-            - else
-              div id="omtale-bilde-liste"
-                div id="inner-border-liste"
-                  div.book-author-liste #{similar_work[:creatorName]}
-                  div.book-title-liste #{similar_work[:title]}
-                  p ~
+  div id="liste-wrapper"
+    ul class="listevisning"
+      - book.similar_works_collection.each_with_index do |similar_work, index|
+        a href="/omtale" class="liste-link"
+          li
+            input[class="tnr_id" type="hidden" value="#{similar_work[:book].to_s.match(/tnr_(.*)/)[1]}"]
+            p class="liste-forfatter" #{similar_work[:creatorName]}
+            p class="liste-tittel" #{similar_work[:title]}
+            hr style="width:100%;"
+            div class="liste-bilde"
+              - if similar_work[:cover_url]
+                img src="#{similar_work[:cover_url]}" class="listevisning"
+              - else
+                div id="omtale-bilde-liste"
+                  div id="inner-border-liste"
+                    div.book-author-liste #{similar_work[:creatorName]}
+                    div.book-title-liste #{similar_work[:title]}
 div id="vi-leter"
   p Vi leter etter boka, vennligst vent
   div id="avbryt"

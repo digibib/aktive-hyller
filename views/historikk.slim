@@ -4,22 +4,22 @@
 
 div id="contents"
   ul class="listevisning"
-    - history.each do |h|
-      a href="/omtale" class="liste-link"
-        li
-          input[class="tnr_id" type="hidden" value="#{h[:tnr].to_s.match(/tnr_(.*)/)[1]}"]
-          p class="liste-forfatter" #{h[:creatorName]}
-          p class="liste-tittel" #{h[:title]}
-          hr style="width:100%;"
-          div class="liste-bilde"
-            - if h[:cover_url]
-              img src="#{h[:cover_url]}" class="listevisning"
-            - else
-              div id="omtale-bilde-liste"
-                div id="inner-border-liste"
-                  div.book-author-liste #{h[:creatorName]}
-                  div.book-title-liste #{h[:title]}
-                  p ~
+    div id="liste-wrapper"
+      - history.each do |h|
+        a href="/omtale" class="liste-link"
+          li
+            input[class="tnr_id" type="hidden" value="#{h[:tnr].to_s.match(/tnr_(.*)/)[1]}"]
+            p class="liste-forfatter" #{h[:creatorName]}
+            p class="liste-tittel" #{h[:title]}
+            hr style="width:100%;"
+            div class="liste-bilde"
+              - if h[:cover_url]
+                img src="#{h[:cover_url]}" class="listevisning"
+              - else
+                div id="omtale-bilde-liste"
+                  div id="inner-border-liste"
+                    div.book-author-liste #{h[:creatorName]}
+                    div.book-title-liste #{h[:title]}
 div id="vi-leter"
   p Vi leter etter boka, vennligst vent
   div id="avbryt"
