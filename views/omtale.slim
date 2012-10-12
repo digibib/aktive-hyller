@@ -8,13 +8,6 @@ div id="contents"
       h2 #{book.title} 
       h2 #{book.creatorName ? "av #{book.creatorName}" : book.responsible }
       hr
-    div id="omtale-scroll"
-      div id="scroll-actions"
-        |<a class="prev">
-        |<img src="/img/up.png" class="scroll-icon" style="margin-top:20px"></a>
-        |<br/>
-        |<a class="next">
-        |<img src="/img/down.png" class="scroll-icon" style="margin-top:460px"></a>
       
     div id="omtale-wrapper"
       div id="omtale-tekst"
@@ -102,16 +95,6 @@ javascript:
       $(this).removeClass('kilde-uvalgt').addClass('kilde-valgt');
       var nr = $(this).attr('id').slice(6);
       $('#review-'+nr).show().siblings("div.review").hide();
-    });
-
-    $('a.prev').on('click', function() {
-      console.log("up!");
-      $('#omtale-tekst').animate({scrollTop: -500},'slow');
-    });
-
-    $('a.next').on('click', function() {
-      console.log("down!");
-      $('#omtale-tekst').animate({scrollTop: 500},'slow');
     });
 
   });
