@@ -1,17 +1,66 @@
 # Oppsett av Virtuoso og konvertering av MARC til RDF
 
-## Klargjøring og opsett av linux til å kjøre Aktive Hyller
+## Virtuoso installering
+
+    sudo apt-get install virtuoso-server virtuoso-vad-conductor
+
+global config: 
+    /etc/default/virtuoso-opensource-6.1
+database settings:
+    /etc/virtuoso-opensource-6.1/virtuoso.ini
+
+### Virtuoso through apache proxy
+
+need mod_proxy:
+    sudo apt-get install libapache2-mod-proxy-html
+
+add virtualhost directive:
+
+```<VirtualHost *:80>
+    Alias /robots.txt /var/www/robots.txt
+    Alias /favicon.ico /var/www/favicon.ico
+
+    DocumentRoot /var/www/hostname
+    ServerName hostname
+      
+    ProxyRequests Off
+    ProxyPreserveHost on 
+    ProxyTimeout        300    
+    # Proxy ACL
+    <Proxy *>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+
+   <Proxy /sparql>
+    Allow from all
+    ProxyPass http://hostname:8890/sparql timeout=300
+    ProxyPassReverse http://hostname:8890/sparql 
+   </Proxy>
+   <Proxy /sparql-auth>
+    Allow from all
+    ProxyPass http://hostname:8890/sparql-auth timeout=300
+    ProxyPassReverse http://hostname:8890/sparql-auth
+   </Proxy>
+
+    LimitRequestLine 1000000
+    LimitRequestFieldSize 16380
+</Virtualhost>```
+
+## MARC to RDF conversion
+
+Mer info kommer...
+
+## Klargjøring og oppsett av linux til å kjøre Aktive Hyller
 Installer lubuntu 12.04 LTS eller nyere, f.eks. fra live-CD
 
 oppdater og installer påkrevde pakker:
 
-```
-sudo update && sudo upgrade
+```sudo update && sudo upgrade
 sudo apt-get install xserver-xorg-input-multitouch
 sudo apt-get install openssh-server vim xnest```
 
 ## Touch-skjerm
-
 
 Multitouch er vel og bra men applikasjonen trenger bare to funksjoner:
 * klikk
@@ -125,4 +174,4 @@ stop on (stopping network-interface
          or stopping network-manager
          or stopping networking
          and runlevel [016])
-EOF
+EOF```
