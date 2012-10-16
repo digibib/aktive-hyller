@@ -1,22 +1,37 @@
-# Oppsett av Virtuoso og konvertering av MARC til RDF
+# Aktive hyller Setup and Configuration
 
-## Virtuoso installering
+## Linux install for Aktive Hyller
+Install lubuntu 12.04 LTS or newer
+
+oppdater og installer påkrevde pakker:
+
+```bash
+sudo update && sudo upgrade
+sudo apt-get install xserver-xorg-input-multitouch
+sudo apt-get install openssh-server vim xnest
+```
+
+## Virtuoso install
 
     sudo apt-get install virtuoso-server virtuoso-vad-conductor
 
-global config: 
+global config:
+
     /etc/default/virtuoso-opensource-6.1
+
 database settings:
     /etc/virtuoso-opensource-6.1/virtuoso.ini
 
 ### Virtuoso through apache proxy
 
 need mod_proxy:
+
     sudo apt-get install libapache2-mod-proxy-html
 
 add virtualhost directive:
 
-```<VirtualHost *:80>
+```
+    <VirtualHost *:80>
     Alias /robots.txt /var/www/robots.txt
     Alias /favicon.ico /var/www/favicon.ico
 
@@ -45,50 +60,45 @@ add virtualhost directive:
 
     LimitRequestLine 1000000
     LimitRequestFieldSize 16380
-</Virtualhost>```
+</Virtualhost>
+```
 
 ## MARC to RDF conversion
 
-Mer info kommer...
+More to come...
 
-## Klargjøring og oppsett av linux til å kjøre Aktive Hyller
-Installer lubuntu 12.04 LTS eller nyere, f.eks. fra live-CD
+## Touchscreen
 
-oppdater og installer påkrevde pakker:
-
-```sudo update && sudo upgrade
-sudo apt-get install xserver-xorg-input-multitouch
-sudo apt-get install openssh-server vim xnest```
-
-## Touch-skjerm
-
-Multitouch er vel og bra men applikasjonen trenger bare to funksjoner:
-* klikk
+Will need a sensitive touch screen, though multitouch not needed, only
+* click
 * scroll
 
-dette håndteres best som plugin i Firefox:
+best handled by plugins in Firefox:
 
 ## Firefox
-Aktive Hyller er laget og testet for Firefox.
+Aktive Hyller is tested and made to work with Firefox
 
 ### Firefox plugins
-For å skjule URL tooltip som dukker opp i nedre venstre hjørne ved hver sidelasting, kan man installere programtillegget [Status-4-Evar] og deaktivere alle statusmeldinger (Vis nettverksstatus, vis standardstatus osv)
+To hide tooltip and deactivate status messages:
 
-[Reset Kiosk] pluginet gjør det mulig å angi at nettleseren skal resetes (dvs gå tilbake til aktive hyller startsiden) etter x antall minutter med inaktivitet.
+    [Status-4-Evar]: https://addons.mozilla.org/en-US/firefox/addon/status-4-evar/
 
-[Reset Kiosk]: https://addons.mozilla.org/en-US/firefox/addon/reset-kiosk/
-[Status-4-Evar]: https://addons.mozilla.org/en-US/firefox/addon/status-4-evar/
+to reset browser after inactivity
 
-[Grab and drag]: http://grabanddrag.mozdev.org/installation.html
-kan håndtere scrolling, og kan sette sensitivitet og funksjon, f.eks. deaktivere 'drag link' osv.
+    [Reset Kiosk]: https://addons.mozilla.org/en-US/firefox/addon/reset-kiosk/
 
-### Firefox settings
-Sett følgende instillinger ved å skrive `about:config` i adressefeltet til Firefox:
+to handle scrolling and sensitivity:
 
-```nglayout.enable_drag_images til false```
+    [Grab and drag]: http://grabanddrag.mozdev.org/installation.html
 
-### Automatisk oppstartskript for firefox
+### other Firefox settings
+in address window `about:config` 
 
+    nglayout.enable_drag_images til false
+
+### Automatic start script for firefox
+
+```bash
 cat <<EOF | tee ~/code/aktivehyller.sh && chmod +x ~/code/aktivehyller.sh
 #!/bin/bash
 sleep 3
@@ -96,9 +106,11 @@ rm -rf ~/.mozilla/firefox/*.default/startupCache
 rm -rf ~/.mozilla/firefox/*.default/Cache
 firefox -private http://localhost:4567
 EOF
+```
 
-### lag en autostart-fil for automatisk å starte denne ved oppstart
+### desktop item to automatic load startscript on logon
 
+```bash
 cat <<EOF | tee ~/.config/autostart/aktivehyller.desktop
 [Desktop Entry]
 Encoding=UTF-8
@@ -110,16 +122,18 @@ Categories=;
 NotShowIn=GNOME;
 NoDisplay=true
 EOF
+```
 
-### fjerntilgang ###
+### remote access ###
 
-fjerntilgang via ssh er det beste for å gjøre vedlikehold, oppgradering, etc, oppenssh-server ble installert ovenfor
+openssh, as described above
 
 ### remote desktop
 
-innstillinger i /etc/lightdm/lightdm.conf:
+settings in /etc/lightdm/lightdm.conf:
 
-```[SeatDefaults]
+```
+[SeatDefaults]
 xserver-allow-tcp=true #  TCP/IP connections are allowed to this X server
 # xdmcp-port = XDMCP UDP/IP port to communicate on
 # xdmcp-key = Authentication key to use for XDM-AUTHENTICATION-1 (stored in keys.conf)
@@ -127,34 +141,39 @@ session-setup-script = su - aktiv -c aktivehyller.sh # Script to run when starti
 autologin-user=aktiv
 
 [XDMCPServer]
-enabled=true```
+enabled=true
+´´´
 
-'xnest' gir mulighet til å bruke ekstern desktop hvis du vil teste
-1. koble til stasjon med x forwarding
+'xnest' allows for testing on external desktop
+1. connect with x forwarding
     ssh -X user@iptoserver
-2. start en vindussesjon på egen maskin
+2. start session on local computer
     Xnest :1 -ac -geometry 800x480 -once -query localhost
 
-du kan nå teste applikasjonen lokalt
+#### automatisk start on boot
 
-#### automatisk oppstart
+1. make a foreman Procfile
 
-1. lag en foreman Procfile, kan ikke begynne med cd pga. en bug i foreman...:
+    gem install foreman
 
-```cat <<EOF | tee Procfile
+```bash
+cat <<EOF | tee Procfile
 app:  sleep 0; cd /home/aktiv/code/aktive-hyller; ruby app.rb
 rfid:  sleep 3; cd /home/aktiv/code/rfidgeek; ruby rfid.rb
 EOF
 ```
-2. lag upstart oppstartsjobber:
+
+2. create upstart jobs
+    
     rvmsudo foreman export upstart /etc/init -a aktivehyller -p 4567 -u aktiv -l ~/code/aktive-hyller/logs/upstart
 
-her lager vi en oppstartsjobb for både rfidleser og aktive-hyller, som kjører med bruker aktiv på port 4567 og logger til ~/code/aktive-hyller/logs/upstart
-hvis applikasjonen skal starte fra boot må det legges til runlevel [2345]:
+this creates an upstart job for both rfid reader and active shelf on port 4567 with logs on ~/code/aktive-hyller/logs/upstart
+if to start automatically on booy add runlevel [2345]:
 
-eksempel på upstart-fil:
+example upstart:
 
-```cat <<EOF | sudo tee /etc/init/aktivehyller.conf
+```bash
+cat <<EOF | sudo tee /etc/init/aktivehyller.conf
 pre-start script
 
 bash << "EOF"
@@ -174,4 +193,5 @@ stop on (stopping network-interface
          or stopping network-manager
          or stopping networking
          and runlevel [016])
-EOF```
+EOF
+```
