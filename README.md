@@ -3,7 +3,7 @@
 ## Linux install for Aktive Hyller
 Install lubuntu 12.04 LTS or newer
 
-oppdater og installer påkrevde pakker:
+update and install necessary packages:
 
 ```bash
 sudo update && sudo upgrade
@@ -81,15 +81,15 @@ Aktive Hyller is tested and made to work with Firefox
 ### Firefox plugins
 To hide tooltip and deactivate status messages:
 
-    [Status-4-Evar]: https://addons.mozilla.org/en-US/firefox/addon/status-4-evar/
+* [Status-4-Evar]: https://addons.mozilla.org/en-US/firefox/addon/status-4-evar/
 
 to reset browser after inactivity
 
-    [Reset Kiosk]: https://addons.mozilla.org/en-US/firefox/addon/reset-kiosk/
+* [Reset Kiosk]: https://addons.mozilla.org/en-US/firefox/addon/reset-kiosk/
 
 to handle scrolling and sensitivity:
 
-    [Grab and drag]: http://grabanddrag.mozdev.org/installation.html
+* [Grab and drag]: http://grabanddrag.mozdev.org/installation.html
 
 ### other Firefox settings
 in address window `about:config` 
@@ -98,7 +98,7 @@ in address window `about:config`
 
 ### Automatic start script for firefox
 
-```bash
+```
 cat <<EOF | tee ~/code/aktivehyller.sh && chmod +x ~/code/aktivehyller.sh
 #!/bin/bash
 sleep 3
@@ -110,7 +110,7 @@ EOF
 
 ### desktop item to automatic load startscript on logon
 
-```bash
+```
 cat <<EOF | tee ~/.config/autostart/aktivehyller.desktop
 [Desktop Entry]
 Encoding=UTF-8
@@ -142,7 +142,7 @@ autologin-user=aktiv
 
 [XDMCPServer]
 enabled=true
-´´´
+```
 
 'xnest' allows for testing on external desktop
 1. connect with x forwarding
@@ -156,7 +156,7 @@ enabled=true
 
     gem install foreman
 
-```bash
+```
 cat <<EOF | tee Procfile
 app:  sleep 0; cd /home/aktiv/code/aktive-hyller; ruby app.rb
 rfid:  sleep 3; cd /home/aktiv/code/rfidgeek; ruby rfid.rb
@@ -165,14 +165,14 @@ EOF
 
 2. create upstart jobs
     
-    rvmsudo foreman export upstart /etc/init -a aktivehyller -p 4567 -u aktiv -l ~/code/aktive-hyller/logs/upstart
+```rvmsudo foreman export upstart /etc/init -a aktivehyller -p 4567 -u aktiv -l ~/code/aktive-hyller/logs/upstart```
 
 this creates an upstart job for both rfid reader and active shelf on port 4567 with logs on ~/code/aktive-hyller/logs/upstart
 if to start automatically on booy add runlevel [2345]:
 
 example upstart:
 
-```bash
+```
 cat <<EOF | sudo tee /etc/init/aktivehyller.conf
 pre-start script
 
