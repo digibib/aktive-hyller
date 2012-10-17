@@ -15,7 +15,7 @@ root = ::File.dirname(__FILE__)
 logfile = ::File.join(root,'logs','requests.log')
 class ::Logger; alias_method :write, :<<; end
 logger  = ::Logger.new(logfile,'weekly')
-use Rack::CommonLogger, logger
+#use Rack::CommonLogger, logger
 
 # Global constants
 url           = 'http://data.deichman.no/sparql'
@@ -34,19 +34,18 @@ set :sockets, []
 get '/' do
   session[:history] = []
   # Nysgjerrig på boka?
-  logger.info("Start av ny sesjon.")
+  logger.info("Sesjon - -")
   slim(:index)  
 end
 
 get '/omtale' do
-  # Ikke i bruk
   #redirect '/omtale/' + session[:book].book_id.to_s.match(/tnr_(.*)/)[1]
   redirect '/' unless session[:book]
   session[:history].push({:tnr => session[:book].book_id,
                           :title => session[:book].title,
                           :cover_url => session[:book].cover_url,
                           :creatorName => session[:book].creatorName})
-  logger.info("Omtalevisning på bok: #{session[:book].book_id}")
+  logger.info("Omtalevisning #{session[:book].book_id} #{session[:book].review_collection.size}")
   slim :omtale, :locals => {:book => session[:book], :history => session[:history].uniq}
 end
 
@@ -88,17 +87,20 @@ end
 
 get '/flere' do
   # Flere bøker av forfatteren
+  logger.info("Flere - #{session[:book].same_author_collection.size}")
   slim :flere, :locals => {:book => session[:book], :history => session[:history].uniq}
 end
 
 get '/relaterte' do
   # Noe som ligner, relaterte bøker
+  logger.info("Relaterte - #{session[:book].similar_works_collection.size}")
   slim :relaterte, :locals => {:book => session[:book], :history => session[:history].uniq}
 end
 
 get '/historikk' do
   # Titler som har vært vist i omtalevisning. Nullstilles når man kommer til
   # nysgjerrig på boka-siden.
+  logger.info("Historikk - #{session[:history].uniq.size}")
   slim :historikk, :locals => {:book => session[:book], :history => session[:history].uniq}
 end
 
@@ -113,7 +115,7 @@ get '/ws' do
     end
       
     ws.onmessage do |msg|
-      puts msg
+      logger.info("RFID #{msg} -")
       EM.next_tick { settings.sockets.each{|s| s.send(msg) } }
     end
       
