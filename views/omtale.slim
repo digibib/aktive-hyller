@@ -62,7 +62,7 @@ div id="contents"
           img src="/img/star_half.png" class="star"
         - (5-red_stars).times do
           img src="/img/star_gray.png" class="star"
-        p Basert på #{rating[:num_raters]} vurderinger fra #{rating[:source]}
+        p Basert på #{rating[:num_raters]} vurdering#{'er' if rating[:num_raters] > 1 } fra #{rating[:source]}
       -if rating[:source] =~ /Bokelskere/ and rating[:num_raters] > 0
         - rating_converted = rating[:rating] / 1.2
         - red_stars = rating_converted.to_i
@@ -73,7 +73,7 @@ div id="contents"
           img src="/img/star_half.png" class="star"
         - (5-red_stars).times do
           img src="/img/star_gray.png" class="star"
-        p Basert på #{rating[:num_raters]} vurderinger fra #{rating[:source]}
+        p Basert på #{rating[:num_raters]} vurdering#{'er' if rating[:num_raters] > 1} fra #{rating[:source]}
 
 div id="vi-leter"
   p Vi leter etter boka, vennligst vent
