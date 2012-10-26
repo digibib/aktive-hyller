@@ -1,4 +1,4 @@
-*                  { margin:0; padding:0; border:0; cursor: none; }
+*                  { margin:0; padding:0; border:0; /*cursor: none;*/ }
 .select-disable     { -khtml-user-select: none; -moz-user-select: none;
                     -o-user-select: none;  user-select: none; }
 button::-moz-focus-inner { border: 0; }
@@ -10,8 +10,8 @@ a:link             { text-decoration: none; color: #444;}
 a:visited          { color: #444;}
 a:active, a:focus  { outline-style: none; outline: 0; }
 
-img#frontarrow    { position:fixed; left:900px; top:650px;}     
-img#frontbook     { position:fixed; left:1280px; top: 400px;}     
+img#frontarrow    { position:fixed; left:900px; top:650px;}
+img#frontbook     { position:fixed; left:1280px; top: 400px;}
 div#overlay        { position: fixed; width:100%; height: 100%; top:0; left: 0;
                      z-index: 50; background: #000; opacity: 0.8; display:none;}
 div#vi-leter       { color: #fff; position:fixed; display:none;
@@ -102,7 +102,7 @@ img.scroll-icon    { width: 60px;}
 button.kilde       { float:left; width: 220px; height: 80px; font-size: 1.2em;
                      border-left: 1px solid gray; border-top: 1px solid gray;
                      border-bottom: 1px solid gray; box-shadow: 1px  2px 30px 10px rgba(0,0,0,0.1);}
-.kilde-mid         { } 
+.kilde-mid         { }
 .kilde-left        { border-radius: 5px 0 0 5px; }
 .kilde-right       { border-radius: 0 5px 5px 0; border-right: 1px solid gray; }
 .kilde-valgt       { color: #fff; font-weight: bold;
@@ -113,18 +113,18 @@ button.kilde       { float:left; width: 220px; height: 80px; font-size: 1.2em;
 .kilde-inaktiv     { background-color: #ccc; color: gray;}
 
 div#omtale-bilde-liste   { display: block; height: 260px; width: 220px; background:#eee; padding:20px;}
-div#inner-border-liste   { padding: 10px; border:2px solid gray; background: #eee; height: 200px ; width: 160px; text-align: center;}
+div#inner-border-liste   { padding: 10px; border:2px solid gray; background: #eee; height: 230px ; width: 160px; text-align: center;}
 div.book-title-liste     { color:#333; font-family: Times; font-size: 1.3em; margin-bottom: 60px; font-style: italic;}
 div.book-author-liste    { color:#333; font-family: Arial; font-size: 0.9em; margin: 20px;}
 
 div#liste-wrapper { overflow:auto; width:1430px; height: 882px;}
-div.liste-bilde    { height:260px; width: 220px; margin: auto; overflow:hidden;
+div.liste-bilde    { height:300px; width: 220px; margin: auto; overflow:hidden;
                      padding: 0; border:0px solid white; }
 ul.listevisning    { list-style-type: none }
-ul.listevisning li { display: inline-block; width: 250px; height: 362px;
+ul.listevisning li { display: inline-block; width: 250px; height: 420px;
                      background-color: #ccc; margin: 0 60px 35px 0; padding: 20px;
                      border-radius: 5px; box-shadow: 1px  2px 20px 5px rgba(0,0,0,0.1);
                      text-align: center; overflow:hidden;}
-img.listevisning   { height: 260px;}
+img.listevisning   { height: 300px;}
 p.liste-forfatter  { text-align: left; font-size:18px; font-weight: bold; margin-bottom: 5px; margin-left: 20px;}
 p.liste-tittel     { text-align: left; font-size:18px; margin-left:20px;}
