@@ -35,7 +35,12 @@ get '/' do
   session[:history] = []
   # Nysgjerrig på boka?
   logger.info("Sesjon - -")
-  slim(:index)  
+  slim(:index)
+end
+
+get '/timeout' do
+  logger.info("Timeout - -")
+  redirect('/')
 end
 
 get '/omtale' do
@@ -52,7 +57,7 @@ end
 get '/checkformat/:tnr' do
   content_type :json
   accepted_formats = ["http://data.deichman.no/format/Book", "http://data.deichman.no/format/Audiobook"]
-    
+
   url      = 'http://data.deichman.no/resource/tnr_' + params[:tnr].strip.to_i.to_s
   @book_id = RDF::URI(url)
   query    = QUERY.select(:title, :format).from(DEFAULT_GRAPH)
@@ -107,18 +112,18 @@ end
 get '/ws' do
   # handles the messages from the RFID-reader
   return false unless request.websocket?
- 
+
   request.websocket do |ws|
-   
+
     ws.onopen do
       settings.sockets << ws
     end
-      
+
     ws.onmessage do |msg|
       logger.info("RFID #{msg} -")
       EM.next_tick { settings.sockets.each{|s| s.send(msg) } }
     end
-      
+
     ws.onclose do
       #warn("websocket closed")
       settings.sockets.delete(ws)
