@@ -76,8 +76,12 @@ get '/checkformat/:tnr' do
 end
 
 get '/populate/:tnr' do
-  session[:book] = Book.new(params[:tnr].strip.to_i)
+  session[:book_new] = Book.new(params[:tnr].strip.to_i)
   "success!"
+end
+
+get '/copy' do
+  session[:book] = session[:book_new]
 end
 
 get '/omtale/:tnr' do
