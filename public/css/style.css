@@ -80,7 +80,7 @@ div.left-button-s   { position: relative; padding-top: 10px; display: block; wid
 div.grayed          { color:#999;}
 img.menu-icon        { width:100px; margin-top:50px;}
 div.circle-gray     { display:inline-block; width: 45px; height: 38px; border-radius:30px;
-                     background-color: #666; padding: 8px 2px 0 1px; margin-bottom:5px;}
+                     background-color: #666; padding: 8px 2px 0 1px; margin-bottom:5px; color:#ccc;}
 div.circle-red     { display:inline-block; width: 45px; height: 38px; border-radius:30px;
                      background-color: #e65740; padding: 8px 2px 0 1px; margin-bottom:5px;}
 
