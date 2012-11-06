@@ -158,8 +158,8 @@ enabled=true
 
 ```
 cat <<EOF | tee Procfile
-app:  sleep 0; cd /home/aktiv/code/aktive-hyller; ruby app.rb
-rfid:  sleep 3; cd /home/aktiv/code/rfidgeek; ruby rfid.rb
+app: /home/aktiv/.rvm/scripts/rvm; cd /home/aktiv/code/aktive-hyller; ruby app.rb
+rfid: sleep 3; /home/aktiv/.rvm/scripts/rvm; cd /home/aktiv/code/rfidgeek; ruby rfid.rb
 EOF
 ```
 

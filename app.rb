@@ -56,7 +56,7 @@ end
 
 get '/checkformat/:tnr' do
   content_type :json
-  accepted_formats = ["http://data.deichman.no/format/Book", "http://data.deichman.no/format/Audiobook"]
+  accepted_formats = ["http://data.deichman.no/format/Book", "http://data.deichman.no/format/Audiobook", "http://data.deichman.no/format/Compact_Disc"]
 
   url      = 'http://data.deichman.no/resource/tnr_' + params[:tnr].strip.to_i.to_s
   @book_id = RDF::URI(url)
