@@ -34,8 +34,10 @@ javascript:
         request = $.get('/populate/'+evt.data);
 
         request.done(function(data) {
-          window.location.replace("/omtale");
-          console.log(data);
+        $.get('/copy', function(data) {
+            window.location.replace("/omtale");
+            console.log(data);
+          });
         });
 
         request.fail(function(message) {
