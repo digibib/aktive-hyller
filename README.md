@@ -5,11 +5,42 @@ Install lubuntu 12.04 LTS or newer
 
 update and install necessary packages:
 
+### Remote management
+
 ```bash
 sudo update && sudo upgrade
-sudo apt-get install xserver-xorg-input-multitouch
 sudo apt-get install openssh-server vim xnest
 ```
+
+### Firefox, git and curl
+
+    sudo apt-get install firefox
+    sudo apt-get install build-essential git-core curl
+
+### Ruby
+
+best handled by Ruby Version Manager (https://rvm.io/rvm/install/)
+
+    curl -L https://get.rvm.io | bash -s stable --ruby
+
+#### find your system's dependencies:
+
+    rvm requirements
+
+and install these.
+
+then install ruby.
+
+    rvm reinstall 1.9.3
+
+## App and RFID reader
+
+clone the repositories
+
+mkdir -p code && cd code
+git clone https://github.com/digibib/aktive-hyller
+git clone https://github.com/digibib/rfidgeek.git
+
 
 ## Virtuoso install
 
