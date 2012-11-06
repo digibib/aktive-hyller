@@ -5,10 +5,16 @@
 div id="contents"
   div id="content-right"
     div id="omtale-tittel"
-      h2 #{book.title} 
+      h2 #{book.title}
       h2 #{book.creatorName ? "av #{book.creatorName}" : book.responsible }
       hr
-      
+
+    div id="omtale-scroll"
+      div id="scroll-actions"
+        |<img src="/img/up.png" class="scroll-icon" style="margin-top:20px">
+        |<br/>
+        |<img src="/img/down.png" class="scroll-icon" style="margin-top:460px">
+
     div id="omtale-wrapper"
       div id="omtale-tekst"
         - if not book.review_collection.empty?
@@ -33,6 +39,7 @@ div id="contents"
               |<br />
             p Ta gjerne kontakt med en ansatt hvis du lurer på noe!
 
+
     div style="clear:both"
     div id="omtale-kilder"
       - for i in 0..3
@@ -42,7 +49,7 @@ div id="contents"
           button[class="kilde #{'kilde-left' if i == 0} #{'kilde-right' if i == 3} kilde-inaktiv" id="kilde_#{i}"]
 
 
-      
+
   div id="content-left"
     - if book.cover_url
       img src="#{book.cover_url}" class="omtalt-bok"
@@ -87,6 +94,9 @@ div[id="overlay"]
 javascript:
   $(document).ready(function () {
 
+    if ( $('#review-0').height() < 600 ) {
+        $('#scroll-actions').hide();
+      }
 
     $('#review-0').siblings("div.review").hide();
 
@@ -95,6 +105,14 @@ javascript:
       $(this).removeClass('kilde-uvalgt').addClass('kilde-valgt');
       var nr = $(this).attr('id').slice(6);
       $('#review-'+nr).show().siblings("div.review").hide();
+
+      // show arrows if reviewtext overflows
+      if ( $('#review-'+nr).height() > 600 ) {
+        console.log("arrows!");
+        $('#scroll-actions').show();
+      } else {
+        $('#scroll-actions').hide();
+      }
     });
 
   });
