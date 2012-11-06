@@ -106,7 +106,7 @@ get '/historikk' do
   # Titler som har vært vist i omtalevisning. Nullstilles når man kommer til
   # nysgjerrig på boka-siden.
   logger.info("Historikk - #{session[:history].uniq.size}")
-  slim :historikk, :locals => {:book => session[:book], :history => session[:history].uniq}
+  slim :historikk, :locals => {:book => session[:book], :history => session[:history].uniq.reverse}
 end
 
 get '/ws' do
