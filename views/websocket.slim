@@ -1,12 +1,12 @@
 javascript:
   // Initialize
   var ws = new WebSocket("ws://localhost:4567/ws");
-  var wsreq;
+  var request;
 
   $('button#avbryt-knapp').on('click', function() {
     $('#overlay').hide();
     $('#vi-leter').hide();
-    wsreq.abort();
+    request.abort();
   });
 
   // loading animation
@@ -31,14 +31,14 @@ javascript:
         $('div#vi-leter p').html('Henter informasjon om "' + data.title + '" <span id="loading"></span>' );
 
         //hent all info til omtalevisning her
-        wsreq = $.get('/populate/'+evt.data);
+        request = $.get('/populate/'+evt.data);
 
-        wsreq.done(function(data) {
+        request.done(function(data) {
           window.location.replace("/omtale");
           console.log(data);
         });
 
-        wsreq.fail(function(message) {
+        request.fail(function(message) {
           console.log(message);
           $('div#vi-leter p').html('Ops! Klarte ikke å finne noe om denne.');
           $('button#avbryt-knapp').html('OK');
