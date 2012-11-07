@@ -324,11 +324,11 @@ class Book
   def fetch_similar_works
     # this query fetches related books
     similaritygraph = {:context => RDF::URI('http://data.deichman.no/noeSomLigner')}
-    bookgraph       = {:context => RDF::URI("http://data.deichman.no/books")} 
-    
+    bookgraph       = {:context => RDF::URI("http://data.deichman.no/books")}
+
     query = QUERY.select(:book, :book_title, :lang, :original_language, :similar_work)
     query.sample(:cover_url)
-    query.group_digest(:creatorName, ',', 1000, 1)
+    query.group_digest(:creatorName, ', ', 1000, 1)
     query.distinct
     query.where(
         [:work, RDF.type, RDF::FABIO.Work, bookgraph],
