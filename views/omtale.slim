@@ -10,10 +10,14 @@ div id="contents"
       hr
 
     div id="omtale-scroll"
-      div id="scroll-actions"
-        |<img src="/img/up.png" class="scroll-icon" style="margin-top:20px">
+      div id="scroll-active"
+        |<img src="/img/up_red.png" class="scroll-icon" style="margin-top:20px">
         |<br/>
-        |<img src="/img/down.png" class="scroll-icon" style="margin-top:460px">
+        |<img src="/img/down_red.png" class="scroll-icon" style="margin-top:460px">
+      /div id="scroll-inactive"
+      /  |<img src="/img/up_grey.png" class="scroll-icon" style="margin-top:20px">
+      /  |<br/>
+      /  |<img src="/img/down_grey.png" class="scroll-icon" style="margin-top:460px">
 
     div id="omtale-wrapper"
       div id="omtale-tekst"
@@ -95,7 +99,9 @@ javascript:
   $(document).ready(function () {
 
     if ( $('#review-0').height() < 600 ) {
-        $('#scroll-actions').hide();
+        $('#scroll-active').hide();
+        $('#scroll-inactive').show();
+
       }
 
     $('#review-0').siblings("div.review").hide();
@@ -109,9 +115,11 @@ javascript:
       // show arrows if reviewtext overflows
       if ( $('#review-'+nr).height() > 600 ) {
         console.log("arrows!");
-        $('#scroll-actions').show();
+        $('#scroll-active').show();
+        $('#scroll-inactive').hide();
       } else {
-        $('#scroll-actions').hide();
+        $('#scroll-active').hide();
+        $('#scroll-inactive').show();
       }
     });
 
