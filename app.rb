@@ -56,7 +56,8 @@ end
 
 get '/checkformat/:tnr' do
   content_type :json
-  accepted_formats = ["http://data.deichman.no/format/Book", "http://data.deichman.no/format/Audiobook"]
+  accepted_formats = [RDF::URI("http://data.deichman.no/format/Book"), 
+                      RDF::URI("http://data.deichman.no/format/Audiobook")]
 
   url      = 'http://data.deichman.no/resource/tnr_' + params[:tnr].strip.to_i.to_s
   @book_id = RDF::URI(url)
@@ -65,7 +66,7 @@ get '/checkformat/:tnr' do
              [@book_id, RDF::DC.format, :format])
   results  = REPO.select(query)
   unless results.empty?
-    if accepted_formats.include?(results.first[:format].to_s)
+    if !(accepted_formats & results.bindings[:format]).empty?
       {:accepted_format => true, :title => results.first[:title].to_s}.to_json
     else
       {:accepted_format => false}.to_json
