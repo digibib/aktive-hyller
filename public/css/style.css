@@ -119,11 +119,11 @@ div.book-title-liste     { color:#333; font-family: Times; font-size: 1.3em; mar
 div.book-author-liste    { color:#333; font-family: Arial; font-size: 0.9em; margin: 20px;}
 
 div#liste-wrapper { overflow:auto; width:1430px; height: 882px;}
-div.liste-bilde    { height:300px; width: 220px; margin: auto; overflow:hidden;
+div.liste-bilde    { height:300px; width: 240px; margin: auto; overflow:hidden;
                      padding: 0; border:0px solid white; }
 ul.listevisning    { list-style-type: none }
-ul.listevisning li { display: inline-block; width: 250px; height: 420px;
-                     background-color: #ccc; margin: 0 60px 35px 0; padding: 20px;
+ul.listevisning li { display: inline-block; width: 260px; height: 450px;
+                     background-color: #ccc; margin: 0 50px 50px 0; padding: 20px;
                      border-radius: 5px; box-shadow: 1px  2px 20px 5px rgba(0,0,0,0.1);
                      text-align: center; overflow:hidden;}
 img.listevisning   { height: 300px;}
