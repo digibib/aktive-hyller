@@ -37,10 +37,25 @@ then install ruby.
 
 clone the repositories
 
-mkdir -p code && cd code
-git clone https://github.com/digibib/aktive-hyller
-git clone https://github.com/digibib/rfidgeek.git
+    mkdir -p code && cd code
+    git clone https://github.com/digibib/aktive-hyller
+    git clone https://github.com/digibib/rfidgeek.git
 
+### RFID reader
+
+needs access to dialout group
+
+    sudo usermod -a -G dialout [username]
+
+restart window manager
+
+#### RFID websocket client
+
+    git checkout feature/sinatra-integration
+    
+    cp config/config.yml-dist config/config.yml
+    
+set ports and 
 
 ## Virtuoso install
 
@@ -101,6 +116,7 @@ More to come...
 ## Touchscreen
 
 Will need a sensitive touch screen, though multitouch not needed, only
+
 * click
 * scroll
 
@@ -129,17 +145,44 @@ in address window `about:config`
 
 ### Automatic start script for firefox
 
+need to make sure it respawns after crash
+
 ```
 cat <<EOF | tee ~/code/aktivehyller.sh && chmod +x ~/code/aktivehyller.sh
 #!/bin/bash
+FIREFOX=/usr/bin/firefox
 sleep 3
-rm -rf ~/.mozilla/firefox/*.default/startupCache
-rm -rf ~/.mozilla/firefox/*.default/Cache
-firefox -private http://localhost:4567
+while true
+  rm -rf ~/.mozilla/firefox/*.default/startupCache
+  rm -rf ~/.mozilla/firefox/*.default/Cache
+  firefox -private http://localhost:4567/timeout
+  sleep 3s
+end
+EOF
+```
+### screensaver based browser reset
+
+xscreensaver can be set to trigger events, and this is a good way to script firefox browser reset:
+
+```
+cat <<EOF | tee ~/code/xscreensaver-timeout.sh && chmod +x ~/code/xscreensaver-timeout.sh
+#!/bin/bash
+
+process() {
+while read input; do 
+  case "$input" in
+    BLANK*)     /usr/bin/pkill firefox ;;
+    UNBLANK*)	echo "start something? " ;;
+    LOCK*)	echo "lock .... do nothing yet" ;;
+  esac
+done
+}
+
+/usr/bin/xscreensaver-command -watch | process
 EOF
 ```
 
-### desktop item to automatic load startscript on logon
+### desktop items to automatic load startscripts on logon
 
 ```
 cat <<EOF | tee ~/.config/autostart/aktivehyller.desktop
@@ -148,6 +191,20 @@ Encoding=UTF-8
 Name=autologout
 Comment=autologout
 Exec=/home/aktiv/code/aktivehyller.sh
+Type=Application
+Categories=;
+NotShowIn=GNOME;
+NoDisplay=true
+EOF
+```
+
+```
+cat <<EOF | tee ~/.config/autostart/xscreensaver-timeout.desktop
+[Desktop Entry]
+Encoding=UTF-8
+Name=autologout
+Comment=autologout
+Exec=/home/aktiv/code/xscreensaver-timeout.sh
 Type=Application
 Categories=;
 NotShowIn=GNOME;
