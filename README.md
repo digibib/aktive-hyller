@@ -190,7 +190,7 @@ cat <<EOF | tee ~/.config/autostart/aktivehyller.desktop
 Encoding=UTF-8
 Name=autologout
 Comment=autologout
-Exec=/home/aktiv/code/aktivehyller.sh
+Exec=/home/aktiv/code/aktive-hyller/aktivehyller.sh
 Type=Application
 Categories=;
 NotShowIn=GNOME;
@@ -204,7 +204,7 @@ cat <<EOF | tee ~/.config/autostart/xscreensaver-timeout.desktop
 Encoding=UTF-8
 Name=autologout
 Comment=autologout
-Exec=/home/aktiv/code/xscreensaver-timeout.sh
+Exec=/home/aktiv/code/aktive-hyller/xscreensaver-timeout.sh
 Type=Application
 Categories=;
 NotShowIn=GNOME;
