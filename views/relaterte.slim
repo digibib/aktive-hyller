@@ -30,10 +30,10 @@ div[id="overlay"]
 javascript:
   $(document).ready(function () {
 
-
    $('button#avbryt-knapp').on('click', function() {
       $('#overlay').hide();
       $('#vi-leter').hide();
+      request.abort();
     });
 
     // loading animation
@@ -50,16 +50,18 @@ javascript:
         // show overlay
         $('#overlay').show();
         $('button#avbryt-knapp').html('Avbryt');
-        $('div#vi-leter p').html('Henter informasjon om "' + title + '" <span id="loading"></span>' );
+        $('div#vi-leter p').html('Henter informasjon om "' + title + '" <div id="loading"></div>' );
         $('#vi-leter').show();
 
-        var request = $.ajax({
+        request = $.ajax({
           url: '/populate/'+tnr,
           type: 'GET'});
 
         request.done(function(msg) {
-          window.location.replace("/omtale");
-        })
+          $.get('/copy', function(data) {
+            window.location.replace("/omtale");
+          });
+        });
 
         request.fail(function(jqXHR, textStatus, errorThrown) {
           return;

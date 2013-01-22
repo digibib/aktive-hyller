@@ -5,10 +5,20 @@
 div id="contents"
   div id="content-right"
     div id="omtale-tittel"
-      h2 #{book.title} 
+      h2 #{book.title}
       h2 #{book.creatorName ? "av #{book.creatorName}" : book.responsible }
       hr
-      
+
+    div id="omtale-scroll"
+      div id="scroll-active"
+        |<img src="/img/up_red.png" class="scroll-icon" style="margin-top:20px">
+        |<br/>
+        |<img src="/img/down_red.png" class="scroll-icon" style="margin-top:460px">
+      /div id="scroll-inactive"
+      /  |<img src="/img/up_grey.png" class="scroll-icon" style="margin-top:20px">
+      /  |<br/>
+      /  |<img src="/img/down_grey.png" class="scroll-icon" style="margin-top:460px">
+
     div id="omtale-wrapper"
       div id="omtale-tekst"
         - if not book.review_collection.empty?
@@ -27,11 +37,12 @@ div id="contents"
             p Husk at du også kan:
             ul
               li Se flere bøker av samme forfatter
-              li Sjekke relaterte bøker
+              li Finne noe som ligner
               li Legge på en ny bok
             p
               |<br />
             p Ta gjerne kontakt med en ansatt hvis du lurer på noe!
+
 
     div style="clear:both"
     div id="omtale-kilder"
@@ -42,7 +53,7 @@ div id="contents"
           button[class="kilde #{'kilde-left' if i == 0} #{'kilde-right' if i == 3} kilde-inaktiv" id="kilde_#{i}"]
 
 
-      
+
   div id="content-left"
     - if book.cover_url
       img src="#{book.cover_url}" class="omtalt-bok"
@@ -62,7 +73,7 @@ div id="contents"
           img src="/img/star_half.png" class="star"
         - (5-red_stars).times do
           img src="/img/star_gray.png" class="star"
-        p Basert på #{rating[:num_raters]} vurderinger fra #{rating[:source]}
+        p Basert på #{rating[:num_raters]} vurdering#{'er' if rating[:num_raters] > 1 } fra #{rating[:source]}
       -if rating[:source] =~ /Bokelskere/ and rating[:num_raters] > 0
         - rating_converted = rating[:rating] / 1.2
         - red_stars = rating_converted.to_i
@@ -73,7 +84,7 @@ div id="contents"
           img src="/img/star_half.png" class="star"
         - (5-red_stars).times do
           img src="/img/star_gray.png" class="star"
-        p Basert på #{rating[:num_raters]} vurderinger fra #{rating[:source]}
+        p Basert på #{rating[:num_raters]} vurdering#{'er' if rating[:num_raters] > 1} fra #{rating[:source]}
 
 div id="vi-leter"
   p Vi leter etter boka, vennligst vent
@@ -87,6 +98,11 @@ div[id="overlay"]
 javascript:
   $(document).ready(function () {
 
+    if ( $('#review-0').height() < 600 ) {
+        $('#scroll-active').hide();
+        $('#scroll-inactive').show();
+
+      }
 
     $('#review-0').siblings("div.review").hide();
 
@@ -95,6 +111,16 @@ javascript:
       $(this).removeClass('kilde-uvalgt').addClass('kilde-valgt');
       var nr = $(this).attr('id').slice(6);
       $('#review-'+nr).show().siblings("div.review").hide();
+
+      // show arrows if reviewtext overflows
+      if ( $('#review-'+nr).height() > 600 ) {
+        console.log("arrows!");
+        $('#scroll-active').show();
+        $('#scroll-inactive').hide();
+      } else {
+        $('#scroll-active').hide();
+        $('#scroll-inactive').show();
+      }
     });
 
   });

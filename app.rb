@@ -35,7 +35,12 @@ get '/' do
   session[:history] = []
   # Nysgjerrig på boka?
   logger.info("Sesjon - -")
-  slim(:index)  
+  slim(:index)
+end
+
+get '/timeout' do
+  logger.info("Timeout - -")
+  redirect('/')
 end
 
 get '/omtale' do
@@ -51,8 +56,9 @@ end
 
 get '/checkformat/:tnr' do
   content_type :json
-  accepted_formats = ["http://data.deichman.no/format/Book", "http://data.deichman.no/format/Audiobook"]
-    
+  accepted_formats = [RDF::URI("http://data.deichman.no/format/Book"), 
+                      RDF::URI("http://data.deichman.no/format/Audiobook")]
+
   url      = 'http://data.deichman.no/resource/tnr_' + params[:tnr].strip.to_i.to_s
   @book_id = RDF::URI(url)
   query    = QUERY.select(:title, :format).from(DEFAULT_GRAPH)
@@ -60,7 +66,7 @@ get '/checkformat/:tnr' do
              [@book_id, RDF::DC.format, :format])
   results  = REPO.select(query)
   unless results.empty?
-    if accepted_formats.include?(results.first[:format].to_s)
+    if !(accepted_formats & results.bindings[:format]).empty?
       {:accepted_format => true, :title => results.first[:title].to_s}.to_json
     else
       {:accepted_format => false}.to_json
@@ -71,8 +77,12 @@ get '/checkformat/:tnr' do
 end
 
 get '/populate/:tnr' do
-  session[:book] = Book.new(params[:tnr].strip.to_i)
+  session[:book_new] = Book.new(params[:tnr].strip.to_i)
   "success!"
+end
+
+get '/copy' do
+  session[:book] = session[:book_new]
 end
 
 get '/omtale/:tnr' do
@@ -101,24 +111,24 @@ get '/historikk' do
   # Titler som har vært vist i omtalevisning. Nullstilles når man kommer til
   # nysgjerrig på boka-siden.
   logger.info("Historikk - #{session[:history].uniq.size}")
-  slim :historikk, :locals => {:book => session[:book], :history => session[:history].uniq}
+  slim :historikk, :locals => {:book => session[:book], :history => session[:history].uniq.reverse}
 end
 
 get '/ws' do
   # handles the messages from the RFID-reader
   return false unless request.websocket?
- 
+
   request.websocket do |ws|
-   
+
     ws.onopen do
       settings.sockets << ws
     end
-      
+
     ws.onmessage do |msg|
       logger.info("RFID #{msg} -")
       EM.next_tick { settings.sockets.each{|s| s.send(msg) } }
     end
-      
+
     ws.onclose do
       #warn("websocket closed")
       settings.sockets.delete(ws)
