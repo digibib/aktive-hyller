@@ -128,7 +128,7 @@ class Book
       query.where([:review_id, RDF::REV.title, :review_title],
                   [:review_id, RDF::REV.text, :review_text])
       query.optional([:review_id, RDF::DC.source, :source_id],
-                     [:source_id, RDF::RDFS.label, :review_source])
+                     [:source_id, RDF::FOAF.name, :review_source])
       query.optional([:review_id, RDF::REV.reviewer, :reviewer])
       query.filter('lang(?review_text) != "nn"')
       
@@ -307,7 +307,7 @@ class Book
       .optional([:book, RDF::DEICHMAN.originalLanguage, :original_language])
       .minus([:work, RDF::FABIO.hasManifestation, :book])
     
-    puts "#{query}"
+    puts "Her: #{query}"
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
     return nil unless results
