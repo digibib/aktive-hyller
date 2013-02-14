@@ -21,9 +21,9 @@ div id="contents"
                     div.book-author-liste #{h[:creatorName]}
                     div.book-title-liste #{h[:title]}
 div id="vi-leter"
-  p Vi leter etter boka, vennligst vent
+  == t.looking
   div id="avbryt"
-    button[class="top-button" id="avbryt-knapp"] Avbryt
+    button[class="top-button" id="avbryt-knapp"] == t.cancel
 div[id="overlay"]
 
 == render :slim, :'websocket'

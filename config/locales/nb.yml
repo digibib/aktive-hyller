@@ -1,0 +1,33 @@
+# common terms
+cancel: Avbryt
+looking: Vi leter etter boka, vennligst vent
+made_by: av
+fetched_from: Denne teksten er hentet fra
+fetching_info: Henter informasjon om
+nothing_found: Ops! Klarte ikke å finne noe om denne.
+no_reviews_html: |
+  Her finnes det dessverre ingen omtaler!<br /> 
+  Husk at du også kan:
+    <ul>
+      <li> Se flere bøker av samme forfatter</li>
+      <li> Finne noe som ligner</li>
+      <li> Legge på en ny bok</li>
+    </ul>
+  <br />Ta gjerne kontakt med en ansatt hvis du lurer på noe!
+based_on_reviews1: <br/>Basert på %1
+based_on_reviews2: vurdering(er) fra %1
+# page terms
+startpage:
+  title: Nysgjerrig på boka?
+  subtitle: Legg den her og finn ut mer!
+  
+header:
+  title: Bokanbefalinger
+
+menu:
+  more_by_author: Flere bøker<br/>av forfatteren
+  review_active: Omtale
+  review_inactive: Omtale<br/>
+  similar_works: Noe som ligner
+  history_active: Historikk
+  history_inactive: <br/>Historikk

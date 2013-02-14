@@ -1,7 +1,7 @@
 div id="leftmenu"
   - if request.env['REQUEST_URI'].split("/")[1] == 'omtale'
     div[class="left-button"]
-      span style="font-weight:bold" Omtale
+      span style="font-weight:bold" = t.menu.review_active
       div class="arrow"
       div class="arrow-border"
       div style="clear:both"
@@ -9,47 +9,47 @@ div id="leftmenu"
   - else
     a href="/omtale"
       div[class="left-button"]
-        |Omtale<br/>
+        == t.menu.review_inactive
         img src="/img/omtale_gray.png" class="menu-icon"
   - if request.env['REQUEST_URI'] == '/flere' and book.same_author_collection.any?
     div[class="left-button"]
-      span style="font-weight:bold" Flere bøker<br/>av forfatteren
+      span style="font-weight:bold" == t.menu.more_by_author
       div class="arrow"
       div class="arrow-border"
       div style="clear:both"
       img src="/img/flere_red.png" class="menu-icon"
   - elsif request.env['REQUEST_URI'] != '/flere' and book.same_author_collection.empty?
     div[class="left-button grayed"]
-      |Flere bøker<br/>av forfatteren
+      == t.menu.more_by_author
       img src="/img/flere_gray2.png" class="menu-icon"
   - else
     a href="/flere"
       div[class="left-button"]
-        |Flere bøker<br/>av forfatteren
+        == t.menu.more_by_author
         img src="/img/flere_gray.png" class="menu-icon"
   - if request.env['REQUEST_URI'] == '/relaterte' and book.similar_works_collection.any?
     div class="left-button"
-      span style="font-weight:bold" Noe som ligner
+      span style="font-weight:bold" == t.menu.similar_works
       div class="arrow"
       div class="arrow-border"  
       img src="/img/relaterte_red.png" class="menu-icon"
   - elsif request.env['REQUEST_URI'] != '/relaterte' and book.similar_works_collection.any?
     a href="/relaterte"
       div[class="left-button"]
-        |Noe som ligner
+        == t.menu.similar_works
         img src="/img/relaterte_gray.png" class="menu-icon"
   - else
     div[class="left-button grayed"]
-      |Noe som ligner
+      == t.menu.similar_works
       img src="/img/relaterte_gray2.png" class="menu-icon"
   - if request.env['REQUEST_URI'] != '/historikk' 
     a href="/historikk"
       div[class="left-button-s"]
         div class="circle-gray" #{history.size}
-        |<br/>Historikk
+        == t.menu.history_inactive
   - else
     div[class="left-button-s"]
       div class="circle-red" #{history.size}
-      div style="font-weight:bold" Historikk
+      div style="font-weight:bold" == t.menu.history_active
       div class="arrow-s"
       div class="arrow-border-s"

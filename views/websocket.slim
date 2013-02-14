@@ -21,14 +21,14 @@ javascript:
   ws.onmessage = function(evt) {
     // show overlay
     $('#overlay').show();
-    $('button#avbryt-knapp').html('Avbryt');
-    $('#vi-leter p').html('Vi leter etter boka, vennligst vent <span id="loading"></span>');
+    $('button#avbryt-knapp').html("#{t.cancel}");
+    $('#vi-leter p').html("#{t.looking} <span id=\"loading\"></span>");
     $('#vi-leter').show();
 
     check_format = $.getJSON('/checkformat/'+evt.data);
     check_format.done(function(data) {
       if (data.accepted_format) {
-        $('div#vi-leter p').html('Henter informasjon om "' + data.title + '" <span id="loading"></span>' );
+        $('div#vi-leter p').html("#{t.fetching_info} \"" + data.title + '" <span id="loading"></span>' );
 
         //hent all info til omtalevisning her
         request = $.get('/populate/'+evt.data);
@@ -42,7 +42,7 @@ javascript:
 
         request.fail(function(message) {
           console.log(message);
-          $('div#vi-leter p').html('Ops! Klarte ikke å finne noe om denne.');
+          $('div#vi-leter p').html("#{t.nothing_found}");
           $('button#avbryt-knapp').html('OK');
         });
 

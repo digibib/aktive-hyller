@@ -6,7 +6,7 @@ div id="contents"
   div id="content-right"
     div id="omtale-tittel"
       h2 #{book.title}
-      h2 #{book.creatorName ? "av #{book.creatorName}" : book.responsible }
+      h2 #{book.creatorName ? "#{t.made_by} #{book.creatorName}" : book.responsible }
       hr
 
     div id="omtale-scroll"
@@ -26,22 +26,12 @@ div id="contents"
             div class="review" id="review-#{i.to_s}"
               p #{{r[:text]}}
               hr
-              p #{"Denne teksten er hentet fra #{r[:source]}" if r[:source]}
+              p #{"#{t.fetched_from} #{r[:source]}" if r[:source]}
               br
               p
         - else
           div class="no-review"
-            p Her finnes det dessverre ingen omtaler!
-            p
-              |<br />
-            p Husk at du også kan:
-            ul
-              li Se flere bøker av samme forfatter
-              li Finne noe som ligner
-              li Legge på en ny bok
-            p
-              |<br />
-            p Ta gjerne kontakt med en ansatt hvis du lurer på noe!
+            == t.no_reviews_html
 
 
     div style="clear:both"
@@ -73,7 +63,9 @@ div id="contents"
           img src="/img/star_half.png" class="star"
         - (5-red_stars).times do
           img src="/img/star_gray.png" class="star"
-        p Basert på #{rating[:num_raters]} vurdering#{'er' if rating[:num_raters] > 1 } fra #{rating[:source]}
+        == t.based_on_reviews1("#{rating[:num_raters]} ") 
+        == t.based_on_reviews2("#{rating[:source]}")
+          
       -if rating[:source] =~ /Bokelskere/ and rating[:num_raters] > 0
         - rating_converted = rating[:rating] / 1.2
         - red_stars = rating_converted.to_i
@@ -84,13 +76,14 @@ div id="contents"
           img src="/img/star_half.png" class="star"
         - (5-red_stars).times do
           img src="/img/star_gray.png" class="star"
-        p Basert på #{rating[:num_raters]} vurdering#{'er' if rating[:num_raters] > 1} fra #{rating[:source]}
+        == t.based_on_reviews1("#{rating[:num_raters]} ") 
+        == t.based_on_reviews2("#{rating[:source]}")
 
 div id="vi-leter"
-  p Vi leter etter boka, vennligst vent
+  t.looking
     span[id="loading"]
   div id="avbryt"
-    button[class="top-button" id="avbryt-knapp"] Avbryt
+    button[class="top-button" id="avbryt-knapp"] == t.cancel
 div[id="overlay"]
 
 == render :slim, :'websocket'

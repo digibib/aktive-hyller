@@ -21,9 +21,9 @@ div id="contents"
                     div.book-author-liste #{similar_work[:creatorName]}
                     div.book-title-liste #{similar_work[:title]}
 div id="vi-leter"
-  p Vi leter etter boka, vennligst vent
+  == t.looking
   div id="avbryt"
-    button[class="top-button" id="avbryt-knapp"] Avbryt
+    button[class="top-button" id="avbryt-knapp"] == t.cancel
 div[id="overlay"]
 
 == render :slim, :'websocket'
@@ -49,8 +49,8 @@ javascript:
         var tnr = $(this).find('input.tnr_id').val();
         // show overlay
         $('#overlay').show();
-        $('button#avbryt-knapp').html('Avbryt');
-        $('div#vi-leter p').html('Henter informasjon om "' + title + '" <div id="loading"></div>' );
+        $('button#avbryt-knapp').html("#{t.cancel}");
+        $('div#vi-leter p').html("#{t.fetching_info} \"" + title + '" <div id="loading"></div>' );
         $('#vi-leter').show();
 
         request = $.ajax({

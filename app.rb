@@ -4,7 +4,6 @@ require_relative "./config/init.rb"
 require "sinatra"
 require "sinatra-websocket"
 require "sinatra/reloader" if development?
-require "sinatra/r18n" # internationalization
 require "slim"
 require "json"
 require "logger"

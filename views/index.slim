@@ -1,14 +1,14 @@
 == render :slim, :'header'
 
-div[id="nysgjerrig-tittel"] Nysgjerrig på boka?
+div[id="nysgjerrig-tittel"] = t.startpage.title
 img[id="frontbook" src="/img/bok.png"]
 img[id="frontarrow" src="/img/pil.png"] 
-div[id="nysgjerrig-undertittel"] Legg den her og finn ut mer!
+div[id="nysgjerrig-undertittel"] == t.startpage.subtitle
 div id="vi-leter"
-  p Vi leter etter boka, vennligst vent
+  t.looking
     span[id="loading"]
   div id="avbryt"
-    button[class="top-button" id="avbryt-knapp"] Avbryt
+    button[class="top-button" id="avbryt-knapp"] == t.cancel
 div[id="overlay"]
 
 == render :slim, :'websocket'
