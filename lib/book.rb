@@ -4,7 +4,7 @@ require "faraday"
 
 class Book
   attr_accessor :book_id, :title, :format, :cover_url, :isbn, :creator_id, :creatorName, :responsible, :ratings,
-                :work_id, :work_isbn, :review_collection, :same_author_collection, :similar_works_collection
+                :work_id, :work_isbn, :review_collection, :same_author_collection, :similar_works_collection, :abstract
 
   def initialize(tnr)
 =begin
@@ -20,6 +20,7 @@ class Book
      @responsible : redaktørtekst (literal)
      @work_id     : verksid (uri)
      @work_isbns  : array of isbn uris
+     @abstract    : 520-note
      @review_collection       : array of reviews on book
      @same_author_collection  : array of books by same author
      @ratings                 : array of ratings
@@ -32,19 +33,22 @@ class Book
     
     url      = 'http://data.deichman.no/resource/tnr_' + tnr.to_s
     @book_id = RDF::URI(url)
-    query    = QUERY.select(:title, :format, :isbn, :work_id, :creator_id, :responsible)
+    query    = QUERY.select(:title, :format, :isbn, :work_id, :creator_id, :responsible, :abstract)
     query.distinct.from(DEFAULT_GRAPH)
-    query.sample(:cover_url)
+    query.sample(:cover_url, :workAbstract)
     query.group_digest(:creatorName, ', ', 1000, 1)
     query.where([@book_id, RDF::DC.title, :title],
              [@book_id, RDF::DC.language, :lang],
              [@book_id, RDF::DC.format, :format])
     query.optional([@book_id, RDF::FOAF.depiction, :cover_url])
+    query.optional([@book_id, RDF::DC.abstract, :abstract])
     query.optional([@book_id, RDF::BIBO.isbn, :isbn])
     query.optional([@book_id, RDF::DC.creator, :creator_id],
                 [:creator_id, RDF::FOAF.name, :creatorName])
     query.optional([@book_id, RDF::RDA.statementOfResponsibility, :responsible])
     query.optional([:work_id, RDF::FABIO.hasManifestation, @book_id])
+    query.optional([:work_id, RDF::FABIO.hasManifestation, :book],
+                [:book, RDF::DC.abstract, :workAbstract])
     
     puts "#{query}"
     results       = REPO.select(query)
@@ -58,6 +62,12 @@ class Book
       @creator_id  = results.first[:creator_id]  
       @creatorName = results.first[:creatorName] unless results.first[:creatorName].to_s.empty?
       @responsible = results.first[:responsible]
+      unless results.first[:abstract].to_s.empty?
+        @abstract  = results.first[:abstract]
+      else
+        @abstract  = results.first[:workAbstract] unless results.first[:workAbstract].to_s.empty?
+      end
+
       # fetch isbns for work into array
       if @work_id
         query = QUERY.select(:work_isbns)
@@ -143,6 +153,7 @@ class Book
       @review_collection.push({:title => r[:review_title].to_s, :text => r[:review_text].to_s,
         :source => r[:review_source].to_s})
     end
+    @review_collection.push({:text => @abstract.to_s, :source => "Katalogpost"}) if @abstract
     return @review_collection
   end
 
