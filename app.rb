@@ -1,34 +1,36 @@
 #encoding: UTF-8
-require "rubygems"
-require "bundler/setup"
+require_relative "./config/init.rb"
+
 require "sinatra"
 require "sinatra-websocket"
 require "sinatra/reloader" if development?
+require "sinatra/r18n" # internationalization
 require "slim"
 require "json"
 require "logger"
-require_relative "./lib/vocabularies.rb"
-require_relative "./lib/book.rb"
 
-# Loggin setup
 root = ::File.dirname(__FILE__)
+
+# load init.rb
+require File.join(root, 'config', 'init.rb')
+
+# Logging setup
+
 logfile = ::File.join(root,'logs','requests.log')
 class ::Logger; alias_method :write, :<<; end
 logger  = ::Logger.new(logfile,'weekly')
 #use Rack::CommonLogger, logger
 
-# Global constants
-url           = 'http://data.deichman.no/sparql'
-REPO          = RDF::Virtuoso::Repository.new(url)
-QUERY         = RDF::Virtuoso::Query
-DEFAULT_GRAPH = RDF::URI('http://data.deichman.no/books')
-
 # Sinatra configs
-session = {}
-session[:history] = []
-set :server, 'thin'
-set :sockets, []
+  session = {}
+  session[:history] = []
+  set :server, 'thin'
+  set :sockets, []
 
+# before each request
+before do
+  session[:locale] = params[:locale] if params[:locale]
+end
 
 # Routing
 get '/' do
