@@ -123,7 +123,7 @@ class Book
       if self.work_id
         query.where([:review_id, RDF::DC.subject, self.work_id])
       else
-        query.where([:review_id, RDF::DEICHMAN.basedOnManifestation, self.book_id])
+        query.where([:review_id, RDF::DEICH.basedOnManifestation, self.book_id])
       end
       query.where([:review_id, RDF::REV.title, :review_title],
                   [:review_id, RDF::REV.text, :review_text])
@@ -304,7 +304,7 @@ class Book
         [:creator, RDF::FOAF.name, :creatorName],
         [:book, RDF::DC.title, :book_title])
       .optional([:book, RDF::FOAF.depiction, :cover_url])
-      .optional([:book, RDF::DEICHMAN.originalLanguage, :original_language])
+      .optional([:book, RDF::DEICH.originalLanguage, :original_language])
       .minus([:work, RDF::FABIO.hasManifestation, :book])
     
     puts "Her: #{query}"
@@ -341,7 +341,7 @@ class Book
         [:book, RDF::DC.language, :lang, bookgraph]
         )
     query.optional([:book, RDF::FOAF.depiction, :cover_url, bookgraph])
-    query.optional([:book, RDF::DEICHMAN.originalLanguage, :original_language, bookgraph])
+    query.optional([:book, RDF::DEICH.originalLanguage, :original_language, bookgraph])
     query.optional([:book, RDF::DC.creator, :similar_book_creator, bookgraph],
         [:similar_book_creator, RDF::FOAF.name, :creatorName, bookgraph])
     query.minus([:similar_work, RDF::DC.creator, :creator, bookgraph])
