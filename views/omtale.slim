@@ -10,28 +10,31 @@ div id="contents"
           p ~
     div.ratings
       - for rating in book.ratings
-        / -if rating[:source] =~ /GoodReads/ and rating[:num_raters] > 0
-        /   - red_stars = (rating[:rating]/rating[:num_raters]).to_i
-        /   - red_stars.times do
-        /     img src="/img/star_red.png" class="star"
-        /   - if red_stars != (rating[:rating]/rating[:num_raters].to_f).round
-        /     - red_stars += 1
-        /     img src="/img/star_half.png" class="star"
-        /   - (5-red_stars).times do
-        /     img src="/img/star_gray.png" class="star"
-        /   p Basert på #{rating[:num_raters]} vurdering#{'er' if rating[:num_raters] > 1 } fra #{rating[:source]}
+        div
+          -if rating[:source] =~ /GoodReads/ and rating[:num_raters] > 0
+            - red_stars = (rating[:rating]/rating[:num_raters]).to_i
+            - red_stars.times do
+              img src="/img/star_red.png" class="star"
+            - if red_stars != (rating[:rating]/rating[:num_raters].to_f).round
+              - red_stars += 1
+              img src="/img/star_half.png" class="star"
+            - (5-red_stars).times do
+              img src="/img/star_gray.png" class="star"
+            'GoodReads (#{rating[:num_raters]} vurdering#{'er' if rating[:num_raters] > 1 })</span>
+
         -if rating[:source] =~ /Bokelskere/ and rating[:num_raters] > 0
-          - rating_converted = rating[:rating] / 1.2
-          - red_stars = rating_converted.to_i
-          - red_stars.times do
-            img src="/img/star_red.png" class="star"
-          - if red_stars != rating_converted.round
-            - red_stars += 1
-            img src="/img/star_half.png" class="star"
-          - (5-red_stars).times do
-            img src="/img/star_gray.png" class="star"
-          span Basert på #{rating[:num_raters]} vurdering#{'er' if rating[:num_raters] > 1}
-          /fra #{rating[:source]}
+          div
+            - rating_converted = rating[:rating] / 1.2
+            - red_stars = rating_converted.to_i
+            - red_stars.times do
+              img src="/img/star_red.png" class="star"
+            - if red_stars != rating_converted.round
+              - red_stars += 1
+              img src="/img/star_half.png" class="star"
+            - (5-red_stars).times do
+              img src="/img/star_gray.png" class="star"
+            'Bokelskere (#{rating[:num_raters]} vurdering#{'er' if rating[:num_raters] > 1})
+
     div class="hyllestatus inne" Boka er inne
 
   div id="content-right"
