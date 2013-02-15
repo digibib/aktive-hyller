@@ -7,5 +7,15 @@ html
     script src="/js/jquery.min.js"
 
   body
+    div id="left-bar"
+      div id="logo-container"
+        img class="logo" src="/img/logo.png"
+      button id="tilbake" class="square" TILBAKE
+      div id="avslutt-container"
+        button id="avslutt" class="square" AVSLUTT
+    div id="white-bar"
+    div id="header"
+      p id="title" #{book.title}
+      p id="sub-title" #{book.creatorName}
     div id="container" class="select-disable dim"
       == yield

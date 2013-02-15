@@ -1,89 +1,61 @@
-== render :slim, :'header'
-
-== render :slim, :'menu', locals: {book: book, history: history}
-
 div id="contents"
-  div id="content-right"
-    div id="omtale-tittel"
-      h2 #{book.title}
-      h2 #{book.creatorName ? "#{t.made_by} #{book.creatorName}" : book.responsible }
-      hr
-
-    div id="omtale-scroll"
-      div id="scroll-active"
-        |<img src="/img/up_red.png" class="scroll-icon" style="margin-top:20px">
-        |<br/>
-        |<img src="/img/down_red.png" class="scroll-icon" style="margin-top:460px">
-      /div id="scroll-inactive"
-      /  |<img src="/img/up_grey.png" class="scroll-icon" style="margin-top:20px">
-      /  |<br/>
-      /  |<img src="/img/down_grey.png" class="scroll-icon" style="margin-top:460px">
-
-    div id="omtale-wrapper"
-      div id="omtale-tekst"
-        - if not book.review_collection.empty?
-          - book.review_collection.each_with_index do |r, i|
-            div class="review" id="review-#{i.to_s}"
-              p #{{r[:text]}}
-              hr
-              p #{"#{t.fetched_from} #{r[:source]}" if r[:source]}
-              br
-              p
-        - else
-          div class="no-review"
-            == t.no_reviews_html
-
-
-    div style="clear:both"
-    div id="omtale-kilder"
-      - for i in 0..3
-        - if book.review_collection[i]
-          button[class="kilde #{'kilde-uvalgt' if i != 0} #{'kilde-left kilde-valgt' if i == 0} #{'kilde-right' if i == 3}" id="kilde_#{i}"]: span #{book.review_collection[i][:source]}
-        - else
-          button[class="kilde #{'kilde-left' if i == 0} #{'kilde-right' if i == 3} kilde-inaktiv" id="kilde_#{i}"]
-
-
-
   div id="content-left"
     - if book.cover_url
-      img src="#{book.cover_url}" class="omtalt-bok"
+      img src="#{book.cover_url}" class="omtalt-bok": br
     - else
       div id="omtale-bilde"
         div id="inner-border"
           div.book-author #{book.creatorName}
           div.book-title #{book.title}
           p ~
-    - for rating in book.ratings
-      -if rating[:source] =~ /GoodReads/ and rating[:num_raters] > 0
-        - red_stars = (rating[:rating]/rating[:num_raters]).to_i
-        - red_stars.times do
-          img src="/img/star_red.png" class="star"
-        - if red_stars != (rating[:rating]/rating[:num_raters].to_f).round
-          - red_stars += 1
-          img src="/img/star_half.png" class="star"
-        - (5-red_stars).times do
-          img src="/img/star_gray.png" class="star"
-        == t.based_on_reviews1("#{rating[:num_raters]} ") 
-        == t.based_on_reviews2("#{rating[:source]}")
-          
-      -if rating[:source] =~ /Bokelskere/ and rating[:num_raters] > 0
-        - rating_converted = rating[:rating] / 1.2
-        - red_stars = rating_converted.to_i
-        - red_stars.times do
-          img src="/img/star_red.png" class="star"
-        - if red_stars != rating_converted.round
-          - red_stars += 1
-          img src="/img/star_half.png" class="star"
-        - (5-red_stars).times do
-          img src="/img/star_gray.png" class="star"
-        == t.based_on_reviews1("#{rating[:num_raters]} ") 
-        == t.based_on_reviews2("#{rating[:source]}")
+    div.ratings
+      - for rating in book.ratings
+        / -if rating[:source] =~ /GoodReads/ and rating[:num_raters] > 0
+        /   - red_stars = (rating[:rating]/rating[:num_raters]).to_i
+        /   - red_stars.times do
+        /     img src="/img/star_red.png" class="star"
+        /   - if red_stars != (rating[:rating]/rating[:num_raters].to_f).round
+        /     - red_stars += 1
+        /     img src="/img/star_half.png" class="star"
+        /   - (5-red_stars).times do
+        /     img src="/img/star_gray.png" class="star"
+        /   p Basert på #{rating[:num_raters]} vurdering#{'er' if rating[:num_raters] > 1 } fra #{rating[:source]}
+        -if rating[:source] =~ /Bokelskere/ and rating[:num_raters] > 0
+          - rating_converted = rating[:rating] / 1.2
+          - red_stars = rating_converted.to_i
+          - red_stars.times do
+            img src="/img/star_red.png" class="star"
+          - if red_stars != rating_converted.round
+            - red_stars += 1
+            img src="/img/star_half.png" class="star"
+          - (5-red_stars).times do
+            img src="/img/star_gray.png" class="star"
+          span Basert på #{rating[:num_raters]} vurdering#{'er' if rating[:num_raters] > 1}
+          /fra #{rating[:source]}
+    div class="hyllestatus inne" Boka er inne
+
+  div id="content-right"
+    div id="omtale-wrapper"
+      p hei
+
+  div.clearfix
+  div id="content-bottom"
+    div class="flere"
+      h3 FLERE BØKER AV FORFATTEREN
+      - num = [book.same_author_collection.size, 3].min
+      - book.same_author_collection[0...num].each do |b|
+        p #{b[:title]}
+    div class="relaterte"
+      h3 NOE SOM LIGNER
+      - num = [book.similar_works_collection.size, 3].min
+      - book.similar_works_collection[0...num].each do |b|
+        p #{b[:title]}
 
 div id="vi-leter"
-  t.looking
+  p #{t.looking}
     span[id="loading"]
   div id="avbryt"
-    button[class="top-button" id="avbryt-knapp"] == t.cancel
+    button[class="top-button" id="avbryt-knapp"] Avbryt
 div[id="overlay"]
 
 == render :slim, :'websocket'

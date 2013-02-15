@@ -1,7 +1,0 @@
-div id="header"
-  img src="/img/logo.png" class="logo"
-  div id="top-buttons"
-    /button[class="top-button"] == t.header.title
-    - unless request.env['REQUEST_URI'] == "/"
-      a href="/"
-        button[class="top-button"] == t.cancel
