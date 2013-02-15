@@ -35,7 +35,7 @@ div id="contents"
               img src="/img/star_gray.png" class="star"
             'Bokelskere (#{rating[:num_raters]} vurdering#{'er' if rating[:num_raters] > 1})
 
-    div class="hyllestatus inne" Boka er inne
+    div class="hyllestatus inne" Boka er kanskje inne
 
   div id="content-right"
     div id="omtale-wrapper" class="iosSlider"
@@ -86,7 +86,8 @@ div id="contents"
             div.cover-small
               img src="#{b[:cover_url]}"
           - else
-            div.cover-small-missing #{b[:creatorName]} <strong> #{b[:title]}</strong>
+            div.cover-small-missing
+              p #{b[:creatorName]} <strong> #{b[:title]}</strong>
           p.title: strong #{b[:title]}
           p.author #{b[:creatorName]}
       - unless book.similar_works_collection.size <= 3
