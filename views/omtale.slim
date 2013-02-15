@@ -1,7 +1,7 @@
 div id="contents"
   div id="content-left"
     - if book.cover_url
-      img src="#{book.cover_url}" class="omtalt-bok": br
+      img src="#{book.cover_url}" class="omtalt-bok"
     - else
       div id="omtale-bilde"
         div id="inner-border"
@@ -35,8 +35,23 @@ div id="contents"
     div class="hyllestatus inne" Boka er inne
 
   div id="content-right"
-    div id="omtale-wrapper"
-      p hei
+    div id="omtale-wrapper" class="iosSlider"
+      div id="scroller" class="slider"
+        - if not book.review_collection.empty?
+          - book.review_collection.each_with_index do |r, i|
+            div class="review slide"
+              p #{{r[:text]}}
+              p #{r[:source]}
+        - else
+          div class="no-review slide"
+            p ingen info
+
+      - unless book.review_collection.size <= 1
+        div class="indicator-wrapper"
+          ul id="indicator"
+            - for i in (1..book.review_collection.size)
+              li #{i}
+
 
   div.clearfix
   div id="content-bottom"
@@ -86,6 +101,20 @@ div[id="overlay"]
 
 javascript:
   $(document).ready(function () {
+
+  $('#indicator li:first').addClass("active");
+
+  $('#omtale-wrapper').iosSlider({
+        snapToChildren: true,
+        scrollbar: false,
+        desktopClickDrag: true,
+        onSlideChange: slideChange,
+    });
+
+  function slideChange(args) {
+    $('#indicator li').removeClass('active');
+    $('#indicator li:eq(' + (args.currentSlideNumber - 1) + ')').addClass('active');
+  }
 
   $('.liste-small').on('click', function(evt) {
     evt.preventDefault();
