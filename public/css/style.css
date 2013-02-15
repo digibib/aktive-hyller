@@ -160,6 +160,6 @@ ul.review-list li  { padding:0 10px; height:300px; }
 }
 
 #indicator li { display:block; float:left; list-style:none; width:8px; height:8px;
-                background: #ddd; border-radius:4px; text-indent:-9999em;
+                background: #aaa; border-radius:4px; text-indent:-9999em;
                 margin-right:4px;}
 #indicator li.active { background: #e65740 ;}
