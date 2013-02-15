@@ -36,7 +36,7 @@ get '/' do
   session[:history] = []
   # Nysgjerrig på boka?
   logger.info("Sesjon - -")
-  slim(:index)
+  slim(:index, :layout => false)
 end
 
 get '/timeout' do
@@ -57,7 +57,7 @@ end
 
 get '/checkformat/:tnr' do
   content_type :json
-  accepted_formats = [RDF::URI("http://data.deichman.no/format/Book"), 
+  accepted_formats = [RDF::URI("http://data.deichman.no/format/Book"),
                       RDF::URI("http://data.deichman.no/format/Audiobook")]
 
   url      = 'http://data.deichman.no/resource/tnr_' + params[:tnr].strip.to_i.to_s

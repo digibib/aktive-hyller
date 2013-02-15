@@ -1,12 +1,24 @@
-div[id="nysgjerrig-tittel"] = t.startpage.title
-img[id="frontbook" src="/img/bok.png"]
-img[id="frontarrow" src="/img/pil.png"]
-div[id="nysgjerrig-undertittel"] == t.startpage.subtitle
-div id="vi-leter"
-  t.looking
-    span[id="loading"]
-  div id="avbryt"
-    button[class="top-button" id="avbryt-knapp"] == t.cancel
-div[id="overlay"]
+doctype html
+html
+  head
+    meta charset='utf-8'
+    title Aktive hyller
+    link href='/css/style.css' rel='stylesheet' type='text/css'
+    script src="/js/jquery.min.js"
+    script src="/js/jquery.iosslider.js"
+
+
+  body
+    div id="container" class="select-disable dim"
+      div[id="nysgjerrig-tittel"] = t.startpage.title
+      img[id="frontbook" src="/img/bok.png"]
+      img[id="frontarrow" src="/img/pil.png"]
+      div[id="nysgjerrig-undertittel"] == t.startpage.subtitle
+      div id="vi-leter"
+        t.looking
+          span[id="loading"]
+        div id="avbryt"
+          button[class="top-button" id="avbryt-knapp"] == t.cancel
+      div[id="overlay"]
 
 == render :slim, :'websocket'
