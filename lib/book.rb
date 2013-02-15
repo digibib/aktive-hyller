@@ -153,7 +153,7 @@ class Book
       @review_collection.push({:title => r[:review_title].to_s, :text => r[:review_text].to_s,
         :source => r[:review_source].to_s})
     end
-    @review_collection.push({:text => @abstract.to_s, :source => "Katalogpost"}) if @abstract
+    @review_collection.push({:text => @abstract.to_s, :source => "Bibliotekbasen"}) if @abstract
     return @review_collection
   end
 
