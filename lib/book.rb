@@ -301,11 +301,11 @@ class Book
   def fetch_same_author_books
     # this query fetches other works by same author
     query = QUERY.select(:similar_work, :lang, :original_language, :book_title, :book)
-      .sample(:cover_url)
-      .group_digest(:creatorName, ', ', 1000, 1)
-      .distinct
-      .from(DEFAULT_GRAPH)
-      .where(
+      query.sample(:cover_url)
+      query.group_digest(:creatorName, ', ', 1000, 1)
+      query.distinct
+      query.from(DEFAULT_GRAPH)
+      query.where(
         [self.book_id, RDF::DC.creator, :creator],
         [:work, RDF::FABIO.hasManifestation, self.book_id],
         [:similar_work, RDF::FABIO.hasManifestation, :book],
@@ -314,14 +314,15 @@ class Book
         [:similar_work, RDF::DC.creator, :creator],
         [:creator, RDF::FOAF.name, :creatorName],
         [:book, RDF::DC.title, :book_title])
-      .optional([:book, RDF::FOAF.depiction, :cover_url])
-      .optional([:book, RDF::DEICH.originalLanguage, :original_language])
-      .minus([:work, RDF::FABIO.hasManifestation, :book])
+      query.optional([:book, RDF::FOAF.depiction, :cover_url])
+      query.optional([:book, RDF::DEICH.originalLanguage, :original_language])
+      query.minus([:work, RDF::FABIO.hasManifestation, :book])
     
     puts "Her: #{query}"
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
     return nil unless results
+    results.order_by(:book_title)
     results.each do |same_author_books| 
     @same_author_collection.push({
       :book => same_author_books[:book], 
@@ -377,7 +378,7 @@ class Book
   def select_manifestations(solutions)
     return nil if solutions.empty?
     
-    results = []
+    results = RDF::Query::Solutions.new
     # We only want one manifestation of each work
     # Iterate solutions and choose by priorities:
     # 1. lang = nob/nno
