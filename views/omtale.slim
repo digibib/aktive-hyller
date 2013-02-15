@@ -44,12 +44,36 @@ div id="contents"
       h3 FLERE BØKER AV FORFATTEREN
       - num = [book.same_author_collection.size, 3].min
       - book.same_author_collection[0...num].each do |b|
-        p #{b[:title]}
+        div.liste-small
+          input[class="tnr_id" type="hidden" value="#{b[:book].to_s.match(/tnr_(.*)/)[1]}"]
+          - if b[:cover_url]
+            div.cover-small
+              img src="#{b[:cover_url]}"
+          - else
+            div.cover-small-missing #{b[:creatorName]} <strong> #{b[:title]}</strong>
+          p.title: strong #{b[:title]}
+          /p.author #{b[:creatorName]}
+      - unless book.same_author_collection.size <= 3
+        a href="/flere"
+          div.cover-small
+            div.cover-small-missing SE FLERE
     div class="relaterte"
       h3 NOE SOM LIGNER
       - num = [book.similar_works_collection.size, 3].min
       - book.similar_works_collection[0...num].each do |b|
-        p #{b[:title]}
+        div.liste-small
+          input[class="tnr_id" type="hidden" value="#{b[:book].to_s.match(/tnr_(.*)/)[1]}"]
+          - if b[:cover_url]
+            div.cover-small
+              img src="#{b[:cover_url]}"
+          - else
+            div.cover-small-missing #{b[:creatorName]} <strong> #{b[:title]}</strong>
+          p.title: strong #{b[:title]}
+          p.author #{b[:creatorName]}
+      - unless book.similar_works_collection.size <= 3
+        a href="/relaterte"
+          div.cover-small
+            div.cover-small-missing SE FLERE
 
 div id="vi-leter"
   p #{t.looking}
@@ -63,29 +87,29 @@ div[id="overlay"]
 javascript:
   $(document).ready(function () {
 
-    if ( $('#review-0').height() < 600 ) {
-        $('#scroll-active').hide();
-        $('#scroll-inactive').show();
+  $('.liste-small').on('click', function(evt) {
+    evt.preventDefault();
+      var title = $(this).find('p.title').html();
+      var tnr = $(this).find('input.tnr_id').val();
+      // show overlay
+      $('#overlay').show();
+      $('button#avbryt-knapp').html('Avbryt');
+      $('div#vi-leter p').html('Henter informasjon om "' + title + '" <div id="loading"></div>' );
+      $('#vi-leter').show();
 
-      }
+      request = $.ajax({
+        url: '/populate/'+tnr,
+        type: 'GET'});
 
-    $('#review-0').siblings("div.review").hide();
+      request.done(function(msg) {
+        $.get('/copy', function(data) {
+          window.location.replace("/omtale");
+        });
+      });
 
-    $('#omtale-kilder').on('click', ".kilde-uvalgt", function() {
-      $('.kilde-valgt').removeClass('kilde-valgt').addClass('kilde-uvalgt');
-      $(this).removeClass('kilde-uvalgt').addClass('kilde-valgt');
-      var nr = $(this).attr('id').slice(6);
-      $('#review-'+nr).show().siblings("div.review").hide();
-
-      // show arrows if reviewtext overflows
-      if ( $('#review-'+nr).height() > 600 ) {
-        console.log("arrows!");
-        $('#scroll-active').show();
-        $('#scroll-inactive').hide();
-      } else {
-        $('#scroll-active').hide();
-        $('#scroll-inactive').show();
-      }
-    });
+      request.fail(function(jqXHR, textStatus, errorThrown) {
+        return;
+      });
+  });
 
   });

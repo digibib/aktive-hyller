@@ -2,17 +2,17 @@
 .select-disable     { -khtml-user-select: none; -moz-user-select: none;
                     -o-user-select: none;  user-select: none; }
 button::-moz-focus-inner { border: 0; }
-
 body               { font-family: Arial; font-size:100%; overflow:hidden}
 h2                 { font-size: 2em; color: #222; letter-spacing: 2px; line-height: 1.1em ;}
-h3                 { font-weight: normal;}
+h3                 { font-weight: normal; margin-bottom:10px;}
 hr                 { border: 1px solid gray; width: 91%; margin-top: 20px; margin-bottom: 20px;}
 a:link             { text-decoration: none; color: #444;}
 a:visited          { color: #444;}
 a:active, a:focus  { outline-style: none; outline: 0; }
+.disabled          { visibility: hidden;}
 
-img#frontarrow    { position:fixed; left:900px; top:650px;}
-img#frontbook     { position:fixed; left:1280px; top: 400px;}
+img#frontarrow     { position:fixed; left:900px; top:650px;}
+img#frontbook      { position:fixed; left:1280px; top: 400px;}
 div#overlay        { position: fixed; width:100%; height: 100%; top:0; left: 0;
                      z-index: 50; background: #000; opacity: 0.8; display:none;}
 div#vi-leter       { color: #fff; position:fixed; display:none;
@@ -22,7 +22,7 @@ div#avbryt         { z-index: 1000; position: fixed; top: 570px; left: 720px;}
 
 div.clearfix       { clear:both;}
 div#barcode_search { text-align: center; padding: 20px;}
-#loading       { width:60px; display:inline-block; text-align:left;}
+#loading           { width:60px; display:inline-block; text-align:left;}
 input.barcode_field  { border:1px solid gray; margin-top:150px; padding: 10px; text-align: center; font-style: italic; color:#666;}
 
 div#omtale-bilde   { display: block; width: 255px; height: 380px; background:#eee; padding:20px;}
@@ -57,10 +57,10 @@ div#top-buttons    { float: right; margin: 24px;}
 div#contents       { padding: 0; float: left; width: 1425px; overflow:hidden;}
 div#content-left   { height: 500px; width: 300px; float: left; color:#444; padding:5px; background:#eee;}
 div#content-right  { float: left; margin-left:85px; width:785px; height: 500px; }
-div#content-bottom { clear:both; margin-top: 85px; width:1150px; height:255px;
+div#content-bottom { clear:both; margin-top: 85px; width:1250px; height:350px;
                      background: #555; color: #fff; padding:10px;}
-div.flere          { float:left; width: 500px; padding-left:10px;}
-div.relaterte      { float:left; width: 500px; border-left: 2px dashed white; padding-left:10px;}
+div.flere          { float:left; width: 600px; padding-left:10px;}
+div.relaterte      { float:left; width: 600px; border-left: 2px dashed white; padding-left:20px;}
 img.logo           { width: 150px; margin-top:70px; margin-left:10px;}
 button.top-button  { border-radius: 5px; height: 80px; width: 240px;
                      margin-left: 24px; font-size: 1.2em; color: #444;
@@ -76,7 +76,17 @@ button.square:active { position: relative; top: 3px; color: #000;
                        border: 1px solid gray; box-shadow: 0;
                        background: -moz-linear-gradient(bottom,  #eee,  #aaa)}
 
-
+div.liste-small     { width:130px; height:300px; float:left; margin-right:10px;
+                      overflow: hidden; cursor: pointer;}
+   .liste-small p   { word-wrap: break-word;}
+div.cover-small     { width:130px; height:180px; overflow:hidden;;
+                      background: #fff; box-shadow: 6px 6px 7px 2px rgba(0,0,0,0.15);
+                       position:relative;}
+   .cover-small img { width:120px; max-height:170px; border: 5px solid white;
+                      position:absolute;top:0;bottom:0;margin:auto;}
+div.cover-small-missing { width:120px; height:170px; border: 5px solid white;
+                          background: -moz-linear-gradient(top,  #eee,  #b5b5b5);
+                          text-align: center; color:#444; display:table-cell; vertical-align:middle;}
 
 div#omtale-wrapper { width: 600px; height:500px; overflow:hidden; border: 2px solid #aaa;
                      box-shadow:inset 0 0 10px #bbb; background:#eee;}
@@ -85,13 +95,13 @@ div#omtale-tekst   { border:10px solid white; background-color: #fff; height: 55
 
 div#omtale-scroll  { float: right; margin-right:20px; }
 div.ratings        { margin-top: 10px; font-size: 0.7em; display:table; }
-.ratings span { display:table-cell; vertical-align: middle; padding-left:1em;}
+.ratings span      { display:table-cell; vertical-align: middle; padding-left:1em;}
 div.hyllestatus    { margin-top: 10px; font-size:1.5em; width:250px; height: 30px; text-align: center;}
 .inne              { background: #e65740; color: #fff;}
 
 #scrollable        { position:relative; overflow:hidden; height: 575px; }
 
-.disabled          { visibility: hidden;}
+
 img.omtalt-bok     { width: 240px; border: 10px solid white;
                      box-shadow: 5px 6px 7px 2px rgba(0,0,0,0.25);}
 img.rating         { margin-top: 20px; margin-bottom: 10px;;}
@@ -102,7 +112,7 @@ div#inner-border-liste   { padding: 10px; border:2px solid gray; background: #ee
 div.book-title-liste     { color:#333; font-family: Times; font-size: 1.3em; margin-bottom: 60px; font-style: italic;}
 div.book-author-liste    { color:#333; font-family: Arial; font-size: 0.9em; margin: 20px;}
 
-div#liste-wrapper { overflow:auto; width:1430px; height: 882px;}
+div#liste-wrapper  { overflow:auto; width:1430px; height: 882px;}
 div.liste-bilde    { height:300px; width: 240px; margin: auto; overflow:hidden;
                      padding: 0; border:0px solid white; }
 ul.listevisning    { list-style-type: none }
