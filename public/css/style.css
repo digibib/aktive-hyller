@@ -33,10 +33,11 @@ img.omtalt-bok     { width: 230px; max-height: 340px; border: 10px solid white;
                       position:absolute;top:0;bottom:0;margin:auto;}
 div.hyllestatus    { font-size:1.5em; bottom:30px; left:-7px; display:block; position:absolute; text-align:center;
                      color:#fff; padding:5px; background:green; opacity:0.7; width:250px;}
-div#omtale-bilde   { display: block; width: 255px; height: 380px; background:#eee; padding:20px;}
-div#inner-border   { padding: 20px; border:2px solid gray; background: #eee; height:338px; text-align: center;}
-div.book-title     { color:#333; font-family: Times; font-size: 2.3em; margin-bottom: 60px; font-style: italic;}
-div.book-author    { color:#333; font-family: Arial; font-size: 1.5em; margin: 20px;}
+div#omtale-bilde   { display: block; width: 190px; height: 300px; background:#eee; padding:20px;
+                     box-shadow: 5px 6px 7px 2px rgba(0,0,0,0.25);}
+div#inner-border   { padding: 20px; border:2px solid gray; background: #eee; height:260px; text-align: center;}
+div.book-title     { color:#333; font-family: Times; font-size: 1.5em; margin-bottom: 60px; font-style: italic;}
+div.book-author    { color:#333; font-family: Arial; font-size: 1.3em; margin: 20px;}
 
 div.no-review      { padding:1em; font-size: 1.5em;}
 div.no-review p    { line-height: 1.2em;}

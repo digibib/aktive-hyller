@@ -10,7 +10,7 @@ div id="contents"
           div id="inner-border"
             div.book-author #{book.creatorName}
             div.book-title #{book.title}
-            p ~
+        div class="hyllestatus inne" Boka er kanskje inne
     div.ratings
       - for rating in book.ratings
         -if rating[:source] =~ /GoodReads/ and rating[:num_raters] > 0
