@@ -61,41 +61,43 @@ div id="contents"
 
   div.clearfix
   div id="content-bottom"
-    div class="flere"
-      h3 FLERE BØKER AV FORFATTEREN
-      - num = [book.same_author_collection.size, 3].min
-      - book.same_author_collection[0...num].each do |b|
-        div.liste-small
-          input[class="tnr_id" type="hidden" value="#{b[:book].to_s.match(/tnr_(.*)/)[1]}"]
-          - if b[:cover_url]
+    - unless book.same_author_collection.size == 0
+      div class="flere"
+        h3 FLERE BØKER AV FORFATTEREN
+        - num = [book.same_author_collection.size, 3].min
+        - book.same_author_collection[0...num].each do |b|
+          div.liste-small
+            input[class="tnr_id" type="hidden" value="#{b[:book].to_s.match(/tnr_(.*)/)[1]}"]
+            - if b[:cover_url]
+              div.cover-small
+                img src="#{b[:cover_url]}"
+            - else
+              div.cover-small-missing #{b[:creatorName]} <strong> #{b[:title]}</strong>
+            p.title: strong #{b[:title]}
+            /p.author #{b[:creatorName]}
+        - unless book.same_author_collection.size <= 3
+          a href="/flere"
             div.cover-small
-              img src="#{b[:cover_url]}"
-          - else
-            div.cover-small-missing #{b[:creatorName]} <strong> #{b[:title]}</strong>
-          p.title: strong #{b[:title]}
-          /p.author #{b[:creatorName]}
-      - unless book.same_author_collection.size <= 3
-        a href="/flere"
-          div.cover-small
-            div.cover-small-missing SE FLERE
-    div class="relaterte"
-      h3 NOE SOM LIGNER
-      - num = [book.similar_works_collection.size, 3].min
-      - book.similar_works_collection[0...num].each do |b|
-        div.liste-small
-          input[class="tnr_id" type="hidden" value="#{b[:book].to_s.match(/tnr_(.*)/)[1]}"]
-          - if b[:cover_url]
+              div.cover-small-missing SE FLERE
+    - unless book.similar_works_collection.size == 0
+      div class="relaterte"
+        h3 NOE SOM LIGNER
+        - num = [book.similar_works_collection.size, 3].min
+        - book.similar_works_collection[0...num].each do |b|
+          div.liste-small
+            input[class="tnr_id" type="hidden" value="#{b[:book].to_s.match(/tnr_(.*)/)[1]}"]
+            - if b[:cover_url]
+              div.cover-small
+                img src="#{b[:cover_url]}"
+            - else
+              div.cover-small-missing
+                p #{b[:creatorName]} <strong> #{b[:title]}</strong>
+            p.title: strong #{b[:title]}
+            p.author #{b[:creatorName]}
+        - unless book.similar_works_collection.size <= 3
+          a href="/relaterte"
             div.cover-small
-              img src="#{b[:cover_url]}"
-          - else
-            div.cover-small-missing
-              p #{b[:creatorName]} <strong> #{b[:title]}</strong>
-          p.title: strong #{b[:title]}
-          p.author #{b[:creatorName]}
-      - unless book.similar_works_collection.size <= 3
-        a href="/relaterte"
-          div.cover-small
-            div.cover-small-missing SE FLERE
+              div.cover-small-missing SE FLERE
 
 div id="vi-leter"
   p #{t.looking}
