@@ -5,8 +5,8 @@ div id="contents"
         a href="/omtale" class="liste-link"
           li
             input[class="tnr_id" type="hidden" value="#{similar_work[:book].to_s.match(/tnr_(.*)/)[1]}"]
-            p class="liste-forfatter" #{similar_work[:creatorName]}
             p class="liste-tittel" #{similar_work[:title]}
+            p class="liste-forfatter" #{similar_work[:creatorName]}
             hr style="width:100%;"
             div class="liste-bilde"
               - if similar_work[:cover_url]
