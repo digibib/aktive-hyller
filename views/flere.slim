@@ -4,8 +4,8 @@ div id="contents"
       - book.same_author_collection.each_with_index do |same_author_book, index|
         a href="/omtale" class="liste-link"
           li
-            p class="liste-forfatter" #{same_author_book[:creatorName]}
             p class="liste-tittel" #{same_author_book[:title]}
+            p class="liste-forfatter" #{same_author_book[:creatorName]}
             input[class="tnr_id" type="hidden" value="#{same_author_book[:book].to_s.match(/tnr_(.*)/)[1]}"]
             hr style="width:100%;"
             div class="liste-bilde"
