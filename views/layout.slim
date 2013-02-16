@@ -11,8 +11,9 @@ html
   body
     div id="container" class="select-disable dim"
       div id="left-bar"
-        button id="tilbake" class="square": img src="img/tilbake.png" id="tilbake-pil"
-          'TILBAKE
+        - unless request.referrer == "http://localhost:4567/"
+          button onclick="window.history.back()" id="tilbake" class="square": img src="img/tilbake.png" id="tilbake-pil"
+            'TILBAKE
         div id="avslutt-container"
           button id="avslutt" class="square": span AVSLUTT <img src="img/avslutt.png" id="avslutt-ikon" />
       div id="header"
