@@ -61,8 +61,8 @@ div id="contents"
 
   div.clearfix
   div id="content-bottom"
-    - unless book.same_author_collection.size == 0
-      div class="flere"
+    div class="flere"
+      - unless book.same_author_collection.size == 0
         h3 FLERE BØKER AV FORFATTEREN
         - num = [book.same_author_collection.size, 3].min
         - book.same_author_collection[0...num].each do |b|
@@ -79,6 +79,7 @@ div id="contents"
           a href="/flere"
             div.cover-small
               div.cover-small-missing SE FLERE
+      p &nbsp;
     - unless book.similar_works_collection.size == 0
       div class="relaterte"
         h3 NOE SOM LIGNER
