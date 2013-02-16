@@ -50,7 +50,7 @@ div id="contents"
                 p class="source" #{r[:source]}
         - else
           div class="no-review slide"
-            p ingen info
+            #{{t.no_reviews_html}}
 
       - unless book.review_collection.size <= 1
         div class="indicator-wrapper"

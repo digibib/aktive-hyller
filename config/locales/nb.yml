@@ -6,21 +6,23 @@ fetched_from: Denne teksten er hentet fra
 fetching_info: Henter informasjon om
 nothing_found: Ops! Klarte ikke å finne noe om denne.
 no_reviews_html: |
-  Her finnes det dessverre ingen omtaler!<br /> 
-  Husk at du også kan:
+  <p>Her finnes det dessverre ingen omtaler!</p>
+  <br/>
+  <p>Husk at du også kan:</p>
     <ul>
       <li> Se flere bøker av samme forfatter</li>
       <li> Finne noe som ligner</li>
       <li> Legge på en ny bok</li>
     </ul>
-  <br />Ta gjerne kontakt med en ansatt hvis du lurer på noe!
+  <br/>
+  <p><em>Ta gjerne kontakt med en ansatt hvis du lurer på noe!</em></p>
 based_on_reviews1: <br/>Basert på %1
 based_on_reviews2: vurdering(er) fra %1
 # page terms
 startpage:
   title: Nysgjerrig på boka?
   subtitle: Legg den her og finn ut mer!
-  
+
 header:
   title: Bokanbefalinger
 
