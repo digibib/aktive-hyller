@@ -60,7 +60,8 @@ div#left-bar       { float:left; width: 298px; height: 1050px; position:relative
                      background-image: url("../img/leftbar.png");}
 
 div#avslutt-container { position: absolute; bottom:0; left:0;}
-
+button#avslutt span    { position:relative; bottom:15px;}
+#avslutt-ikon      { position: absolute; top:35px; left:30px;}
 div#logo-container { height:170px; background: #444;}
 div#top-buttons    { float: right; margin: 24px;}
 div#contents       { padding: 0; float: left; width: 1365px; overflow:hidden;}
@@ -85,7 +86,8 @@ button.square      { height: 120px; width: 160px; color: #444; margin: 33px;
 button.square:active { position: relative; top: 3px; color: #000;
                        border: 1px solid gray; box-shadow: 0;
                        background: -moz-linear-gradient(bottom,  #eee,  #aaa)}
-#tilbake             { margin-top: 184px;}
+#tilbake             { margin-top: 184px; position: relative;}
+#tilbake-pil         { height:20px; position: absolute; left:18px; top: 50px; }
 div.liste-small     { width:130px; height:300px; float:left; margin-right:40px;
                       overflow: hidden; cursor: pointer;}
    .liste-small p   { word-wrap: break-word; margin-top:10px;}
