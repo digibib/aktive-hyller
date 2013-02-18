@@ -1,0 +1,35 @@
+# common terms
+cancel: Cancel
+looking: We're looking for the book, please wait
+made_by: by
+fetched_from: This text is fetched from
+fetching_info: Gathering information about
+nothing_found: Sorry, could not find any information on this book.
+no_reviews_html: |
+  <p>No reviews found!</p>
+  <br/>
+  <p>Don't forget you can also:</p>
+    <ul>
+      <li> Find other books by this author</li>
+      <li> Find similar books</li>
+      <li> Place a new book on shelf</li>
+    </ul>
+  <br/>
+  <p><em>Please contact an employee if you have any questions!</em></p>
+based_on_reviews1: <br/>Based on %1
+based_on_reviews2: review(s) from %1
+# page terms
+startpage:
+  title: Curious about the book?
+  subtitle: Place a new book on shelf and learn more!
+
+header:
+  title: Book reviews
+
+menu:
+  more_by_author: Other books<br/>by author
+  review_active: Review
+  review_inactive: Review<br/>
+  similar_works: Similar books
+  history_active: History
+  history_inactive: <br/>History
