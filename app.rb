@@ -119,7 +119,7 @@ end
 
 get '/populate/:tnr' do
   tnr = params[:tnr].strip.to_i
-  session[:books][:new] = session[:books][:tnr] || Book.new(tnr)
+  session[:books][:new] = session[:books][tnr] || Book.new(tnr)
   "success!"
 end
 
