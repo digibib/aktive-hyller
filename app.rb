@@ -21,21 +21,30 @@ logger  = ::Logger.new(logfile,'weekly')
 #use Rack::CommonLogger, logger
 
 # Sinatra configs
-  session = {}
-  session[:history] = []
-  set :server, 'thin'
-  set :sockets, []
+set :server, 'thin'
+set :sockets, []
+
+# In-memory session object
+session = {}
+session[:books] = {}    # {:tnr => book_object}
+session[:history] = []  # Array of Hash
+                        # ex: {:path => "/omtale" :book => session[:books][:tnr]}
+session[:current] = nil # Current book in session
 
 # before each request
 before do
   session[:locale] = params[:locale] if params[:locale]
+  @history = session[:history]
 end
 
 # Routing
 get '/' do
-  session[:history] = []
   # Nysgjerrig på boka?
+
+  # Clear session history
+  session[:history] = []
   logger.info("Sesjon - -")
+
   slim(:index, :layout => false)
 end
 
@@ -45,14 +54,45 @@ get '/timeout' do
 end
 
 get '/omtale' do
-  #redirect '/omtale/' + session[:book].book_id.to_s.match(/tnr_(.*)/)[1]
-  redirect '/' unless session[:book]
-  session[:history].push({:tnr => session[:book].book_id,
-                          :title => session[:book].title,
-                          :cover_url => session[:book].cover_url,
-                          :creatorName => session[:book].creatorName})
-  logger.info("Omtalevisning #{session[:book].book_id} #{session[:book].review_collection.size}")
-  slim :omtale, :locals => {:book => session[:book], :history => session[:history].uniq}
+  redirect '/' unless session[:current]
+
+  session[:history].push({:path => '/omtale', :tnr => session[:current].tnr})
+  logger.info("Omtalevisning #{session[:current].book_id} #{session[:current].review_collection.size}")
+  slim :omtale, :locals => {:book => session[:current]}
+end
+
+get '/omtale/:tnr' do
+  # Help route to fetch book manually by tnr
+  tnr = params[:tnr].strip.to_i
+  session[:books][tnr] = Book.new(tnr)
+  session[:current] = session[:books][tnr]
+
+  redirect '/omtale'
+end
+
+get '/flere' do
+  # Flere bøker av forfatteren
+
+  session[:history].push({:path => '/flere', :tnr => session[:current].tnr})
+  logger.info("Flere - #{session[:current].same_author_collection.size}")
+  slim :flere, :locals => {:book => session[:current]}
+end
+
+get '/relaterte' do
+  # Noe som ligner, relaterte bøker
+
+  session[:history].push({:path => '/relaterte', :tnr => session[:current].tnr})
+  logger.info("Relaterte - #{session[:current].similar_works_collection.size}")
+  slim :relaterte, :locals => {:book => session[:current]}
+end
+
+get '/back' do
+  # Route to trigger history -1 - works like browsers back-button
+
+  session[:history] = session[:history][0...-1]
+  back = session[:history].pop
+  session[:current] = session[:books][back[:tnr]]
+  redirect back[:path]
 end
 
 get '/checkformat/:tnr' do
@@ -78,41 +118,15 @@ get '/checkformat/:tnr' do
 end
 
 get '/populate/:tnr' do
-  session[:book_new] = Book.new(params[:tnr].strip.to_i)
+  tnr = params[:tnr].strip.to_i
+  session[:books][:new] = session[:books][:tnr] || Book.new(tnr)
   "success!"
 end
 
 get '/copy' do
-  session[:book] = session[:book_new]
-end
-
-get '/omtale/:tnr' do
-  # lag bok fra tittelnummer og hent max fire anmeldelser
-  session[:book] = Book.new(params[:tnr].strip.to_i)
-  session[:history].push ({:tnr => session[:book].book_id,
-                          :title => session[:book].title,
-                          :cover_url => session[:book].cover_url,
-                          :creatorName => session[:book].creatorName})
-  slim :omtale, :locals => {:book => session[:book], :history => session[:history].uniq}
-end
-
-get '/flere' do
-  # Flere bøker av forfatteren
-  logger.info("Flere - #{session[:book].same_author_collection.size}")
-  slim :flere, :locals => {:book => session[:book], :history => session[:history].uniq}
-end
-
-get '/relaterte' do
-  # Noe som ligner, relaterte bøker
-  logger.info("Relaterte - #{session[:book].similar_works_collection.size}")
-  slim :relaterte, :locals => {:book => session[:book], :history => session[:history].uniq}
-end
-
-get '/historikk' do
-  # Titler som har vært vist i omtalevisning. Nullstilles når man kommer til
-  # nysgjerrig på boka-siden.
-  logger.info("Historikk - #{session[:history].uniq.size}")
-  slim :historikk, :locals => {:book => session[:book], :history => session[:history].uniq.reverse}
+  tnr = session[:books][:new].tnr
+  session[:books][tnr] = session[:books][:new]
+  session[:current] = session[:books][tnr]
 end
 
 get '/ws' do

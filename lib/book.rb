@@ -3,7 +3,7 @@ require "nokogiri"
 require "faraday"
 
 class Book
-  attr_accessor :book_id, :title, :format, :cover_url, :isbn, :creator_id, :creatorName, :responsible, :ratings,
+  attr_accessor :book_id, :title, :format, :cover_url, :isbn, :creator_id, :creatorName, :responsible, :ratings, :tnr,
                 :work_id, :work_isbn, :review_collection, :same_author_collection, :similar_works_collection, :abstract
 
   def initialize(tnr)
@@ -25,12 +25,13 @@ class Book
      @same_author_collection  : array of books by same author
      @ratings                 : array of ratings
 =end
-    
+
+    @tnr = tnr
     @ratings                  = [] # ratings format {:source, :num_raters, :rating}
     @review_collection        = []
     @same_author_collection   = []
     @similar_works_collection = []
-    
+
     url      = 'http://data.deichman.no/resource/tnr_' + tnr.to_s
     @book_id = RDF::URI(url)
     query    = QUERY.select(:title, :format, :isbn, :work_id, :creator_id, :responsible, :abstract)
