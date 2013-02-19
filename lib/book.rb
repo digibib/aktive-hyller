@@ -3,7 +3,7 @@ require "nokogiri"
 require "faraday"
 
 class Book
-  attr_accessor :book_id, :title, :format, :cover_url, :isbn, :creator_id, :creatorName, :responsible, :ratings, :tnr,
+  attr_accessor :book_id, :title, :format, :cover_url, :isbn, :creator_id, :creatorName, :responsible, :rating, :tnr,
                 :work_id, :work_isbn, :review_collection, :same_author_collection, :similar_works_collection, :abstract
 
   def initialize(tnr)
@@ -27,7 +27,7 @@ class Book
 =end
 
     @tnr = tnr
-    @ratings                  = [] # ratings format {:source, :num_raters, :rating}
+    @rating                   = {} # ratings format {:source, :num_raters, :rating}
     @review_collection        = []
     @same_author_collection   = []
     @similar_works_collection = []
@@ -193,14 +193,20 @@ class Book
     gr_num_raters = xml.xpath('//ratings_count').first.content.to_i
     gr_rating = xml.xpath('//ratings_sum').first.content.to_i
 
-    @ratings.push({:rating => gr_rating, :num_raters => gr_num_raters, :source=>"GoodReads"}) if gr_rating
+    if gr_rating
+      @rating[:rating] = gr_rating
+      @rating[:num_raters] = gr_num_raters
+      @rating[:source] = "GoodReads"
+    end
     @review_collection.push({:source => "GoodReads", :text => gr_description}) if gr_description
   end
 
   def Bokelskere
     return nil unless @isbn
+     # Don't bother with Bokelskere if we have ratings from Goodreads
+    return nil if @rating[:rating]
     puts "isbn til bokelskere: ", @isbn
-    
+
     timing_start = Time.now
     conn = Faraday.new "http://bokelskere.no"
     begin
@@ -214,22 +220,23 @@ class Book
       puts "\nDEBUG:timeout getting data from Bokelskere after #{Time.now - timing_start} seconds\n"
       result = nil
     end
-    
+
+    return nil unless result
     return nil unless result.body
     return nil if result.body.strip.empty?
     return nil if result.body =~ /Not Found/
 
-    jsonres = JSON.parse(result.body) 
+    jsonres = JSON.parse(result.body)
     if jsonres['antall_terningkast'].to_i > 0
-      be_rating = jsonres['gjennomsnittelig_terningkast']
-      be_num_raters = jsonres['antall_terningkast']
-      @ratings.push( {:rating => be_rating, :num_raters => be_num_raters, :source => "Bokelskere"})
+      @rating[:num_raters] = jsonres['antall_terningkast']
+      @rating[:rating] = (jsonres['gjennomsnittelig_terningkast'] / 1.2) * @rating[:num_raters]
+      @rating[:source] = "Bokelskere"
     end
   end
 
   def Novelist
     return nil unless @isbn
-  
+
     timing_start = Time.now
 
     #TODO undersøke andre muligheter for å få dns til ebscohost

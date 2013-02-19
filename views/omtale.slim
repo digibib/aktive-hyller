@@ -12,32 +12,19 @@ div id="contents"
             div.book-title #{book.title}
         div class="hyllestatus inne" Boka er kanskje inne
     div.ratings
-      - for rating in book.ratings
-        -if rating[:source] =~ /GoodReads/ and rating[:num_raters] > 0
-          div.rating
-            - red_stars = (rating[:rating]/rating[:num_raters]).to_i
-            - red_stars.times do
-              img src="/img/star_orange.png" class="star"
-            - if red_stars != (rating[:rating]/rating[:num_raters].to_f).round
-              - red_stars += 1
-              img src="/img/star_half.png" class="star"
-            - (5-red_stars).times do
-              img src="/img/star_gray.png" class="star"
-            p Basert på #{rating[:num_raters]} rangering#{'er' if rating[:num_raters] > 1 }
-              <br/> fra GoodReads
-        / -if rating[:source] =~ /Bokelskere/ and rating[:num_raters] > 0
-        /   div
-        /     - rating_converted = rating[:rating] / 1.2
-        /     - red_stars = rating_converted.to_i
-        /     - red_stars.times do
-        /       img src="/img/star_orange.png" class="star"
-        /     - if red_stars != rating_converted.round
-        /       - red_stars += 1
-        /       img src="/img/star_half.png" class="star"
-        /     - (5-red_stars).times do
-        /       img src="/img/star_gray.png" class="star"
-        /     'Bokelskere (#{rating[:num_raters]} vurdering#{'er' if rating[:num_raters] > 1})
-
+      - rating = book.rating
+      -if rating[:source] and rating[:num_raters] > 0
+        div.rating
+          - red_stars = (rating[:rating]/rating[:num_raters]).to_i
+          - red_stars.times do
+            img src="/img/star_orange.png" class="star"
+          - if red_stars != (rating[:rating]/rating[:num_raters].to_f).round
+            - red_stars += 1
+            img src="/img/star_half.png" class="star"
+          - (5-red_stars).times do
+            img src="/img/star_gray.png" class="star"
+          p Basert på #{rating[:num_raters]} rangering#{'er' if rating[:num_raters] > 1 }
+            <br/> fra #{rating[:source]}
 
   div id="content-right"
     div id="omtale-wrapper" class="iosSlider"
