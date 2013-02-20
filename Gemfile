@@ -6,6 +6,7 @@ gem "slim"
 gem 'sinatra-websocket'
 gem "sinatra-contrib"
 gem "sinatra-r18n" # internationalization
+gem "em-websocket", "0.3.8" # broken API after
 gem "rdf"
 gem "rdf-virtuoso", :git => "https://github.com/digibib/rdf-virtuoso.git"
 gem 'capistrano'
