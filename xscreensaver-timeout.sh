@@ -3,7 +3,7 @@
 process() {
 while read input; do 
   case "$input" in
-    BLANK*)     /usr/bin/pkill firefox ;;
+    BLANK*)     (echo 'GET /timeout ';sleep 1) | telnet localhost 4567 ;;
     UNBLANK*)	echo "start something? " ;;
     LOCK*)	echo "lock .... do nothing yet" ;;
   esac
