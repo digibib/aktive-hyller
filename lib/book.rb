@@ -212,9 +212,9 @@ class Book
     if gr_rating
       @rating[:rating] = gr_rating
       @rating[:num_raters] = gr_num_raters
-      @rating[:source] = "GoodReads"
+      @rating[:source] = "Goodreads"
     end
-    @review_collection.push({:source => "GoodReads", :text => gr_description}) if gr_description
+    @review_collection.push({:source => "Goodreads", :text => gr_description}) if gr_description
   end
 
   def Bokelskere
