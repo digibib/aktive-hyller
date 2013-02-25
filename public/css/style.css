@@ -64,7 +64,7 @@ button#avslutt span    { position:relative; bottom:15px;}
 #avslutt-ikon      { position: absolute; top:35px; left:30px;}
 div#logo-container { height:170px; background: #444;}
 div#top-buttons    { float: right; margin: 24px;}
-div#contents       { padding: 0; float: left; width: 1365px; overflow:hidden;}
+div#contents       { padding: 0; float: left; width: 1365px; overflow:hidden; position: relative;}
 div#content-left   { margin-left: 94px; height: 460px; width: 300px; float: left; }
 
 div#content-right  { float: left; margin-left:85px; width:785px; height: 460px; }
@@ -124,7 +124,7 @@ div#liste-wrapper  { margin-left:10px; overflow:auto; width:1430px; height: 882p
 div.liste-bilde    { height:320px; width: 220px; margin: auto; overflow:hidden;
                      padding: 0; position: absolute; left:40px; bottom:40px; background:#fff;
                      box-shadow: 6px 6px 7px 2px rgba(0,0,0,0.35); }
-ul.listevisning    { list-style-type: none }
+ul.listevisning    { list-style-type: none; padding-top:50px; }
 ul.listevisning li { display: inline-block; width: 260px; height: 450px; position: relative;
                      background-color: #666; margin: 0 50px 80px 0; padding: 20px;
                      box-shadow: 1px  2px 20px 5px rgba(0,0,0,0.25);
@@ -137,6 +137,10 @@ p.liste-tittel     { text-align: left; font-weight:bold; font-size:1.3em; margin
 
 ul.review-list     { list-style:none; padding:0; margin:0; width:100%; text-align:left;}
 ul.review-list li  { padding:0 10px; height:300px; }
+
+div#fade-to-white  { position: absolute; top: 0; left: 0; width:100%; padding: 50px 0;
+                     background-image: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);}
+
 
 /* slider container */
 .iosSlider {
