@@ -26,5 +26,7 @@ html
           p id="title" Flere bøker av #{book.creatorName}
         - elsif request.path == "/relaterte"
           p id="title" Noe som ligner på
-          p id="sub-title" #{book.title} av #{book.creatorName}
+          p id="sub-title"
+            span "#{book.title}"&nbsp;
+            span style="font-weight:normal" av #{book.creatorName}
       == yield
