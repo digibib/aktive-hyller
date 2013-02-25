@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require "rdf/virtuoso"
 require "nokogiri"
 require "faraday"
@@ -86,17 +87,32 @@ class Book
     end
 
     #fetch_cover_url(self.book_id) unless self.cover_url
-    
+
     fetch_local_reviews(limit=4)
     fetch_remote_data
     fetch_same_author_books
     fetch_similar_works
-    
+    enforce_review_order
+
     puts "isbn_array: ", @work_isbns
   end
 
   #private
-  
+
+  def enforce_review_order
+
+    # if language = norsk
+    order = ["Ønskebok", "Bibliotekbasen", "Bokkilden", "Katalogkrydder", "Goodreads", "Novelist"]
+            # kilder som ikke er i order arrayen kommer først (i.e alle deichmankildene)
+    # else
+    # order = ["Novelist", "Goodreads", "Ønskebok", "Bibliotekbasen", "Bokkilden", "Katalogkrydder"]
+    # end
+    @review_collection.sort! do |a,b|
+      (order.index(a[:source]) || -1) <=> (order.index(b[:source]) || -1)
+    end
+
+  end
+
   def fetch_cover_url(book_id = self.book_id)
     # Find alternative cover from optionals:
     # 1. other cover from work in same language
