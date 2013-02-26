@@ -1,3 +1,4 @@
 logs/*.log
 config/settings.yml
 public/img/leftbar.png
+public/img/logo.png
