@@ -1,0 +1,16 @@
+form name="barcode" method='post'
+  input type="hidden" class="barcodeinput" onkeypress='GetChar()'
+  
+javascript:
+  $(document).keypress(function(e){
+    var barcodeinput = document.getElementById('barcodeinput')
+    var char = String.fromCharCode(e.keyCode);
+    // Enter is #13
+    if(e.keyCode; == 13){ // this is Enter (keyascii code 13)
+      //alert("Enter pressed");
+    } else {
+      $('barcodeinput').value = $('barcodeinput').value + char;
+      alert($('barcodeinput').value());
+    }
+  }
+

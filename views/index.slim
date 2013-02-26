@@ -21,4 +21,7 @@ html
           button[class="top-button" id="avbryt-knapp"] == t.cancel
       div[id="overlay"]
 
-== render :slim, :'websocket' if SETTINGS["rfid"]
+- if SETTINGS["rfid"]
+  == render :slim, :'websocket' 
+- else
+  == render :slim, :'barcode' 
