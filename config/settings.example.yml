@@ -9,4 +9,7 @@ department:      "voksenavdelingen"
 
 # apperance
 theme_color: '#e65740'
+
+# leftbar
+leftbar_image: false  # set to true to override leftbar css with image 'img/leftpar.png'
 leftbar_color: '#e65740'

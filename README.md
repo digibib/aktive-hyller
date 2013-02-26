@@ -284,4 +284,5 @@ EOF
 
 * Rename `config/settings.example.yml' to 'settings.yml' and set variables
 * Replace the file `public/img/logo.png` with your logo  (150x150px white on transparent background)
+* If you have a leftbar image to replace with leftbar css, name it `public/img/leftbar.png` and set leftbar_image: true in settings.yml
 * Run `rake configure`
