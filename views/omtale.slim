@@ -99,6 +99,12 @@ div[id="overlay"]
 javascript:
   $(document).ready(function () {
 
+    $('button#avbryt-knapp').on('click', function() {
+       request.abort();
+       $('#overlay').hide();
+       $('#vi-leter').hide();
+     });
+
     $('#indicator li:first').addClass("active");
 
     $('#omtale-wrapper').iosSlider({
