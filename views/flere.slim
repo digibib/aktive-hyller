@@ -23,7 +23,7 @@ div id="vi-leter"
     button[class="top-button" id="avbryt-knapp"] == t.cancel
 div[id="overlay"]
 
-== render :slim, :'websocket'
+== render :slim, :'websocket' if SETTINGS["rfid"]
 javascript:
   $(document).ready(function () {
 
