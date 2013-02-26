@@ -5,7 +5,7 @@ while read input; do
   case "$input" in
     BLANK*)     
       (echo 'GET /timeout ';sleep 1) | telnet localhost 4567 
-      [ -f final1.mp4 ] && avplay -fs -loop 0 final1.mp4 # screensaver in full screen loop
+      #[ -f aktivehyller.mp4 ] && avplay -fs -loop 0 aktivehyller.mp4 # screensaver in full screen loop
       ;;
     UNBLANK*)	echo "start something? " ;;
     LOCK*)	echo "lock .... do nothing yet" ;;
