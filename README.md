@@ -52,10 +52,10 @@ restart window manager
 #### RFID websocket client
 
     git checkout feature/sinatra-integration
-    
+
     cp config/config.yml-dist config/config.yml
-    
-set ports and 
+
+set ports and
 
 ## Virtuoso install
 
@@ -83,10 +83,10 @@ add virtualhost directive:
 
     DocumentRoot /var/www/hostname
     ServerName hostname
-      
+
     ProxyRequests Off
-    ProxyPreserveHost on 
-    ProxyTimeout        300    
+    ProxyPreserveHost on
+    ProxyTimeout        300
     # Proxy ACL
     <Proxy *>
         Order deny,allow
@@ -96,7 +96,7 @@ add virtualhost directive:
    <Proxy /sparql>
     Allow from all
     ProxyPass http://hostname:8890/sparql timeout=300
-    ProxyPassReverse http://hostname:8890/sparql 
+    ProxyPassReverse http://hostname:8890/sparql
    </Proxy>
    <Proxy /sparql-auth>
     Allow from all
@@ -130,16 +130,12 @@ To hide tooltip and deactivate status messages:
 
 * [Status-4-Evar]: https://addons.mozilla.org/en-US/firefox/addon/status-4-evar/
 
-to reset browser after inactivity
-
-* [Reset Kiosk]: https://addons.mozilla.org/en-US/firefox/addon/reset-kiosk/
-
 to handle scrolling and sensitivity:
 
 * [Grab and drag]: http://grabanddrag.mozdev.org/installation.html
 
 ### other Firefox settings
-in address window `about:config` 
+in address window `about:config`
 
     nglayout.enable_drag_images til false
 
@@ -169,7 +165,7 @@ cat <<EOF | tee ~/code/xscreensaver-timeout.sh && chmod +x ~/code/xscreensaver-t
 #!/bin/bash
 
 process() {
-while read input; do 
+while read input; do
   case "$input" in
     BLANK*)     /usr/bin/pkill firefox ;;
     UNBLANK*)	echo "start something? " ;;
@@ -252,7 +248,7 @@ EOF
 ```
 
 2. create upstart jobs
-    
+
 ```rvmsudo foreman export upstart /etc/init -a aktivehyller -p 4567 -u aktiv -l ~/code/aktive-hyller/logs/upstart```
 
 this creates an upstart job for both rfid reader and active shelf on port 4567 with logs on ~/code/aktive-hyller/logs/upstart
