@@ -158,7 +158,7 @@ EOF
 ```
 ### screensaver based browser reset
 
-xscreensaver can be set to trigger events, and this is a good way to script firefox browser reset:
+xscreensaver can be set to trigger events, and this is a good way to script timeout in firefox browser:
 
 ```
 cat <<EOF | tee ~/code/xscreensaver-timeout.sh && chmod +x ~/code/xscreensaver-timeout.sh
@@ -167,9 +167,9 @@ cat <<EOF | tee ~/code/xscreensaver-timeout.sh && chmod +x ~/code/xscreensaver-t
 process() {
 while read input; do
   case "$input" in
-    BLANK*)     /usr/bin/pkill firefox ;;
-    UNBLANK*)	echo "start something? " ;;
-    LOCK*)	echo "lock .... do nothing yet" ;;
+    BLANK*)   (echo 'GET /timeout ';sleep 1) | telnet localhost 4567  ;;
+    UNBLANK*)	 echo "start something? " ;;
+    LOCK*)	   echo "lock .... do nothing yet" ;;
   esac
 done
 }
@@ -286,3 +286,13 @@ EOF
 * Replace the file `public/img/logo.png` with your logo  (150x150px white on transparent background)
 * If you have a leftbar image to replace with leftbar css, name it `public/img/leftbar.png` and set leftbar_image: true in settings.yml
 * Run `rake configure`
+
+## Screen Saver
+
+you will need to activate xscreensaver and make a new play format in ~/.xscreensaver:
+```
+"Aktiv hylle screensaver" mplayer -x 1680 -y 1050 -wid $XSCREENSAVER_WINDOW -fs -loop 0 \
+                          [/path/to/movie] >> /dev/null 2>&1 \n\
+```
+
+this one can now be selected in xscreensaver-demo
