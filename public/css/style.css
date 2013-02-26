@@ -73,7 +73,7 @@ div#content-bottom { clear:both; margin-top: 55px; width:1365px; height:367px;
                      background: #555; color: #fff; padding:10px;}
 div.flere          { float:left; width: 660px; padding-left:10px;}
 div.relaterte      { float:left; width: 660px; border-left: 2px dashed white; padding-left:20px;}
-div.logo           { width: 218px; height:170px; padding:10px; background: #555;}
+div.logo           { width: 218px; height:170px; padding:10px; }
 img.logo           { margin-left:10px; width: 150px; height: 150px;}
 button.top-button  { border-radius: 5px; height: 80px; width: 240px;
                      margin-left: 24px; font-size: 1.2em; color: #444;
