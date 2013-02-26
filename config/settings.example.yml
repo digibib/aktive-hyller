@@ -8,8 +8,8 @@ book_status_api: http://bibsyst/???????
 department:      "voksenavdelingen"
 
 # apperance
-theme_color: '#e65740'
+theme_color: 'rgba(230,87,64,0)' 
 
 # leftbar
 leftbar_image: false  # set to true to override leftbar css with image 'img/leftpar.png'
-leftbar_color: '#e65740'
+leftbar_color: 'rgba(230,87,64,0)' # set opacity (last digit) to 0 to remove leftbar
