@@ -8,5 +8,5 @@ book_status_api: http://bibsyst/???????
 department:      "voksenavdelingen"
 
 # apperance
-theme_color: '#f8941d'
-leftbar_color: '#f8941d'
+theme_color: '#e65740'
+leftbar_color: '#e65740'

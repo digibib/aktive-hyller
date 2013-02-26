@@ -11,6 +11,8 @@ html
   body
     div id="container" class="select-disable dim"
       div id="left-bar"
+        div class="logo"
+          img class="logo" src="img/logo.png"
         - unless @history.size <= 1
           a href="/back"
             button id="tilbake" class="square": img src="img/tilbake.png" id="tilbake-pil"
