@@ -4,7 +4,7 @@ require "nokogiri"
 require "faraday"
 
 class Book
-  attr_accessor :book_id, :title, :format, :cover_url, :isbn, :creator_id, :creatorName, :responsible, :rating, :tnr,
+  attr_accessor :book_id, :title, :format, :cover_url, :isbn, :creator_id, :creatorName, :responsible, :rating, :tnr, :lang,
                 :work_id, :work_isbn, :review_collection, :same_author_collection, :similar_works_collection, :abstract
 
   def initialize(tnr)
@@ -35,7 +35,7 @@ class Book
 
     url      = 'http://data.deichman.no/resource/tnr_' + tnr.to_s
     @book_id = RDF::URI(url)
-    query    = QUERY.select(:title, :format, :isbn, :work_id, :creator_id, :responsible, :abstract)
+    query    = QUERY.select(:title, :format, :isbn, :work_id, :creator_id, :responsible, :abstract, :lang)
     query.distinct.from(DEFAULT_GRAPH)
     query.sample(:cover_url, :workAbstract)
     query.group_digest(:creatorName, ', ', 1000, 1)
@@ -51,19 +51,20 @@ class Book
     query.optional([:work_id, RDF::FABIO.hasManifestation, @book_id])
     query.optional([:work_id, RDF::FABIO.hasManifestation, :book],
                 [:book, RDF::DC.abstract, :workAbstract])
-    
+
     puts "#{query}"
     results       = REPO.select(query)
-    
+
     unless results.empty?
       @title       = results.first[:title]
       @format      = results.first[:format]
       @cover_url   = results.first[:cover_url]
       @isbn        = results.first[:isbn].to_s if results.first[:isbn]
       @work_id     = results.first[:work_id]
-      @creator_id  = results.first[:creator_id]  
+      @creator_id  = results.first[:creator_id]
       @creatorName = results.first[:creatorName] unless results.first[:creatorName].to_s.empty?
       @responsible = results.first[:responsible]
+      @lang        = results.first[:lang]
       unless results.first[:abstract].to_s.empty?
         @abstract  = results.first[:abstract]
       else
@@ -100,13 +101,15 @@ class Book
   #private
 
   def enforce_review_order
+    # Sorter etter rangeringen i arrayen 'order'
+    # kilder som ikke er i 'order' kommer først (i.e alle deichmankildene)
 
-    # if language = norsk
-    order = ["Ønskebok", "Bibliotekbasen", "Bokkilden", "Katalogkrydder", "Goodreads", "Novelist"]
-            # kilder som ikke er i order arrayen kommer først (i.e alle deichmankildene)
-    # else
-    # order = ["Novelist", "Goodreads", "Ønskebok", "Bibliotekbasen", "Bokkilden", "Katalogkrydder"]
-    # end
+    if @lang == RDF::URI("http://lexvo.org/id/iso639-3/eng")
+      order = ["Novelist", "Goodreads", "Ønskebok", "Bibliotekbasen", "Bokkilden", "Katalogkrydder"]
+     else
+      order = ["Ønskebok", "Bibliotekbasen", "Bokkilden", "Katalogkrydder", "Goodreads", "Novelist"]
+    end
+
     @review_collection.sort! do |a,b|
       (order.index(a[:source]) || -1) <=> (order.index(b[:source]) || -1)
     end
