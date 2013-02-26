@@ -279,3 +279,9 @@ stop on (stopping network-interface
          and runlevel [016])
 EOF
 ```
+
+## Aktive hyller configuration
+
+* Rename `config/settings.example.yml' to 'settings.yml' and set variables
+* Replace the file `public/img/logo.png` with your logo  (150x150px white on transparent background)
+* Run `rake configure`
