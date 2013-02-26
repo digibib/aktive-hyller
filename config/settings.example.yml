@@ -1,0 +1,11 @@
+# book reader
+rfid: true       # set to false to use barcode scanner
+
+# data access
+sparql_endpoint: http://localhost:8890/sparql
+deafult_graph:   http://example.com/books
+book_status_api: http://bibsyst/???????
+department:      "voksenavdelingen"
+
+# apperance
+theme_color: '#f8941d'

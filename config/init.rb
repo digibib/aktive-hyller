@@ -5,12 +5,12 @@ require "rdf"
 require "rdf/virtuoso"
 require "sinatra/r18n" # internationalization
 
-# read configuration file 
-config = YAML::load(File.open(File.join('config', 'repository.yml')))
-              
+# read configuration file
+SETTINGS = YAML::load(File.open(File.join('config', 'settings.yml')))
+
 # Global constants
-REPO          = RDF::Virtuoso::Repository.new(config["sparql_endpoint"])
-DEFAULT_GRAPH = RDF::URI(config["deafult_graph"])
+REPO          = RDF::Virtuoso::Repository.new(SETTINGS["sparql_endpoint"])
+DEFAULT_GRAPH = RDF::URI(SETTINGS["deafult_graph"])
 QUERY         = RDF::Virtuoso::Query
 
 # load all library files
