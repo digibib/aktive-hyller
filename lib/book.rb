@@ -8,24 +8,8 @@ class Book
                 :work_id, :work_isbn, :review_collection, :same_author_collection, :similar_works_collection, :abstract
 
   def initialize(tnr)
-=begin
-  her henter vi det vi trenger i første rekke
-  1. Book - den fysiske boka som legges på stasjonen
-     @book_id     : bokid (uri)
-     @title       : tittel (literal)
-     @format      : fysisk format (uri)
-     @cover_url   : bilde (uri) hvis på manifestasjon
-     @isbn        : (literal)
-     @creator     : forfatterid (uri)
-     @creatorName : forfatter (literal)
-     @responsible : redaktørtekst (literal)
-     @work_id     : verksid (uri)
-     @work_isbns  : array of isbn uris
-     @abstract    : 520-note
-     @review_collection       : array of reviews on book
-     @same_author_collection  : array of books by same author
-     @ratings                 : array of ratings
-=end
+    timing_start = Time.now
+    print "\nSPARQL - get book info: "
 
     @tnr = tnr
     @rating                   = {} # ratings format {:source, :num_raters, :rating}
@@ -52,9 +36,9 @@ class Book
     query.optional([:work_id, RDF::FABIO.hasManifestation, :book],
                 [:book, RDF::DC.abstract, :workAbstract])
 
-    puts "#{query}"
+    #puts "#{query}"
     results       = REPO.select(query)
-
+    print "#{Time.now - timing_start} s."
     unless results.empty?
       @title       = results.first[:title]
       @format      = results.first[:format]
@@ -73,10 +57,13 @@ class Book
 
       # fetch isbns for work into array
       if @work_id
+        timing_start = Time.now
+        print "\nSPARQL - get work isbns: "
         query = QUERY.select(:work_isbns)
         query.select.where([@work_id, RDF::BIBO.isbn, :work_isbns])
-        puts "#{query}"
+        #puts "#{query}"
         results     = REPO.select(query)
+        print "#{Time.now - timing_start} s."
         @work_isbns = results.bindings[:work_isbns].to_a.uniq
       end
       # return either cover_url, same_language_image or any_image
@@ -89,13 +76,29 @@ class Book
 
     #fetch_cover_url(self.book_id) unless self.cover_url
 
+    timing_start = Time.now
+    print "\nSPARQL - get local reviews: "
     fetch_local_reviews(limit=4)
-    fetch_remote_data
+    print "#{Time.now - timing_start} s."
+
+    timing_start = Time.now
+    print "\nSPARQL - same author books: "
     fetch_same_author_books
+    print "#{Time.now - timing_start} s."
+
+    timing_start = Time.now
+    print "\nSPARQL - similar works: "
     fetch_similar_works
+    print "#{Time.now - timing_start} s."
+
+    timing_start = Time.now
+    print "\nHTTP - get remote data: "
+    fetch_remote_data
+    print "#{Time.now - timing_start} s.\n"
+
     enforce_review_order
 
-    puts "isbn_array: ", @work_isbns
+    #puts "isbn_array: ", @work_isbns
   end
 
   #private
@@ -136,8 +139,8 @@ class Book
            [:any_book, RDF::FOAF.depiction, :any_image],
            [:any_book, RDF::DC.format, self.format])
 
-    #puts query              
-      
+    #puts query
+
     results = REPO.select(query)
     #puts results
     # return either same_language_image or any_image
@@ -145,10 +148,10 @@ class Book
   end
 
   def fetch_local_reviews(limit=nil)
-    reviewgraph = RDF::URI('http://data.deichman.no/reviews') 
+    reviewgraph = RDF::URI('http://data.deichman.no/reviews')
     # her henter vi omtale
     query = QUERY.select(:review_id, :review_title, :review_text, :review_source, :reviewer)
-      query.distinct  
+      query.distinct
       query.from(reviewgraph)
       if self.work_id
         query.where([:review_id, RDF::DC.subject, self.work_id])
@@ -161,8 +164,8 @@ class Book
                      [:source_id, RDF::FOAF.name, :review_source])
       query.optional([:review_id, RDF::REV.reviewer, :reviewer])
       query.filter('lang(?review_text) != "nn"')
-      
-    puts query
+
+    #puts query
     reviews = REPO.select(query)
     # reviews is a graph RDF object, RDF::Query::Solutions
     # http://rdf.rubyforge.org/RDF/Query/Solutions.html
@@ -201,9 +204,10 @@ class Book
         req.options[:open_timeout] = 2
       end
     rescue Faraday::Error::TimeoutError
-      puts "\nDEBUG:timeout getting data from GoodReads after #{Time.now - timing_start} seconds\n"
+      return
+      #puts "\nDEBUG:timeout getting data from GoodReads after #{Time.now - timing_start} seconds\n"
     end
-    
+
 
     return nil unless result.body
     return nil if result.body =~ /book not found/
@@ -224,7 +228,7 @@ class Book
     return nil unless @isbn
      # Don't bother with Bokelskere if we have ratings from Goodreads
     return nil if @rating[:rating]
-    puts "isbn til bokelskere: ", @isbn
+    #puts "isbn til bokelskere: ", @isbn
 
     timing_start = Time.now
     conn = Faraday.new "http://bokelskere.no"
@@ -236,7 +240,8 @@ class Book
         req.options[:open_timeout] = 4
       end
     rescue Faraday::Error::TimeoutError
-      puts "\nDEBUG:timeout getting data from Bokelskere after #{Time.now - timing_start} seconds\n"
+      return
+      #puts "\nDEBUG:timeout getting data from Bokelskere after #{Time.now - timing_start} seconds\n"
       result = nil
     end
 
@@ -273,7 +278,8 @@ class Book
         req.options[:open_timeout] = 2
       end
     rescue Faraday::Error::TimeoutError
-      puts "\nDEBUG:timeout getting data from Novelist after #{Time.now - timing_start} seconds\n"
+      return
+      #puts "\nDEBUG:timeout getting data from Novelist after #{Time.now - timing_start} seconds\n"
     end
 
     return nil if result.nil?
@@ -288,13 +294,13 @@ class Book
   end
 
   def Bokkilden
-    @work_isbns = [@isbn] unless @work_isbns 
+    @work_isbns = [@isbn] unless @work_isbns
     return nil if @work_isbns.empty?
 
     timing_start = Time.now
     conn = Faraday.new "http://partner.bokkilden.no"
     bk_ingress = ""
- 
+
     begin
       @work_isbns.each do |isbn|
         res = conn.get do |req|
@@ -318,13 +324,14 @@ class Book
         end
       end
     rescue Faraday::Error::TimeoutError
-      puts "\nDEBUG:timeout getting data from Bokkilden after #{Time.now - timing_start} seconds\n"
+      return
+      #puts "\nDEBUG:timeout getting data from Bokkilden after #{Time.now - timing_start} seconds\n"
     end
 
     return nil if bk_ingress.empty?
     @review_collection.push({:text => bk_ingress, :source => "Bokkilden"})
   end
-  
+
   def fetch_same_author_books
     # this query fetches other works by same author
     query = QUERY.select(:similar_work, :lang, :original_language, :book_title, :book)
@@ -344,17 +351,17 @@ class Book
       query.optional([:book, RDF::FOAF.depiction, :cover_url])
       query.optional([:book, RDF::DEICH.originalLanguage, :original_language])
       query.minus([:work, RDF::FABIO.hasManifestation, :book])
-    
-    puts "Her: #{query}"
+
+    #puts "Her: #{query}"
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
     return nil unless results
     results.order_by(:book_title)
-    results.each do |same_author_books| 
+    results.each do |same_author_books|
     @same_author_collection.push({
-      :book => same_author_books[:book], 
-      :title => same_author_books[:book_title], 
-      :cover_url => same_author_books[:cover_url] ? same_author_books[:cover_url] : fetch_cover_url(same_author_books[:book]), 
+      :book => same_author_books[:book],
+      :title => same_author_books[:book_title],
+      :cover_url => same_author_books[:cover_url] ? same_author_books[:cover_url] : fetch_cover_url(same_author_books[:book]),
       :creatorName => same_author_books[:creatorName]
       })
     end
@@ -385,26 +392,26 @@ class Book
         [:similar_book_creator, RDF::FOAF.name, :creatorName, bookgraph])
     query.minus([:similar_work, RDF::DC.creator, :creator, bookgraph])
     query.filter('(?predicate = <http://data.deichman.no/similarWork>) || (?predicate = <http://data.deichman.no/autoGeneratedSimilarity>)')
-    
+
     #puts "#{query}"
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
-    
+
     return nil unless results
 
-    results.each do |similar_book| 
+    results.each do |similar_book|
       @similar_works_collection.push({
-        :book => similar_book[:book], 
-        :title => similar_book[:book_title], 
-        :cover_url => similar_book[:cover_url] ? similar_book[:cover_url] : fetch_cover_url(similar_book[:book]), 
+        :book => similar_book[:book],
+        :title => similar_book[:book_title],
+        :cover_url => similar_book[:cover_url] ? similar_book[:cover_url] : fetch_cover_url(similar_book[:book]),
         :creatorName => similar_book[:creatorName]
         })
-    end    
-  end  
-  
+    end
+  end
+
   def select_manifestations(solutions)
     return nil if solutions.empty?
-    
+
     results = RDF::Query::Solutions.new
     # We only want one manifestation of each work
     # Iterate solutions and choose by priorities:
@@ -412,9 +419,9 @@ class Book
     # 2. originalLanguage = eng/swe/dan
     # 3. lang = eng
     # 4. lang = swe
-    # 5. lang = dan 
+    # 5. lang = dan
     distinct_works = Marshal.load(Marshal.dump(solutions)).select(:similar_work).distinct
-    
+
     distinct_works.each do |ds|
       catch :found_book do
         solutions.each do |s|
@@ -434,20 +441,20 @@ class Book
               throw :found_book
             end
           end
-        end      
+        end
         solutions.each do |s|
           if ds[:similar_work] == s[:similar_work]
-            if s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/eng") || 
+            if s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/eng") ||
                 s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/swe") ||
                 s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/dan")
               results << s
               throw :found_book
             end
           end
-        end 
-      end         
+        end
+      end
     end
-    
+
     return results
-  end  
+  end
 end
