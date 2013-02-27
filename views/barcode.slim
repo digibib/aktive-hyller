@@ -1,16 +1,20 @@
-form name="barcode" method='post'
-  input type="hidden" class="barcodeinput" onkeypress='GetChar()'
+form name="barcode" method='post' action="/"
+  input type="text" class="barcodeinput" value="" style="display:none"
+  input type="submit" class="barcodesubmit" style="display:none"
   
 javascript:
+  var barcodeinput = $('barcodeinput').val();
+  
   $(document).keypress(function(e){
-    var barcodeinput = document.getElementById('barcodeinput')
-    var char = String.fromCharCode(e.keyCode);
-    // Enter is #13
-    if(e.keyCode; == 13){ // this is Enter (keyascii code 13)
-      //alert("Enter pressed");
+    var key = String.fromCharCode(e.which);
+    if(e.which == 13){ // this is Enter (keyascii code 13)
+      //console.log(e);
+      console.log(barcodeinput);
+      console.log("enter pressed");
+      //$('barcodeinput').click; //alert("Enter pressed");
     } else {
-      $('barcodeinput').value = $('barcodeinput').value + char;
-      alert($('barcodeinput').value());
+      barcodeinput = barcodeinput + key;
+      //console.log(key_press);
     }
-  }
+  });
 
