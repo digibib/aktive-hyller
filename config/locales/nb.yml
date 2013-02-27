@@ -1,5 +1,9 @@
 # common terms
 cancel: Avbryt
+close: Avslutt
+CLOSE: AVSLUTT
+back: Tilbake
+BACK: TILBAKE
 looking: Vi leter etter boka, vennligst vent
 made_by: av
 fetched_from: Denne teksten er hentet fra

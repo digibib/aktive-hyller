@@ -1,5 +1,6 @@
-# book reader
-rfid: true       # set to false to use barcode scanner
+# supported readers
+rfid: true    
+barcode: true
 
 # data access
 sparql_endpoint: http://localhost:8890/sparql
