@@ -1,20 +1,26 @@
-form name="barcode" method='post' action="/"
+form id="barcode"
   input type="text" class="barcodeinput" value="" style="display:none"
   input type="submit" class="barcodesubmit" style="display:none"
   
-javascript:
-  var barcodeinput = $('barcodeinput').val();
-  
-  $(document).keypress(function(e){
-    var key = String.fromCharCode(e.which);
-    if(e.which == 13){ // this is Enter (keyascii code 13)
-      //console.log(e);
-      console.log(barcodeinput);
-      console.log("enter pressed");
-      //$('barcodeinput').click; //alert("Enter pressed");
-    } else {
-      barcodeinput = barcodeinput + key;
-      //console.log(key_press);
-    }
-  });
+  javascript:
+    var barcodeinput = '';
+    
+    $(document).keypress(function(e){
+      var key = String.fromCharCode(e.which);
+      if(e.which == 13){ // this is Enter (keyascii code 13)
+        //console.log(e);
+        console.log(barcodeinput);
+        console.log("enter pressed");
+        if(barcodeinput.length == 14) {
+          $('barcodeinput').val(barcodeinput);
+          $("#barcode").attr("action", "/omtale/"+barcodeinput.substr(5,6));
+          $('#barcode').submit();
+        } else {
+          console.log("invalid barcode");
+        }
+      } else {
+        // append barcode
+        barcodeinput += key;
+      }
+    });
 
