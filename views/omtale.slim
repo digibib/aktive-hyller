@@ -91,7 +91,7 @@ div id="vi-leter"
   p #{t.looking}
     span[id="loading"]
   div id="avbryt"
-    button[class="top-button" id="avbryt-knapp"] Avbryt
+    button[class="top-button" id="avbryt-knapp"] == t.cancel
 div[id="overlay"]
 
 == render :slim, :'websocket' if SETTINGS["rfid"]
