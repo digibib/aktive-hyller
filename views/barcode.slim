@@ -7,8 +7,7 @@ form id="barcode"
     
     $(document).keypress(function(e){
       var key = String.fromCharCode(e.which);
-      if(e.which == 13){ // this is Enter (keyascii code 13)
-        //console.log(e);
+      if(e.which == 13){ // (Enter ascii code 13)
         console.log(barcodeinput);
         console.log("enter pressed");
         if(barcodeinput.length == 14) {
@@ -17,6 +16,7 @@ form id="barcode"
           $('#barcode').submit();
         } else {
           console.log("invalid barcode");
+          barcodeinput = '';
         }
       } else {
         // append barcode

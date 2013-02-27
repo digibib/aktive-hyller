@@ -9,9 +9,10 @@ require "sinatra/r18n" # internationalization
 SETTINGS = YAML::load(File.open(File.join('config', 'settings.yml')))
 
 # Global constants
-REPO          = RDF::Virtuoso::Repository.new(SETTINGS["sparql_endpoint"])
-DEFAULT_GRAPH = RDF::URI(SETTINGS["deafult_graph"])
-QUERY         = RDF::Virtuoso::Query
+REPO            = RDF::Virtuoso::Repository.new(SETTINGS["sparql_endpoint"])
+DEFAULT_GRAPH   = RDF::URI(SETTINGS["default_graph"])
+RESOURCE_PREFIX = RDF::URI(SETTINGS["resource_prefix"])
+QUERY           = RDF::Virtuoso::Query
 
 # load all library files
 Dir[File.dirname(__FILE__) + '/../lib/*.rb'].each do |file|

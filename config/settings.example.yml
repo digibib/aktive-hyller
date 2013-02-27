@@ -4,7 +4,8 @@ barcode: true
 
 # data access
 sparql_endpoint: http://localhost:8890/sparql
-deafult_graph:   http://example.com/books
+default_graph:   http://example.com/books
+resource_prefix: http://example.com/resource/
 book_status_api: http://bibsyst/???????
 department:      "voksenavdelingen"
 

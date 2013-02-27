@@ -44,7 +44,7 @@ class Book
       @format      = results.first[:format]
       @cover_url   = results.first[:cover_url]
       @isbn        = results.first[:isbn].to_s if results.first[:isbn]
-      @work_id     = results.first[:work_id]
+      @work_id     = results.first[:work_id] unless results.first[:work_id].to_s.empty?
       @creator_id  = results.first[:creator_id]
       @creatorName = results.first[:creatorName] unless results.first[:creatorName].to_s.empty?
       @responsible = results.first[:responsible]
@@ -154,9 +154,9 @@ class Book
       query.distinct
       query.from(reviewgraph)
       if self.work_id
-        query.where([:review_id, RDF::DC.subject, self.work_id])
+        query.where([self.work_id, RDF::REV::hasReview, :review_id])
       else
-        query.where([:review_id, RDF::DEICH.basedOnManifestation, self.book_id])
+        query.where([self.book_id, RDF::REV::hasReview, :review_id])
       end
       query.where([:review_id, RDF::REV.title, :review_title],
                   [:review_id, RDF::REV.text, :review_text])
