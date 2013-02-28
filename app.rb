@@ -17,7 +17,7 @@ require File.join(root, 'config', 'init.rb')
 
 logfile = ::File.join(root,'logs','requests.log')
 class ::Logger; alias_method :write, :<<; end
-logger  = ::Logger.new(logfile,'weekly')
+logger  = ::Logger.new(logfile,'monthly')
 logger.datetime_format = "%Y-%m-%dT%H:%M:%S.%L "
 
 #use Rack::CommonLogger, logger
