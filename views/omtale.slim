@@ -95,6 +95,7 @@ div id="vi-leter"
 div[id="overlay"]
 
 == render :slim, :'websocket' if SETTINGS["rfid"]
+== render :slim, :'barcode' if SETTINGS["barcode"]
 
 javascript:
   $(document).ready(function () {

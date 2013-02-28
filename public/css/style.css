@@ -90,6 +90,8 @@ button.square:active { position: relative; top: 3px; color: #000;
                        background: -moz-linear-gradient(bottom,  #eee,  #aaa)}
 #tilbake             { margin-top: 10px; position: relative;}
 #tilbake-pil         { height:20px; position: absolute; left:18px; top: 50px; }
+div#languages      { margin:10px 0 0 10px; }
+
 div.liste-small     { width:130px; height:300px; float:left; margin-right:40px;
                       overflow: hidden; cursor: pointer;}
    .liste-small p   { word-wrap: break-word; margin-top:10px;}

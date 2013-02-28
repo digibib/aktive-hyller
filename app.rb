@@ -58,6 +58,13 @@ get '/' do
   slim(:index, :layout => false)
 end
 
+get '/lang/:locale' do
+  # language reloads page with new locale (handled with before...do each request)
+  logger.info("Switched_language #{params[:locale]}")
+  back = session[:history].pop
+  redirect back[:path]
+end
+
 get '/timeout' do
   logger.info("Timeout - -")
   redirect('/')

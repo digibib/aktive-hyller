@@ -17,6 +17,14 @@ html
           a href="/back"
             button id="tilbake" class="square": img src="img/tilbake.png" id="tilbake-pil"
               == t.BACK
+        div id="languages"
+          ul
+            li 
+              a href="/lang/nb"
+                button[id="lang_nb" class="square"]: img src="img/lang_nb.png"  
+            li 
+              a href="/lang/en"
+                button[id="lang_en" class="square"]: img src="img/lang_en.png"
         div id="avslutt-container"
           a href="/"
             button id="avslutt" class="square": span #{t.CLOSE} <img src="img/avslutt.png" id="avslutt-ikon" />
