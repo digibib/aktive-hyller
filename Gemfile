@@ -11,6 +11,7 @@ gem "rdf"
 gem "rdf-virtuoso", :git => "https://github.com/digibib/rdf-virtuoso.git"
 gem 'capistrano'
 gem 'rvm-capistrano'
+gem "sqlite3"
 
 group :development do
   gem "pry"
