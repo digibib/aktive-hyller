@@ -143,7 +143,7 @@ get '/copy' do
 end
 
 get '/stats/:file' do
-  "<pre>#{File.read(params[:file]+'.txt')}</pre>"
+  "<pre>#{File.read('logs/'+params[:file]+'.txt')}</pre>"
 end
 
 get '/ws' do

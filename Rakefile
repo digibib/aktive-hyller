@@ -46,17 +46,17 @@ namespace :log do
 
     # sise dag
     today = Time.now.strftime("%Y-%m-%d")
-    %x[./stats.rb #{today} #{today} > views/day.txt]
+    %x[./stats.rb #{today} #{today} > logs/day.txt]
     print "day,"
 
     # inneværende uke
     d = Date.today - Time.now.wday + 1
-    %x[./stats.rb #{d.strftime("%Y-%m-%d")} #{today} > views/week.txt]
+    %x[./stats.rb #{d.strftime("%Y-%m-%d")} #{today} > logs/week.txt]
     print " week,"
 
     # inneværende måned
     d=Date.new(Time.now.year, Time.now.month, 1)
-    %x[./stats.rb #{d.strftime("%Y-%m-%d")} #{today} > views/month.txt]
+    %x[./stats.rb #{d.strftime("%Y-%m-%d")} #{today} > logs/month.txt]
     print " month "
     print "OK\n"
   end
