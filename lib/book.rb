@@ -94,7 +94,7 @@ class Book
     timing_start = Time.now
     print "\nHTTP - get remote data: "
     fetch_remote_data
-    print "#{Time.now - timing_start} s.\n"
+    print "#{Time.now - timing_start} s.\n\n"
 
     enforce_review_order
 
