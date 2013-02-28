@@ -3,3 +3,4 @@ config/settings.yml
 public/img/leftbar.png
 public/img/logo.png
 public/img/startscreen.png
+*.db
