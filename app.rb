@@ -142,6 +142,10 @@ get '/copy' do
   session[:current] = session[:books][tnr]
 end
 
+get '/stats/:file' do
+  "<pre>#{File.read(params[:file]+'.txt')}</pre>"
+end
+
 get '/ws' do
   # handles the messages from the RFID-reader
   return false unless request.websocket?
