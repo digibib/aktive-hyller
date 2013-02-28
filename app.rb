@@ -30,6 +30,7 @@ session[:books] = {}    # {:tnr => book_object}
 session[:history] = []  # Array of Hash
                         # ex: {:path => "/omtale" :book => session[:books][:tnr]}
 session[:current] = nil # Current book in session
+session[:log] = {:start => Time.now, :stop => nil, :rfid => 0, :omtale => 0, :flere => 0, :relaterte => 0}
 
 # before each request
 before do
@@ -41,8 +42,15 @@ end
 get '/' do
   # Nysgjerrig på boka?
 
+  # Generate session log line
+  session[:log][:stop] = Time.now
+                       # start stop rfid omtale flere relaterte
+  logger.info("Finito #{session[:log][:start].strftime("%d-%m-%YT%H:%M:%S.%L")} #{session[:log][:stop].strftime("%d-%m-%YT%H:%M:%S.%L")} #{session[:log][:rfid]} #{session[:log][:omtale]} #{session[:log][:flere]} #{session[:log][:relaterte]}")
+
   # Clear session history
   session[:history] = []
+  session[:current] = nil
+  session[:log] = {:start => Time.now, :rfid => 0, :omtale => 0, :flere => 0, :relaterte => 0}
   logger.info("Sesjon - -")
 
   slim(:index, :layout => false)
@@ -56,8 +64,9 @@ end
 get '/omtale' do
   redirect '/' unless session[:current]
 
+  session[:log][:omtale] += 1
   session[:history].push({:path => '/omtale', :tnr => session[:current].tnr})
-  logger.info("Omtalevisning #{session[:current].book_id} #{session[:current].review_collection.size}")
+  logger.info("Omtalevisning #{session[:current].book_id} #{session[:current].review_collection.size} \"#{session[:current].creatorName || '-'}\" \"#{session[:current].title}\"")
   slim :omtale, :locals => {:book => session[:current]}
 end
 
@@ -73,16 +82,18 @@ end
 get '/flere' do
   # Flere bøker av forfatteren
 
+  session[:log][:flere] += 1
   session[:history].push({:path => '/flere', :tnr => session[:current].tnr})
-  logger.info("Flere - #{session[:current].same_author_collection.size}")
+  logger.info("Flere \"#{session[:current].creatorName || session[:current].responsible}\" #{session[:current].same_author_collection.size}")
   slim :flere, :locals => {:book => session[:current]}
 end
 
 get '/relaterte' do
   # Noe som ligner, relaterte bøker
 
+  session[:log][:relaterte] += 1
   session[:history].push({:path => '/relaterte', :tnr => session[:current].tnr})
-  logger.info("Relaterte - #{session[:current].similar_works_collection.size}")
+  logger.info("Relaterte \"#{session[:current].creatorName || session[:current].responsible} - #{session[:current].title}\" #{session[:current].similar_works_collection.size}")
   slim :relaterte, :locals => {:book => session[:current]}
 end
 
@@ -141,6 +152,7 @@ get '/ws' do
 
     ws.onmessage do |msg|
       logger.info("RFID #{msg} -")
+      session[:log][:rfid] += 1
       EM.next_tick { settings.sockets.each{|s| s.send(msg) } }
     end
 
