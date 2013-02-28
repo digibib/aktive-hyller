@@ -68,3 +68,4 @@ omtaler.each do |row|
   puts "%s - \"%s\" - %s " % [row[0], row[1], row[2]]
 end
 stm.close if stm
+puts
