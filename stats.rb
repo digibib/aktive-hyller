@@ -55,7 +55,7 @@ puts "  max pr. sesjon  : %d" % s[:omtale_max]
 puts
 puts "Anbefalinger"
 puts "----------------------------"
-puts "  antall (avg)   : %d" % s[:anbf_avg]
+puts "  antall (avg)   : %.1f" % s[:anbf_avg]
 puts "  antall 0-treff : %d" % s[:null_treff]
 puts "  0-treff i %%    : %.1f" % ((s[:null_treff]/s[:anbf_count].to_f)*100)
 puts
