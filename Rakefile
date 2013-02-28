@@ -1,5 +1,6 @@
 require "pry"
 require "./app"
+require "date"
 
 task :console do
   binding.pry
@@ -29,6 +30,7 @@ namespace :log do
     print "Prosessing log file.."
     %x[./log2sql.sh]
     print "OK\n"
+    Rake::Task["log:stats"].execute
   end
 
   desc "Clear stats.db file and create tables"
@@ -41,7 +43,21 @@ namespace :log do
   desc "Generate statistics views"
   task :stats do
     print "Generating statistics.."
-    require "./stats.rb"
+
+    # sise dag
+    today = Time.now.strftime("%Y-%m-%d")
+    %x[./stats.rb #{today} #{today} > views/day.txt]
+    print "day,"
+
+    # inneværende uke
+    d = Date.today - Time.now.wday + 1
+    %x[./stats.rb #{d.strftime("%Y-%m-%d")} #{today} > views/week.txt]
+    print " week,"
+
+    # inneværende måned
+    d=Date.new(Time.now.year, Time.now.month, 1)
+    %x[./stats.rb #{d.strftime("%Y-%m-%d")} #{today} > views/month.txt]
+    print " month "
     print "OK\n"
   end
 end
