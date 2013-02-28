@@ -22,3 +22,26 @@ task :configure do
   end
   File.open("public/css/style.css", "w") {|f| f.puts modified}
 end
+
+namespace :log do
+  desc "Process log files"
+  task :process do
+    print "Prosessing log file.."
+    %x[./log2sql.sh]
+    print "OK\n"
+  end
+
+  desc "Clear stats.db file and create tables"
+  task :setup do
+    print "Creating logs/stats.db "
+    %x[sqlite3 logs/stats.db < logs/schema.sql]
+    print "OK\n"
+  end
+
+  desc "Generate statistics views"
+  task :stats do
+    print "Generating statistics.."
+    require "./stats.rb"
+    print "OK\n"
+  end
+end
