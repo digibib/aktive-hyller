@@ -18,6 +18,8 @@ require File.join(root, 'config', 'init.rb')
 logfile = ::File.join(root,'logs','requests.log')
 class ::Logger; alias_method :write, :<<; end
 logger  = ::Logger.new(logfile,'weekly')
+logger.datetime_format = "%Y-%m-%dT%H:%M:%S.%L "
+
 #use Rack::CommonLogger, logger
 
 # Sinatra configs
@@ -45,7 +47,7 @@ get '/' do
   # Generate session log line
   session[:log][:stop] = Time.now
                        # start stop rfid omtale flere relaterte
-  logger.info("Finito #{session[:log][:start].strftime("%d-%m-%YT%H:%M:%S.%L")} #{session[:log][:stop].strftime("%d-%m-%YT%H:%M:%S.%L")} #{session[:log][:rfid]} #{session[:log][:omtale]} #{session[:log][:flere]} #{session[:log][:relaterte]}")
+  logger.info("Finito #{session[:log][:start].strftime("%Y-%m-%dT%H:%M:%S.%L")} #{session[:log][:stop].strftime("%Y-%m-%dT%H:%M:%S.%L")} #{session[:log][:rfid]} #{session[:log][:omtale]} #{session[:log][:flere]} #{session[:log][:relaterte]}")
 
   # Clear session history
   session[:history] = []
