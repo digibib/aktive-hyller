@@ -31,7 +31,7 @@ s[:anbf_count], s[:anbf_avg] = db.get_first_row "select count(*), avg(antall) fr
 s[:null_treff] = db.get_first_value "select count(*) from omtaler where antall=0 and date(time) "+ constraint
 
 puts "AKTIVE HYLLER: Statistikkrapport for perioden #{from_date} til #{to_date}"
-puts "="*71
+puts "="*150
 puts
 puts "Sesjoner"
 puts "----------------------------"
@@ -60,7 +60,7 @@ puts "  antall 0-treff : %d" % s[:null_treff]
 puts "  0-treff i %%    : %.1f" % ((s[:null_treff]/s[:anbf_count].to_f)*100)
 puts
 puts "Bøker uten anbefalinger"
-puts "-"*79
+puts "-"*150
 
 stm = db.prepare "select author, title, uri from omtaler where antall=0 and date(time) "+constraint
 omtaler = stm.execute
