@@ -301,9 +301,9 @@ In addition, you can set email adresses in `config/settings.yml` of those who wi
 
 The `rake log:process` task will aslo send the daily email reports. You need to set up additional two cronjobs to send the weekly and monthly reports:
 
-``` TODO ```
+``` TODO rake email:weekly```
 
-``` TODO ```
+``` TODO rake email:monthly```
 
 ## Configure sendmail
 The applications relies the Linux mail agent `sendmail` to deliver emails:
