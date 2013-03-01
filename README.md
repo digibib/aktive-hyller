@@ -310,7 +310,7 @@ The applications relies the Linux mail agent `sendmail` to deliver emails:
 
 ```sudo apt-get install sendmail```
 
-Be sure to set a valid hostname. Check `/var/log/mail.log` to ensure that the mails are sendt. Theese mails are likely to be treated as spam, so recipents should check their spam-folders if it doesn't arrive.
+Be sure to set a valid hostname. Check `/var/log/mail.log` to ensure that the mails are sendt. Theese mails are likely to be treated as spam, so recipients should check their spam-folders if it doesn't arrive.
 
 ## Screen Saver
 

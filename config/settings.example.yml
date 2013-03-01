@@ -16,7 +16,7 @@ theme_color: 'rgba(230,87,64,1)'
 leftbar_image: false  # set to true to override leftbar css with image 'img/leftpar.png'
 leftbar_color: 'rgba(230,87,64,1)' # set opacity (last digit) to 0 to remove leftbar
 
-# recipents of statistics email reports
+# recipients of statistics email reports
 email:
   daily:
     - example1@example.com
