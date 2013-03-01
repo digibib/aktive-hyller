@@ -295,7 +295,7 @@ Set up a cronjob to run `rake log:process` each night:
 
 The statistics report will be accesible provided you know the IP-address of the station:
 ```
-http://ip.address/stats{day|week|month}
+http://ip.address/stats/{day|week|month}
 ```
 
 In addition, you can set email adresses in `config/settings.yml` of those who wish to recieve the daily, weekly or monthly reports by email.
@@ -307,7 +307,7 @@ The `rake log:process` task will aslo send the daily email reports. You need to 
 ``` TODO rake email:monthly```
 
 ## Configure sendmail
-The applications relies the Linux mail agent `sendmail` to deliver emails:
+The applications relies on the Linux mail agent `sendmail` to deliver emails:
 
 ```sudo apt-get install sendmail```
 
