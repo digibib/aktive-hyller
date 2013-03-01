@@ -299,6 +299,12 @@ The statistics report will be accesible provided you know the IP-address of the 
 
 In addition, you can set email adresses in `config/settings.yml` of those who wish to recieve the daily, weekly or monthly reports by email.
 
+The `rake log:process` task will aslo send the daily email reports. You need to set up additional two cronjobs to send the weekly and monthly reports:
+
+``` TODO ```
+
+``` TODO ```
+
 ## Configure sendmail
 The applications relies the Linux mail agent `sendmail` to deliver emails:
 
