@@ -32,6 +32,7 @@ namespace :log do
     %x[./log2sql.sh]
     print "OK\n"
     Rake::Task["log:stats"].execute
+    Rake::Task["email:daily"].execute
   end
 
   desc "Clear stats.db file and create tables"
