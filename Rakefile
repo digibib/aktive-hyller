@@ -1,6 +1,7 @@
 require "pry"
 require "./app"
 require "date"
+require "pony"
 
 task :console do
   binding.pry
@@ -59,5 +60,37 @@ namespace :log do
     %x[./stats.rb #{d.strftime("%Y-%m-%d")} #{today} > logs/month.txt]
     print " month "
     print "OK\n"
+  end
+end
+
+namespace :email do
+  task :daily do
+    SETTINGS["email"]["daily"].each do |recipent|
+      Pony.mail :to => recipent,
+                :from => "petter.goksoyr.asen@kul.oslo.kommune.no",
+                :subject => "Aktive hyller statistikkrapport",
+                :charset => 'UTF-8',
+                :body => File.read('logs/day.txt')
+    end
+  end
+
+  task :weekly do
+    SETTINGS["email"]["weekly"].each do |recipent|
+      Pony.mail :to => recipent,
+                :from => "petter.goksoyr.asen@kul.oslo.kommune.no",
+                :subject => "Aktive hyller statistikkrapport",
+                :charset => 'UTF-8',
+                :body => File.read('logs/week.txt')
+    end
+  end
+
+  task :monthly do
+    SETTINGS["email"]["month"].each do |recipent|
+      Pony.mail :to => recipent,
+                :from => "petter.goksoyr.asen@kul.oslo.kommune.no",
+                :subject => "Aktive hyller statistikkrapport",
+                :charset => 'UTF-8',
+                :body => File.read('logs/month.txt')
+    end
   end
 end
