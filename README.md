@@ -287,6 +287,25 @@ EOF
 * If you have a leftbar image to replace with leftbar css, name it `public/img/leftbar.png` and set leftbar_image: true in settings.yml
 * Run `rake configure`
 
+### Generate and access statistics reports
+
+Set up a cronjob to run `rake log:process` each night:
+
+``` TODO ```
+
+The statistics report will be accesible provided you know the IP-address of the station:
+
+```http://ip.address/stats{day|week|month}```
+
+In addition, you can set email adresses in `config/settings.yml` of those who wish to recieve the daily, weekly or monthly reports by email.
+
+## Configure sendmail
+The applications relies the Linux mail agent `sendmail` to deliver emails:
+
+```sudo apt-get install sendmail```
+
+Be sure to set a valid hostname. Check `/var/log/mail.log` to ensure that the mails are sendt. Theese mails are likely to be treated as spam, so recipents should check their spam-folders if it doesn't arrive.
+
 ## Screen Saver
 
 you will need to activate xscreensaver and make a new play format in ~/.xscreensaver:
