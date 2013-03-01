@@ -294,8 +294,9 @@ Set up a cronjob to run `rake log:process` each night:
 ``` TODO ```
 
 The statistics report will be accesible provided you know the IP-address of the station:
-
-```http://ip.address/stats{day|week|month}```
+```
+http://ip.address/stats{day|week|month}
+```
 
 In addition, you can set email adresses in `config/settings.yml` of those who wish to recieve the daily, weekly or monthly reports by email.
 
