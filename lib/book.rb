@@ -334,7 +334,7 @@ class Book
 
   def fetch_same_author_books
     # this query fetches other works by same author
-    query = QUERY.select(:similar_work, :lang, :original_language, :book_title, :book)
+    query = QUERY.select(:similar_work, :lang, :original_language, :format, :book_title, :book)
       query.sample(:cover_url)
       query.group_digest(:creatorName, ', ', 1000, 1)
       query.distinct
@@ -347,7 +347,9 @@ class Book
         [:book, RDF::DC.language, :lang],
         [:similar_work, RDF::DC.creator, :creator],
         [:creator, RDF::FOAF.name, :creatorName],
-        [:book, RDF::DC.title, :book_title])
+        [:book, RDF::DC.title, :book_title],
+        [:book, RDF::DC.format, :format, bookgraph]
+        )
       query.optional([:book, RDF::FOAF.depiction, :cover_url])
       query.optional([:book, RDF::DEICH.originalLanguage, :original_language])
       query.minus([:work, RDF::FABIO.hasManifestation, :book])
@@ -384,7 +386,7 @@ class Book
         [:work, :predicate, :similar_work, similaritygraph],
         [:similar_work, RDF::FABIO.hasManifestation, :book, bookgraph],
         [:book, RDF::DC.title, :book_title, bookgraph],
-        [:book, RDF::DC.language, :lang, bookgraph]
+        [:book, RDF::DC.language, :lang, bookgraph],
         [:book, RDF::DC.format, :format, bookgraph]
         )
     query.optional([:book, RDF::FOAF.depiction, :cover_url, bookgraph])
