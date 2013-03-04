@@ -28,6 +28,7 @@ set :sockets, []
 
 # In-memory session object
 session = {}
+session[:locale] = 'nb'
 session[:books] = {}    # {:tnr => book_object}
 session[:history] = []  # Array of Hash
                         # ex: {:path => "/omtale" :book => session[:books][:tnr]}
@@ -36,8 +37,9 @@ session[:log] = {:start => Time.now, :stop => nil, :rfid => 0, :omtale => 0, :fl
 
 # before each request
 before do
-  session[:locale] = params[:locale] if params[:locale]
   @history = session[:history]
+  # Force locale on each request to counter annoying autodetect
+  R18n.set(session[:locale])
 end
 
 # Routing
@@ -59,10 +61,12 @@ get '/' do
 end
 
 get '/lang/:locale' do
-  # language reloads page with new locale (handled with before...do each request)
-  logger.info("Switched_language #{params[:locale]}")
+  session[:locale] = params[:locale]
+  logger.info("language #{params[:locale]}")
+
+  # Reload page with new locale
   back = session[:history].pop
-  redirect back[:path]
+  redirect back[:path] || '/omtale'
 end
 
 get '/timeout' do
