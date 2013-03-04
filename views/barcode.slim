@@ -1,26 +1,55 @@
-form id="barcode"
-  input type="text" class="barcodeinput" value="" style="display:none"
-  input type="submit" class="barcodesubmit" style="display:none"
+javascript:
+  var barcodeinput = '';
   
-  javascript:
-    var barcodeinput = '';
+  $(document).keypress(function(e){
+    var key = String.fromCharCode(e.which);
+    if(e.which == 13){ // (Enter ascii code 13)
+      console.log(barcodeinput);
+      console.log("enter pressed");
+      if(barcodeinput.length == 14) {
+        //$('barcodeinput').val(barcodeinput);
+        var tnr = barcodeinput.substr(5,6);
+        
+        // show overlay
+        $('#overlay').show();
+        $('button#avbryt-knapp').html("#{t.cancel}");
+        $('#vi-leter p').html("#{t.looking} <span id=\"loading\"></span>");
+        $('#vi-leter').show();
     
-    $(document).keypress(function(e){
-      var key = String.fromCharCode(e.which);
-      if(e.which == 13){ // (Enter ascii code 13)
-        console.log(barcodeinput);
-        console.log("enter pressed");
-        if(barcodeinput.length == 14) {
-          $('barcodeinput').val(barcodeinput);
-          $("#barcode").attr("action", "/omtale/"+barcodeinput.substr(5,6));
-          $('#barcode').submit();
-        } else {
-          console.log("invalid barcode");
-          barcodeinput = '';
-        }
+        check_format = $.getJSON('/checkformat/'+tnr);
+        check_format.done(function(data) {
+          if (data.accepted_format) {
+            $('div#vi-leter p').html("#{t.fetching_info} \"" + data.title + '" <span id="loading"></span>' );
+    
+            //hent all info til omtalevisning her
+            request = $.get('/populate/'+tnr);
+    
+            request.done(function(data) {
+            $.get('/copy', function(data) {
+                window.location.replace("/omtale");
+                console.log(data);
+              });
+            });
+    
+            request.fail(function(message) {
+              console.log(message);
+              $('div#vi-leter p').html("#{t.nothing_found}");
+              $('button#avbryt-knapp').html('OK');
+            });
+    
+          } else {
+            $('div#vi-leter p').html('Beklager! Foreløpig kan jeg bare hjelpe deg<br/>med bøker og lydbøker');
+            $('button#avbryt-knapp').html('OK');
+          };
+        });
+        
       } else {
-        // append barcode
-        barcodeinput += key;
+        console.log("invalid barcode");
+        barcodeinput = '';
       }
-    });
+    } else {
+      // append barcode
+      barcodeinput += key;
+    }
+  });
 

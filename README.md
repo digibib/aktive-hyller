@@ -33,29 +33,36 @@ then install ruby.
 
     rvm reinstall 1.9.3
 
-## App and RFID reader
+## App and RFID reader / BARCODE scanner
 
 clone the repositories
 
     mkdir -p code && cd code
     git clone https://github.com/digibib/aktive-hyller
-    git clone https://github.com/digibib/rfidgeek.git
 
 ### RFID reader
 
+    git clone https://github.com/digibib/rfidgeek.git ~/code/rfidgeek
+    
 needs access to dialout group
 
     sudo usermod -a -G dialout [username]
 
 restart window manager
 
-#### RFID websocket client
+### Settings
 
-    git checkout feature/sinatra-integration
+create settings file:
 
-    cp config/config.yml-dist config/config.yml
+    cp config/settings-example.yml config/settings.yml
+    
+set ports and hostname for websocket if RFID reader. Activate websocket server for testing.
 
-set ports and
+settings for logo, background, RFID and/or Barcode scanner, etc. are all in config/settings.yml
+
+to update configuration:
+
+    rake configure
 
 ## Virtuoso install
 
