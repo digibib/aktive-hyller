@@ -31,9 +31,8 @@ header:
   title: Active Shelves
 
 menu:
-  more_by_author: Other books<br/>by author
-  review_active: Review
-  review_inactive: Review<br/>
-  similar_works: Similar books
-  history_active: History
-  history_inactive: <br/>History
+  more: OTHER BOOKS BY THE AUTHOR
+  related: SIMILAR BOOKS
+  see_more: SEE MORE
+  more_by_author: Other books by
+  similar_works: Books similar to

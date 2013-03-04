@@ -26,7 +26,8 @@ html
             p id="title" #{book.title}
             p id="sub-title" #{book.creatorName}
           - elsif request.path == "/flere"
-            p id="title" #{t.menu.more_by_author} #{book.creatorName}
+            p id="title" #{t.menu.more_by_author}
+            p id="sub-title" #{book.creatorName}
           - elsif request.path == "/relaterte"
             p id="title" #{t.menu.similar_works}
             p id="sub-title"

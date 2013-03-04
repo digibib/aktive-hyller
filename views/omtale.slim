@@ -50,7 +50,7 @@ div id="contents"
   div id="content-bottom"
     div class="flere"
       - unless book.same_author_collection.size == 0
-        h3 FLERE BØKER AV FORFATTEREN
+        h3 #{t.menu.more}
         - num = [book.same_author_collection.size, 3].min
         - book.same_author_collection[0...num].each do |b|
           div.liste-small
@@ -65,11 +65,11 @@ div id="contents"
         - unless book.same_author_collection.size <= 3
           a href="/flere"
             div.cover-small
-              div.cover-small-missing SE FLERE
+              div.cover-small-missing #{t.menu.see_more}
       p &nbsp;
     - unless book.similar_works_collection.size == 0
       div class="relaterte"
-        h3 NOE SOM LIGNER
+        h3 #{t.menu.related}
         - num = [book.similar_works_collection.size, 3].min
         - book.similar_works_collection[0...num].each do |b|
           div.liste-small
@@ -85,7 +85,7 @@ div id="contents"
         - unless book.similar_works_collection.size <= 3
           a href="/relaterte"
             div.cover-small
-              div.cover-small-missing SE FLERE
+              div.cover-small-missing #{t.menu.see_more}
 
 div id="vi-leter"
   p #{t.looking}
@@ -126,7 +126,7 @@ javascript:
         // show overlay
         $('#overlay').show();
         $('button#avbryt-knapp').html('Avbryt');
-        $('div#vi-leter p').html('Henter informasjon om "' + title + '" <div id="loading"></div>' );
+        $('div#vi-leter p').html("#{t.fetching_info}\ "" + title + '" <div id="loading"></div>' );
         $('#vi-leter').show();
 
         request = $.ajax({

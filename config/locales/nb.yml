@@ -31,9 +31,8 @@ header:
   title: Aktive hyller
 
 menu:
-  more_by_author: Flere bøker<br/>av forfatteren
-  review_active: Omtale
-  review_inactive: Omtale<br/>
-  similar_works: Noe som ligner
-  history_active: Historikk
-  history_inactive: <br/>Historikk
+  more: FLERE BØKER AV FORFATTEREN
+  related: NOE SOM LIGNER
+  see_more: SE FLERE
+  more_by_author: Flere bøker av
+  similar_works: Noe som ligner på
