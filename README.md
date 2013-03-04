@@ -289,6 +289,11 @@ EOF
 
 ### Generate and access statistics reports
 
+Make sure sqlite3 is installed on your system:
+```
+sudo apt-get install sqlite3
+```
+
 Set up a cronjob to run `rake log:process` each night:
 
 ``` TODO ```
