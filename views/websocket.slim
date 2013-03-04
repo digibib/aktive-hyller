@@ -16,9 +16,11 @@ javascript:
       $("#loading").html(""+Array(i+1).join("."));
   }, 500);
 
-
-  // when titlenr is received from server via websocket:
   ws.onmessage = function(evt) {
+    if (evt.data == "tag removed") {
+      // do nothing...for now
+    } else {
+    // when titlenr is received from server via websocket:
     // show overlay
     $('#overlay').show();
     $('button#avbryt-knapp').html("#{t.cancel}");
