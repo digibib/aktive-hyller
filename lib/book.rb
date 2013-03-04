@@ -348,7 +348,7 @@ class Book
         [:similar_work, RDF::DC.creator, :creator],
         [:creator, RDF::FOAF.name, :creatorName],
         [:book, RDF::DC.title, :book_title],
-        [:book, RDF::DC.format, :format, bookgraph]
+        [:book, RDF::DC.format, :format]
         )
       query.optional([:book, RDF::FOAF.depiction, :cover_url])
       query.optional([:book, RDF::DEICH.originalLanguage, :original_language])
