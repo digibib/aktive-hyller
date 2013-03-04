@@ -1,98 +1,91 @@
-div id="contents"
-  div id="content-left"
-    div.image-wrapper
-      - if book.cover_url
-        div.image-big
-          img src="#{book.cover_url}" class="omtalt-bok"
-        div class="hyllestatus inne" Boka er kanskje inne
+div.buffer
+div id="content-left"
+  div.image-wrapper
+    - if book.cover_url
+      div.image-big
+        img src="#{book.cover_url}" class="omtalt-bok"
+      div class="hyllestatus inne" Boka er kanskje inne
+    - else
+      div id="omtale-bilde"
+        div id="inner-border"
+          div.book-author #{book.creatorName}
+          div.book-title #{book.title}
+      div class="hyllestatus inne" Boka er kanskje inne
+  div.ratings
+    - rating = book.rating
+    -if rating[:source] and rating[:num_raters] > 0
+      div.rating
+        - red_stars = (rating[:rating]/rating[:num_raters]).to_i
+        - red_stars.times do
+          img src="/img/star_orange.png" class="star"
+        - if red_stars != (rating[:rating]/rating[:num_raters].to_f).round
+          - red_stars += 1
+          img src="/img/star_half.png" class="star"
+        - (5-red_stars).times do
+          img src="/img/star_gray.png" class="star"
+        p Basert på #{rating[:num_raters]} rangering#{'er' if rating[:num_raters] > 1 }
+          <br/> fra #{rating[:source]}
+
+div id="content-right"
+  div id="omtale-wrapper" class="iosSlider"
+    div id="scroller" class="slider"
+      - if not book.review_collection.empty?
+        - book.review_collection.each_with_index do |r, i|
+          div class="slide"
+            div class="review"
+              p #{{r[:text]}}
+              p class="source" #{r[:source]}
       - else
-        div id="omtale-bilde"
-          div id="inner-border"
-            div.book-author #{book.creatorName}
-            div.book-title #{book.title}
-        div class="hyllestatus inne" Boka er kanskje inne
-    div.ratings
-      - rating = book.rating
-      -if rating[:source] and rating[:num_raters] > 0
-        div.rating
-          - red_stars = (rating[:rating]/rating[:num_raters]).to_i
-          - red_stars.times do
-            img src="/img/star_orange.png" class="star"
-          - if red_stars != (rating[:rating]/rating[:num_raters].to_f).round
-            - red_stars += 1
-            img src="/img/star_half.png" class="star"
-          - (5-red_stars).times do
-            img src="/img/star_gray.png" class="star"
-          p Basert på #{rating[:num_raters]} rangering#{'er' if rating[:num_raters] > 1 }
-            <br/> fra #{rating[:source]}
+        div class="no-review slide"
+          #{{t.no_reviews_html}}
 
-  div id="content-right"
-    div id="omtale-wrapper" class="iosSlider"
-      div id="scroller" class="slider"
-        - if not book.review_collection.empty?
-          - book.review_collection.each_with_index do |r, i|
-            div class="slide"
-              div class="review"
-                p #{{r[:text]}}
-                p class="source" #{r[:source]}
-        - else
-          div class="no-review slide"
-            #{{t.no_reviews_html}}
-
-      - unless book.review_collection.size <= 1
-        div class="indicator-wrapper"
-          ul id="indicator"
-            - for i in (1..book.review_collection.size)
-              li #{i}
+    - unless book.review_collection.size <= 1
+      div class="indicator-wrapper"
+        ul id="indicator"
+          - for i in (1..book.review_collection.size)
+            li #{i}
 
 
-  div.clearfix
-  div id="content-bottom"
-    div class="flere"
-      - unless book.same_author_collection.size == 0
-        h3 #{t.menu.more}
-        - num = [book.same_author_collection.size, 3].min
-        - book.same_author_collection[0...num].each do |b|
-          div.liste-small
-            input[class="tnr_id" type="hidden" value="#{b[:book].to_s.match(/tnr_(.*)/)[1]}"]
-            - if b[:cover_url]
-              div.cover-small
-                img src="#{b[:cover_url]}"
-            - else
-              div.cover-small-missing #{b[:creatorName]} <strong> #{b[:title]}</strong>
-            p.title: strong #{b[:title]}
-            /p.author #{b[:creatorName]}
-        - unless book.same_author_collection.size <= 3
-          a href="/flere"
+div.clearfix
+div id="content-bottom"
+  div class="flere"
+    - unless book.same_author_collection.size == 0
+      h3 #{t.menu.more}
+      - num = [book.same_author_collection.size, 3].min
+      - book.same_author_collection[0...num].each do |b|
+        div.liste-small
+          input[class="tnr_id" type="hidden" value="#{b[:book].to_s.match(/tnr_(.*)/)[1]}"]
+          - if b[:cover_url]
             div.cover-small
-              div.cover-small-missing #{t.menu.see_more}
-      p &nbsp;
-    - unless book.similar_works_collection.size == 0
-      div class="relaterte"
-        h3 #{t.menu.related}
-        - num = [book.similar_works_collection.size, 3].min
-        - book.similar_works_collection[0...num].each do |b|
-          div.liste-small
-            input[class="tnr_id" type="hidden" value="#{b[:book].to_s.match(/tnr_(.*)/)[1]}"]
-            - if b[:cover_url]
-              div.cover-small
-                img src="#{b[:cover_url]}"
-            - else
-              div.cover-small-missing
-                p #{b[:creatorName]} <strong> #{b[:title]}</strong>
-            p.title: strong #{b[:title]}
-            p.author #{b[:creatorName]}
-        - unless book.similar_works_collection.size <= 3
-          a href="/relaterte"
+              img src="#{b[:cover_url]}"
+          - else
+            div.cover-small-missing #{b[:creatorName]} <strong> #{b[:title]}</strong>
+          p.title: strong #{b[:title]}
+          /p.author #{b[:creatorName]}
+      - unless book.same_author_collection.size <= 3
+        a href="/flere"
+          div.cover-small
+            div.cover-small-missing #{t.menu.see_more}
+    p &nbsp;
+  - unless book.similar_works_collection.size == 0
+    div class="relaterte"
+      h3 #{t.menu.related}
+      - num = [book.similar_works_collection.size, 3].min
+      - book.similar_works_collection[0...num].each do |b|
+        div.liste-small
+          input[class="tnr_id" type="hidden" value="#{b[:book].to_s.match(/tnr_(.*)/)[1]}"]
+          - if b[:cover_url]
             div.cover-small
-              div.cover-small-missing #{t.menu.see_more}
-
-div id="vi-leter"
-  p #{t.looking}
-    span[id="loading"]
-  div id="avbryt"
-    button[class="top-button" id="avbryt-knapp"] == t.cancel
-div[id="overlay"]
+              img src="#{b[:cover_url]}"
+          - else
+            div.cover-small-missing
+              p #{b[:creatorName]} <strong> #{b[:title]}</strong>
+          p.title: strong #{b[:title]}
+          p.author #{b[:creatorName]}
+      - unless book.similar_works_collection.size <= 3
+        a href="/relaterte"
+          div.cover-small
+            div.cover-small-missing #{t.menu.see_more}
 
 == render :slim, :'websocket' if SETTINGS["rfid"]
 == render :slim, :'barcode' if SETTINGS["barcode"]
@@ -126,7 +119,7 @@ javascript:
         // show overlay
         $('#overlay').show();
         $('button#avbryt-knapp').html('Avbryt');
-        $('div#vi-leter p').html("#{t.fetching_info}\ "" + title + '" <div id="loading"></div>' );
+        $('div#vi-leter p').html("#{t.fetching_info} \"" + title + '" <div id="loading"></div>' );
         $('#vi-leter').show();
 
         request = $.ajax({

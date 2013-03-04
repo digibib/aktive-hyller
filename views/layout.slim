@@ -38,4 +38,10 @@ html
               img class="flag" src="img/lang_nb.png"
             a href="/lang/en"
               img class="flag" src="img/lang_en.png"
-      == yield
+      div id="contents"
+        == yield
+      div id="vi-leter"
+        p #{t.looking}
+        div id="avbryt"
+          button[class="top-button" id="avbryt-knapp"] == t.cancel
+      div[id="overlay"]
