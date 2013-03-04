@@ -80,8 +80,8 @@ div id="content-bottom"
           - else
             div.cover-small-missing
               p #{b[:creatorName]} <strong> #{b[:title]}</strong>
-          p.title: strong #{b[:title]}
-          p.author #{b[:creatorName]}
+          p class="title wider": strong #{b[:title]}
+          p class="author wider" #{b[:creatorName]}
       - unless book.similar_works_collection.size <= 3
         a href="/relaterte"
           div.cover-small

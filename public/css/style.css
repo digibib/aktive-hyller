@@ -97,8 +97,9 @@ button.square:active { position: relative; top: 3px; color: #000;
 #tilbake-pil         { height:20px; position: absolute; left:18px; top: 50px; }
 
 div.liste-small     { width:130px; height:300px; float:left; margin-right:40px;
-                      overflow: hidden; cursor: pointer;}
-   .liste-small p   { word-wrap: break-word; margin-top:10px;}
+                      overflow: visible; cursor: pointer;}
+   .liste-small p   { word-wrap: normal; margin-top:10px; }
+.wider              { width:170px; }
 div.cover-small     { width:130px; height:180px; overflow:hidden;;
                       background: #fff; box-shadow: 6px 6px 7px 2px rgba(0,0,0,0.35);
                        position:relative;}
