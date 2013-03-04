@@ -8,6 +8,9 @@ default_graph:   http://example.com/books
 resource_prefix: http://example.com/resource/
 book_status_api: http://bibsyst/???????
 department:      "voksenavdelingen"
+novelist:
+  profile: profile-id
+  password: secret
 
 # apperance
 theme_color: 'rgba(230,87,64,1)'

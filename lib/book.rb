@@ -270,8 +270,8 @@ class Book
     begin
       result = conn.get do |req|
         req.url '/Services/SearchService.asmx/Search'
-        req.params['prof'] = 's9001444.main.eit'
-        req.params['pwd'] = 'ebs6239'
+        req.params['prof'] = SETTINGS['novelist']['profile']
+        req.params['pwd'] = SETTINGS['novelist']['password']
         req.params['db'] = 'noh'
         req.params['query'] = @isbn
         req.options[:timeout] = 1
