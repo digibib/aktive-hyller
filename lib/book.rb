@@ -163,9 +163,8 @@ class Book
       query.optional([:review_id, RDF::DC.source, :source_id],
                      [:source_id, RDF::FOAF.name, :review_source])
       query.optional([:review_id, RDF::REV.reviewer, :reviewer])
-      query.filter('lang(?review_text) != "nn"')
 
-    #puts query
+    puts query
     reviews = REPO.select(query)
     # reviews is a graph RDF object, RDF::Query::Solutions
     # http://rdf.rubyforge.org/RDF/Query/Solutions.html
@@ -437,9 +436,12 @@ class Book
         end
         solutions.each do |s|
           if ds[:similar_work] == s[:similar_work]
-            if s[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/eng") ||
-                s[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/swe") ||
-                s[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/dan")
+            if (s[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/eng") &&
+                s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/eng")) ||
+                (s[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/swe") &&
+                s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/swe")) ||
+                (s[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/dan") &&
+                s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/dan"))
               results << s
               throw :found_book
             end
