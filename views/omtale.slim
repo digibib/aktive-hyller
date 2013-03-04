@@ -23,8 +23,8 @@ div id="content-left"
           img src="/img/star_half.png" class="star"
         - (5-red_stars).times do
           img src="/img/star_gray.png" class="star"
-        p Basert på #{rating[:num_raters]} rangering#{'er' if rating[:num_raters] > 1 }
-          <br/> fra #{rating[:source]}
+        p #{t.based_on} #{rating[:num_raters]} #{t.ranking}#{t.plural if rating[:num_raters] > 1 }
+          <br/> #{t.from} #{rating[:source]}
 
 div id="content-right"
   div id="omtale-wrapper" class="iosSlider"

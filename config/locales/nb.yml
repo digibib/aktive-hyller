@@ -20,8 +20,11 @@ no_reviews_html: |
     </ul>
   <br/>
   <p><em>Ta gjerne kontakt med en ansatt hvis du lurer på noe!</em></p>
-based_on_reviews1: <br/>Basert på %1
-based_on_reviews2: vurdering(er) fra %1
+based_on: Basert på
+ranking: vurdering
+plural: er
+from: fra
+
 # page terms
 startpage:
   title: Nysgjerrig på boka?

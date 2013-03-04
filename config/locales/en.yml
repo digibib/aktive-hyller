@@ -20,8 +20,11 @@ no_reviews_html: |
     </ul>
   <br/>
   <p><em>Please contact an employee if you have any questions!</em></p>
-based_on_reviews1: <br/>Based on %1
-based_on_reviews2: review(s) from %1
+based_on: Based on
+ranking: ranking
+plural: s
+from: from
+
 # page terms
 startpage:
   title: Curious about the book?
