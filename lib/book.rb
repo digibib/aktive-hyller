@@ -372,7 +372,7 @@ class Book
     similaritygraph = {:context => RDF::URI('http://data.deichman.no/noeSomLigner')}
     bookgraph       = {:context => RDF::URI("http://data.deichman.no/books")}
 
-    query = QUERY.select(:book, :book_title, :lang, :original_language, :similar_work)
+    query = QUERY.select(:book, :book_title, :lang, :original_language, :format, :similar_work)
     query.sample(:cover_url)
     query.group_digest(:creatorName, ', ', 1000, 1)
     query.distinct
@@ -385,6 +385,7 @@ class Book
         [:similar_work, RDF::FABIO.hasManifestation, :book, bookgraph],
         [:book, RDF::DC.title, :book_title, bookgraph],
         [:book, RDF::DC.language, :lang, bookgraph]
+        [:book, RDF::DC.format, :format, bookgraph]
         )
     query.optional([:book, RDF::FOAF.depiction, :cover_url, bookgraph])
     query.optional([:book, RDF::DEICH.originalLanguage, :original_language, bookgraph])
