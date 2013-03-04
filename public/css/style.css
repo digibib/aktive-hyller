@@ -53,9 +53,13 @@ div#nysgjerrig     { width:100%; height: 100%; vertical-align: middle}
 div#nysgjerrig-tittel { margin-top:100px; font-size: 6em; font-weight: bold; text-align: center}
 div#nysgjerrig-undertittel { margin:200px;font-size: 4em; text-align: center}
 
-div#header         { margin-left:400px; height: 100px; width: 1225px; padding-top:35px; }
+div#header         { margin-left:400px; height: 150px; width: 1225px; padding-top:35px; }
 p#title            { font-size: 2.5em; font-weight: bold; color: #333;}
 p#sub-title        { margin-top: 15px;font-size: 1.6em; font-weight: bold; color: #333;}
+div#header-text    { float: left; width: 800px;}
+div#flags          { float: right; }
+img.flag           { margin-left: 50px;}
+
 
 div#left-bar { background: rgba(230,87,64,0); margin-right: 60px; float:left;
                      width: 238px; height: 1050px; position:relative; }
@@ -90,7 +94,6 @@ button.square:active { position: relative; top: 3px; color: #000;
                        background: -moz-linear-gradient(bottom,  #eee,  #aaa)}
 #tilbake             { margin-top: 10px; position: relative;}
 #tilbake-pil         { height:20px; position: absolute; left:18px; top: 50px; }
-div#languages      { margin:10px 0 0 10px; }
 
 div.liste-small     { width:130px; height:300px; float:left; margin-right:40px;
                       overflow: hidden; cursor: pointer;}
