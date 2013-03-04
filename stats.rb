@@ -62,7 +62,7 @@ puts
 puts "Bøker uten anbefalinger"
 puts "-"*79
 
-stm = db.prepare "select author, title, uri from omtaler where antall=0 and date(time) "+constraint
+stm = db.prepare "select distinct author, title, uri from omtaler where antall=0 and date(time) "+constraint
 omtaler = stm.execute
 omtaler.each do |row|
   puts "%s - \"%s\" - %s " % [row[0], row[1], row[2]]
