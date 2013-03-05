@@ -19,15 +19,16 @@ class Book
 
     url      = RESOURCE_PREFIX + tnr.to_s
     @book_id = RDF::URI(url)
-    query    = QUERY.select(:title, :format, :isbn, :work_id, :creator_id, :responsible, :abstract, :lang)
+    query    = QUERY.select(:title, :format, :isbn, :work_id, :creator_id, :responsible, :abstract, :krydder, :lang)
     query.distinct.from(DEFAULT_GRAPH)
-    query.sample(:cover_url, :workAbstract)
+    query.sample(:cover_url, :workAbstract, :workKrydder)
     query.group_digest(:creatorName, ', ', 1000, 1)
     query.where([@book_id, RDF::DC.title, :title],
              [@book_id, RDF::DC.language, :lang],
              [@book_id, RDF::DC.format, :format])
     query.optional([@book_id, RDF::FOAF.depiction, :cover_url])
     query.optional([@book_id, RDF::DC.abstract, :abstract])
+    query.optional([@book_id, RDF::DEICH.krydder_beskrivelse, :krydder])
     query.optional([@book_id, RDF::BIBO.isbn, :isbn])
     query.optional([@book_id, RDF::DC.creator, :creator_id],
                 [:creator_id, RDF::FOAF.name, :creatorName])
@@ -35,6 +36,9 @@ class Book
     query.optional([:work_id, RDF::FABIO.hasManifestation, @book_id])
     query.optional([:work_id, RDF::FABIO.hasManifestation, :book],
                 [:book, RDF::DC.abstract, :workAbstract])
+    query.optional([:work_id, RDF::FABIO.hasManifestation, :book],
+                [:book, RDF::DEICH.krydder_beskrivelse, :workKrydder])
+
 
     print "#{query.pp}"
     results       = REPO.select(query)
@@ -53,6 +57,11 @@ class Book
         @abstract  = results.first[:abstract]
       else
         @abstract  = results.first[:workAbstract] unless results.first[:workAbstract].to_s.empty?
+      end
+      unless results.first[:krydder].to_s.empty?
+        @krydder  = results.first[:krydder]
+      else
+        @krydder  = results.first[:workKrydder] unless results.first[:workKrydder].to_s.empty?
       end
 
       # fetch isbns for work into array
@@ -152,10 +161,11 @@ class Book
     query = QUERY.select(:review_id, :review_title, :review_text, :review_source, :reviewer)
       query.distinct
       query.from(REVIEW_GRAPH)
+      query.from_named(DEFAULT_GRAPH)
       if self.work_id
-        query.where([self.work_id, RDF::REV::hasReview, :review_id])
+        query.where([self.work_id, RDF::REV::hasReview, :review_id, :context=>DEFAULT_GRAPH])
       else
-        query.where([self.book_id, RDF::REV::hasReview, :review_id])
+        query.where([self.book_id, RDF::REV::hasReview, :review_id, :context=>DEFAULT_GRAPH])
       end
       query.where([:review_id, RDF::REV.title, :review_title],
                   [:review_id, RDF::REV.text, :review_text])
@@ -175,6 +185,7 @@ class Book
         :source => r[:review_source].to_s})
     end
     @review_collection.push({:text => @abstract.to_s, :source => "Bibliotekbasen"}) if @abstract
+    @review_collection.push({:text => @krydder.to_s, :source => "Katalogkrydder"}) if @krydder
     return @review_collection
   end
 
@@ -334,17 +345,14 @@ class Book
     # this query fetches other works by same author
     query = QUERY.select(:similar_work, :lang, :original_language, :format, :book_title, :book)
       query.sample(:cover_url)
-      query.group_digest(:creatorName, ', ', 1000, 1)
       query.distinct
       query.from(DEFAULT_GRAPH)
       query.where(
         [self.book_id, RDF::DC.creator, :creator],
         [:work, RDF::FABIO.hasManifestation, self.book_id],
-        [:similar_work, RDF::FABIO.hasManifestation, :book],
-        [:book, RDF::DC.format, RDF::URI('http://data.deichman.no/format/Book')],
-        [:book, RDF::DC.language, :lang],
         [:similar_work, RDF::DC.creator, :creator],
-        [:creator, RDF::FOAF.name, :creatorName],
+        [:similar_work, RDF::FABIO.hasManifestation, :book],
+        [:book, RDF::DC.language, :lang],
         [:book, RDF::DC.title, :book_title],
         [:book, RDF::DC.format, :format]
         )
@@ -352,7 +360,7 @@ class Book
       query.optional([:book, RDF::DEICH.originalLanguage, :original_language])
       query.minus([:work, RDF::FABIO.hasManifestation, :book])
 
-    #puts "Her: #{query}"
+    puts "Her: #{query}"
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
     return nil unless results
@@ -361,8 +369,7 @@ class Book
     @same_author_collection.push({
       :book => same_author_books[:book],
       :title => same_author_books[:book_title],
-      :cover_url => same_author_books[:cover_url] ? same_author_books[:cover_url] : fetch_cover_url(same_author_books[:book]),
-      :creatorName => same_author_books[:creatorName]
+      :cover_url => same_author_books[:cover_url] ? same_author_books[:cover_url] : fetch_cover_url(same_author_books[:book])
       })
     end
   end
@@ -377,10 +384,8 @@ class Book
     query.group_digest(:creatorName, ', ', 1000, 1)
     query.distinct
     query.where(
-        [:work, RDF.type, RDF::FABIO.Work, bookgraph],
         [:work, RDF::FABIO.hasManifestation, book_id, bookgraph],
         [:work, RDF::DC.creator, :creator, bookgraph],
-        [:similar_work, RDF::type, RDF::FABIO.Work, bookgraph],
         [:work, :predicate, :similar_work, similaritygraph],
         [:similar_work, RDF::FABIO.hasManifestation, :book, bookgraph],
         [:book, RDF::DC.title, :book_title, bookgraph],
@@ -392,9 +397,8 @@ class Book
     query.optional([:book, RDF::DC.creator, :similar_book_creator, bookgraph],
         [:similar_book_creator, RDF::FOAF.name, :creatorName, bookgraph])
     query.minus([:similar_work, RDF::DC.creator, :creator, bookgraph])
-    query.filter('(?predicate = <http://data.deichman.no/similarWork>) || (?predicate = <http://data.deichman.no/autoGeneratedSimilarity>)')
-
-    #puts "#{query}"
+    
+    puts "#{query}"
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
 
