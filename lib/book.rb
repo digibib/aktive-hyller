@@ -17,7 +17,7 @@ class Book
     @same_author_collection   = []
     @similar_works_collection = []
 
-    url      = 'http://data.deichman.no/resource/tnr_' + tnr.to_s
+    url      = RESOURCE_PREFIX + tnr.to_s
     @book_id = RDF::URI(url)
     query    = QUERY.select(:title, :format, :isbn, :work_id, :creator_id, :responsible, :abstract, :lang)
     query.distinct.from(DEFAULT_GRAPH)
@@ -36,7 +36,7 @@ class Book
     query.optional([:work_id, RDF::FABIO.hasManifestation, :book],
                 [:book, RDF::DC.abstract, :workAbstract])
 
-    #puts "#{query}"
+    print "#{query.pp}"
     results       = REPO.select(query)
     print "#{Time.now - timing_start} s."
     unless results.empty?
@@ -125,17 +125,17 @@ class Book
     # 2. any other cover from work
     # or return nil
     query = QUERY.select.sample(:same_language_format_image, :same_language_image, :any_image)
-      .from(DEFAULT_GRAPH)
-      .where([book_id, RDF::DC.language, :lang])
-      .optional([:work, RDF::FABIO.hasManifestation, book_id])
-      .optional([:work, RDF::FABIO.hasManifestation, :same_language_format_book],
+    query.from(DEFAULT_GRAPH)
+    query.where([book_id, RDF::DC.language, :lang])
+    query.optional([:work, RDF::FABIO.hasManifestation, book_id])
+    query.optional([:work, RDF::FABIO.hasManifestation, :same_language_format_book],
            [:same_language_format_book, RDF::DC.language, :lang],
            [:same_language_format_book, RDF::DC.format, self.format],
            [:same_language_format_book, RDF::FOAF.depiction, :same_language_format_image])
-      .optional([:work, RDF::FABIO.hasManifestation, :same_language_book],
+    query.optional([:work, RDF::FABIO.hasManifestation, :same_language_book],
            [:same_language_book, RDF::DC.language, :lang],
            [:same_language_book, RDF::FOAF.depiction, :same_language_image])
-      .optional([:work, RDF::FABIO.hasManifestation, :any_book],
+    query.optional([:work, RDF::FABIO.hasManifestation, :any_book],
            [:any_book, RDF::FOAF.depiction, :any_image],
            [:any_book, RDF::DC.format, self.format])
 
@@ -148,11 +148,10 @@ class Book
   end
 
   def fetch_local_reviews(limit=nil)
-    reviewgraph = RDF::URI('http://data.deichman.no/reviews')
     # her henter vi omtale
     query = QUERY.select(:review_id, :review_title, :review_text, :review_source, :reviewer)
       query.distinct
-      query.from(reviewgraph)
+      query.from(REVIEW_GRAPH)
       if self.work_id
         query.where([self.work_id, RDF::REV::hasReview, :review_id])
       else
@@ -164,7 +163,7 @@ class Book
                      [:source_id, RDF::FOAF.name, :review_source])
       query.optional([:review_id, RDF::REV.reviewer, :reviewer])
 
-    puts query
+    print "#{query.pp}"
     reviews = REPO.select(query)
     # reviews is a graph RDF object, RDF::Query::Solutions
     # http://rdf.rubyforge.org/RDF/Query/Solutions.html

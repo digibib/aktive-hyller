@@ -26,3 +26,12 @@ module RDF
   class CTAG < RDF::Vocabulary("http://commontag.org/ns#");end 
   class RADATANA < RDF::Vocabulary("http://def.bibsys.no/xmlns/radatana/1.0#");end 
 end
+
+# monkey-patch Virtuoso gem for pretty printing to logs 
+module RDF::Virtuoso
+  class Query
+    def pp
+      self.to_s.gsub(/(SELECT|FROM|WHERE|GRAPH|FILTER)/,"\n"+'\1').gsub(/(\s\.\s|WHERE\s{\s|})(?!})/, '\1'+"\n")
+    end
+  end
+end
