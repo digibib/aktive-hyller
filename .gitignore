@@ -4,4 +4,6 @@ config/settings.yml
 public/img/leftbar.png
 public/img/logo.png
 public/img/startscreen.png
+public/img/star_half.png
+public/img/star_whole.png
 *.db

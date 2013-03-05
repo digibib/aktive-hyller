@@ -17,7 +17,7 @@ div id="content-left"
       div.rating
         - red_stars = (rating[:rating]/rating[:num_raters]).to_i
         - red_stars.times do
-          img src="/img/star_orange.png" class="star"
+          img src="/img/star_whole.png" class="star"
         - if red_stars != (rating[:rating]/rating[:num_raters].to_f).round
           - red_stars += 1
           img src="/img/star_half.png" class="star"
