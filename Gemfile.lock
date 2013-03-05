@@ -1,12 +1,3 @@
-GIT
-  remote: https://github.com/digibib/rdf-virtuoso.git
-  revision: a2b66e0c6a3a70ad19a71e16495faca5b918d2fe
-  specs:
-    rdf-virtuoso (0.1.2)
-      api_smith (~> 1.2.0)
-      httparty (~> 0.10.2)
-      rdf (~> 1.0.3)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -69,6 +60,10 @@ GEM
       rack (>= 1.0)
     rdf (1.0.3)
       addressable (>= 2.2)
+    rdf-virtuoso (0.1.2)
+      api_smith (~> 1.2.0)
+      httparty (~> 0.10.2)
+      rdf (~> 1.0.3)
     rvm-capistrano (1.2.7)
       capistrano (>= 2.0.0)
     sinatra (1.3.5)
@@ -115,7 +110,7 @@ DEPENDENCIES
   pony
   pry
   rdf
-  rdf-virtuoso!
+  rdf-virtuoso
   rvm-capistrano
   sinatra
   sinatra-contrib

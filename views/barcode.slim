@@ -1,5 +1,19 @@
 javascript:
   var barcodeinput = '';
+  var request; 
+  
+  $('button#avbryt-knapp').on('click', function() {
+    $('#overlay').hide();
+    $('#vi-leter').hide();
+    if(request) {request.abort();} //abort running requests
+  });
+  
+  // loading animation
+  i = 0;
+  setInterval(function() {
+      i = ++i % 4;
+      $("#loading").html(""+Array(i+1).join("."));
+  }, 500);
   
   $(document).keypress(function(e){
     var key = String.fromCharCode(e.which);
@@ -35,11 +49,13 @@ javascript:
               console.log(message);
               $('div#vi-leter p').html("#{t.nothing_found}");
               $('button#avbryt-knapp').html('OK');
+              barcodeinput = '';
             });
     
           } else {
-            $('div#vi-leter p').html('Beklager! Foreløpig kan jeg bare hjelpe deg<br/>med bøker og lydbøker');
+            $('div#vi-leter p').html("#{t.wrong_format}");
             $('button#avbryt-knapp').html('OK');
+            barcodeinput = '';
           };
         });
         

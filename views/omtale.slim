@@ -92,12 +92,13 @@ div id="content-bottom"
 
 javascript:
   $(document).ready(function () {
-
+    
     $('button#avbryt-knapp').on('click', function() {
-       request.abort();
-       $('#overlay').hide();
-       $('#vi-leter').hide();
-     });
+      $('#overlay').hide();
+      $('#vi-leter').hide();
+      if(request) {request.abort();} //abort running requests
+    });
+
 
     $('#indicator li:first').addClass("active");
 

@@ -9,6 +9,7 @@ made_by: av
 fetched_from: Denne teksten er hentet fra
 fetching_info: Henter informasjon om
 nothing_found: Ops! Klarte ikke å finne noe om denne.
+wrong_format: Beklager! Foreløpig kan jeg bare hjelpe deg med bøker og lydbøker
 no_reviews_html: |
   <p>Her finnes det dessverre ingen omtaler!</p>
   <br/>

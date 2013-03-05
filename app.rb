@@ -80,7 +80,7 @@ get '/omtale' do
   session[:log][:omtale] += 1
   session[:history].push({:path => '/omtale', :tnr => session[:current].tnr})
   logger.info("Omtalevisning #{session[:current].book_id} #{session[:current].review_collection.size} \"#{session[:current].creatorName || session[:current].responsible || 'ukjent'}\" \"#{session[:current].title}\"")
-  slim :omtale, :locals => {:book => session[:current]}
+  slim :omtale, :locals => {:book => session[:current], :lang => session[:locale]}
 end
 
 get '/omtale/:tnr' do
@@ -98,7 +98,7 @@ get '/flere' do
   session[:log][:flere] += 1
   session[:history].push({:path => '/flere', :tnr => session[:current].tnr})
   logger.info("Flere \"#{session[:current].creatorName || session[:current].responsible}\" #{session[:current].same_author_collection.size}")
-  slim :flere, :locals => {:book => session[:current]}
+  slim :flere, :locals => {:book => session[:current], :lang => session[:locale]}
 end
 
 get '/relaterte' do
@@ -107,7 +107,7 @@ get '/relaterte' do
   session[:log][:relaterte] += 1
   session[:history].push({:path => '/relaterte', :tnr => session[:current].tnr})
   logger.info("Relaterte \"#{session[:current].creatorName || session[:current].responsible} - #{session[:current].title}\" #{session[:current].similar_works_collection.size}")
-  slim :relaterte, :locals => {:book => session[:current]}
+  slim :relaterte, :locals => {:book => session[:current], :lang => session[:locale]}
 end
 
 get '/back' do

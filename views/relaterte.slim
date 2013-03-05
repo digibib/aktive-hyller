@@ -23,10 +23,10 @@ div id="fade-to-white"
 javascript:
   $(document).ready(function () {
 
-   $('button#avbryt-knapp').on('click', function() {
+    $('button#avbryt-knapp').on('click', function() {
       $('#overlay').hide();
       $('#vi-leter').hide();
-      request.abort();
+      if(request) {request.abort();} //abort running requests
     });
 
     // loading animation

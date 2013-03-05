@@ -9,6 +9,7 @@ made_by: by
 fetched_from: This text is fetched from
 fetching_info: Gathering information about
 nothing_found: Sorry, could not find any information on this book.
+wrong_format: Sorry! We can only provide info on books and audio books for now
 no_reviews_html: |
   <p>No reviews found!</p>
   <br/>

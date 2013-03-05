@@ -6,7 +6,7 @@ javascript:
   $('button#avbryt-knapp').on('click', function() {
     $('#overlay').hide();
     $('#vi-leter').hide();
-    request.abort();
+    if(request) {request.abort();} //abort running requests
   });
 
   // loading animation
@@ -49,7 +49,7 @@ javascript:
           });
   
         } else {
-          $('div#vi-leter p').html('Beklager! Foreløpig kan jeg bare hjelpe deg<br/>med bøker og lydbøker');
+          $('div#vi-leter p').html("#{t.wrong_format}");
           $('button#avbryt-knapp').html('OK');
         };
       });

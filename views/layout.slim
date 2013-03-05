@@ -34,10 +34,12 @@ html
               span "#{book.title}"&nbsp;
               span style="font-weight:normal" #{t.made_by} #{book.creatorName}
         div id="languages"
-            a href="/lang/nb"
-              img class="flag" src="img/lang_nb.png"
+          - unless lang == 'en'
             a href="/lang/en"
               img class="flag" src="img/lang_en.png"
+          - else
+            a href="/lang/nb"
+            img class="flag" src="img/lang_nb.png"
       div id="contents"
         == yield
       div id="vi-leter"
