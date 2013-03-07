@@ -52,7 +52,7 @@ div id="content-bottom"
     - unless book.same_author_collection.size == 0
       h3 #{t.menu.more}
       - num = [book.same_author_collection.size, 3].min
-      - book.same_author_collection[0...num].each do |b|
+      - book.randomize_books(book.same_author_collection)[0...num].each do |b|
         div.liste-small
           input[class="tnr_id" type="hidden" value="#{b[:book].to_s.match(/tnr_(.*)/)[1]}"]
           - if b[:cover_url]
@@ -62,7 +62,7 @@ div id="content-bottom"
             div.cover-small-missing #{b[:creatorName]} <strong> #{b[:title]}</strong>
           p.title: strong #{b[:title]}
           /p.author #{b[:creatorName]}
-      - unless book.same_author_collection.size <= 3
+      - if book.same_author_collection.size > 3
         a href="/flere"
           div.cover-small
             div.cover-small-missing #{t.menu.see_more}
@@ -71,7 +71,7 @@ div id="content-bottom"
     div class="relaterte"
       h3 #{t.menu.related}
       - num = [book.similar_works_collection.size, 3].min
-      - book.similar_works_collection[0...num].each do |b|
+      - book.randomize_books(book.similar_works_collection)[0...num].each do |b|
         div.liste-small
           input[class="tnr_id" type="hidden" value="#{b[:book].to_s.match(/tnr_(.*)/)[1]}"]
           - if b[:cover_url]
@@ -82,7 +82,7 @@ div id="content-bottom"
               p #{b[:creatorName]} <strong> #{b[:title]}</strong>
           p class="title wider": strong #{b[:title]}
           p class="author wider" #{b[:creatorName]}
-      - unless book.similar_works_collection.size <= 3
+      - if book.similar_works_collection.size > 3
         a href="/relaterte"
           div.cover-small
             div.cover-small-missing #{t.menu.see_more}

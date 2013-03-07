@@ -5,7 +5,7 @@ require "faraday"
 
 class Book
   attr_accessor :book_id, :title, :format, :cover_url, :isbn, :creator_id, :creatorName, :responsible, :rating, :tnr, :lang,
-                :work_id, :work_isbn, :review_collection, :same_author_collection, :similar_works_collection, :abstract
+                :work_id, :work_isbn, :review_collection, :same_author_collection, :similar_works_collection, :abstract, :randomized_books
 
   def initialize(tnr)
     timing_start = Time.now
@@ -364,6 +364,7 @@ class Book
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
     return nil unless results
+    @randomized_books = randomize_books(results)
     results.order_by(:book_title)
     results.each do |same_author_books|
     @same_author_collection.push({
@@ -373,6 +374,15 @@ class Book
       })
     end
   end
+
+  def randomize_books(solutions)
+    randomized_books = Marshal.load(Marshal.dump(solutions)).shuffle
+    results = []
+    randomized_books.each { |book| results << book if book[:cover_url] }
+    randomized_books.each { |book| results << book unless book[:cover_url] }
+    results
+  end
+
 
   def fetch_similar_works
     # this query fetches related books
