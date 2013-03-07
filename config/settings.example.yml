@@ -3,10 +3,11 @@ rfid: true
 barcode: true
 
 # data access
-sparql_endpoint: http://localhost:8890/sparql
-default_graph:   http://example.com/books
-resource_prefix: http://example.com/resource/
-book_status_api: http://bibsyst/???????
+sparql_endpoint:   http://localhost:8890/sparql
+default_graph:     http://example.com/books
+similarity_graph:  http://data.deichman.no/noeSomLigner
+resource_prefix:   http://example.com/resource/
+book_status_api:   http://bibsyst/???????
 department:      "voksenavdelingen"
 novelist:
   profile: profile-id
