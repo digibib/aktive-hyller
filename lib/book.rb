@@ -345,7 +345,6 @@ class Book
     # this query fetches other works by same author
     query = QUERY.select(:similar_work, :lang, :original_language, :format, :book_title, :book)
       query.sample(:cover_url)
-      query.group_digest(:creatorName, ', ', 1000, 1)
       query.distinct
       query.from(DEFAULT_GRAPH)
       query.where(
@@ -353,10 +352,7 @@ class Book
         [:work, RDF::FABIO.hasManifestation, self.book_id],
         [:similar_work, RDF::DC.creator, :creator],
         [:similar_work, RDF::FABIO.hasManifestation, :book],
-        [:book, RDF::DC.format, RDF::URI('http://data.deichman.no/format/Book')],
         [:book, RDF::DC.language, :lang],
-        [:similar_work, RDF::DC.creator, :creator],
-        [:creator, RDF::FOAF.name, :creatorName],
         [:book, RDF::DC.title, :book_title],
         [:book, RDF::DC.format, :format]
         )
@@ -364,6 +360,7 @@ class Book
       query.optional([:book, RDF::DEICH.originalLanguage, :original_language])
       query.minus([:work, RDF::FABIO.hasManifestation, :book])
 
+    puts query
     puts "#{query.pp}" if ENV['RACK_ENV'] == 'development'
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
@@ -413,7 +410,8 @@ class Book
     query.optional([:book, RDF::DC.creator, :similar_book_creator],
         [:similar_book_creator, RDF::FOAF.name, :creatorName])
     query.minus([:similar_work, RDF::DC.creator, :creator])
-    
+
+    #puts query    
     puts "#{query.pp}" if ENV['RACK_ENV'] == 'development'
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
