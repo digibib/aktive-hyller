@@ -103,7 +103,7 @@ div.liste-small     { width:125px; height:300px; float:left; margin-right:40px;
 div.cover-small     { width:125px; height:180px; overflow:hidden;;
                       background: #fff; box-shadow: 6px 6px 7px 2px rgba(0,0,0,0.35);
                        position:relative;}
-   .cover-small img { width:110px; max-height:170px; border: 5px solid white;
+   .cover-small img { width:115px; max-height:170px; border: 5px solid white;
                       position:absolute;top:0;bottom:0;margin:auto;}
 div.cover-small-missing { width:120px; height:170px; border: 5px solid white;
                           background: -moz-linear-gradient(top,  #eee,  #b5b5b5);
