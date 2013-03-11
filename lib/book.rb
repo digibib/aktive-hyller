@@ -87,7 +87,7 @@ class Book
 
     timing_start = Time.now
     timings += "\nSPARQL - get local reviews: "
-    fetch_local_reviews(limit=4)
+    fetch_local_reviews
     timings += "#{Time.now - timing_start} s."
 
     timing_start = Time.now
@@ -156,7 +156,7 @@ class Book
     results.first[:same_language_format_image] ? results.first[:same_language_format_image] : results.first[:same_language_image] ? results.first[:same_language_image] : results.first[:any_image]
   end
 
-  def fetch_local_reviews(limit=nil)
+  def fetch_local_reviews(limit=4)
     # her henter vi omtale
     query = QUERY.select(:review_id, :review_title, :review_text, :review_source, :reviewer)
       query.distinct
