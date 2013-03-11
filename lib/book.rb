@@ -9,7 +9,7 @@ class Book
 
   def initialize(tnr)
     timing_start = Time.now
-    print "\nSPARQL - get book info: "
+    timings = "\nSPARQL - get book info: "
 
     @tnr = tnr
     @rating                   = {} # ratings format {:source, :num_raters, :rating}
@@ -42,7 +42,7 @@ class Book
 
     print "#{query.pp}"
     results       = REPO.select(query)
-    print "#{Time.now - timing_start} s."
+    timings += "#{Time.now - timing_start} s."
     unless results.empty?
       @title       = results.first[:title]
       @format      = results.first[:format]
@@ -67,12 +67,12 @@ class Book
       # fetch isbns for work into array
       if @work_id
         timing_start = Time.now
-        print "\nSPARQL - get work isbns: "
+        timings += "\nSPARQL - get work isbns: "
         query = QUERY.select(:work_isbns)
         query.select.where([@work_id, RDF::BIBO.isbn, :work_isbns])
         #puts "#{query}"
         results     = REPO.select(query)
-        print "#{Time.now - timing_start} s."
+        timings += "#{Time.now - timing_start} s."
         @work_isbns = results.bindings[:work_isbns].to_a.uniq
       end
       # return either cover_url, same_language_image or any_image
@@ -86,25 +86,25 @@ class Book
     #fetch_cover_url(self.book_id) unless self.cover_url
 
     timing_start = Time.now
-    print "\nSPARQL - get local reviews: "
+    timings += "\nSPARQL - get local reviews: "
     fetch_local_reviews(limit=4)
-    print "#{Time.now - timing_start} s."
+    timings += "#{Time.now - timing_start} s."
 
     timing_start = Time.now
-    print "\nSPARQL - same author books: "
+    timings += "\nSPARQL - same author books: "
     fetch_same_author_books
-    print "#{Time.now - timing_start} s."
+    timings += "#{Time.now - timing_start} s."
 
     timing_start = Time.now
-    print "\nSPARQL - similar works: "
+    timings += "\nSPARQL - similar works: "
     fetch_similar_works
-    print "#{Time.now - timing_start} s."
+    timings += "#{Time.now - timing_start} s."
 
     timing_start = Time.now
-    print "\nHTTP - get remote data: "
+    timings += "\nHTTP - get remote data: "
     fetch_remote_data
-    print "#{Time.now - timing_start} s.\n\n"
-
+    timings += "#{Time.now - timing_start} s.\n\n"
+    puts timings
     enforce_review_order
 
     #puts "isbn_array: ", @work_isbns
@@ -360,7 +360,6 @@ class Book
       query.optional([:book, RDF::DEICH.originalLanguage, :original_language])
       query.minus([:work, RDF::FABIO.hasManifestation, :book])
 
-    puts query
     puts "#{query.pp}" if ENV['RACK_ENV'] == 'development'
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
@@ -411,7 +410,7 @@ class Book
         [:similar_book_creator, RDF::FOAF.name, :creatorName])
     query.minus([:similar_work, RDF::DC.creator, :creator])
 
-    #puts query    
+    #puts query
     puts "#{query.pp}" if ENV['RACK_ENV'] == 'development'
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
