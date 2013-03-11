@@ -52,7 +52,6 @@ div id="content-bottom"
     - unless book.same_author_collection.size == 0
       h3 #{t.menu.more}
       - num = (book.same_author_collection.size > 4 ? 3 : [book.same_author_collection.size, 4].min)
-      - puts "num, same:",num
       - book.randomize_books(book.same_author_collection)[0...num].each do |b|
         div.liste-small
           input[class="tnr_id" type="hidden" value="#{b[:book].to_s.match(/tnr_(.*)/)[1]}"]
@@ -72,7 +71,6 @@ div id="content-bottom"
     div class="relaterte"
       h3 #{t.menu.related}
       - num = (book.similar_works_collection.size > 4 ? 3 : [book.similar_works_collection.size, 4].min)
-      - puts "num, similar:",num
       - book.randomize_books(book.similar_works_collection)[0...num].each do |b|
         div.liste-small
           input[class="tnr_id" type="hidden" value="#{b[:book].to_s.match(/tnr_(.*)/)[1]}"]
@@ -94,7 +92,7 @@ div id="content-bottom"
 
 javascript:
   $(document).ready(function () {
-    
+
     $('button#avbryt-knapp').on('click', function() {
       $('#overlay').hide();
       $('#vi-leter').hide();
