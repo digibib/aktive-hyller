@@ -343,7 +343,7 @@ class Book
 
   def fetch_same_author_books
     # this query fetches other works by same author
-    query = QUERY.select(:similar_work, :lang, :original_language, :format, :book_title, :book)
+    query = QUERY.select(:similar_work, :lang, :original_language, :format, :book_title, :book, :first_edition)
       query.sample(:cover_url)
       query.distinct
       query.from(DEFAULT_GRAPH)
@@ -352,6 +352,7 @@ class Book
         [:work, RDF::FABIO.hasManifestation, self.book_id],
         [:similar_work, RDF::DC.creator, :creator],
         [:similar_work, RDF::FABIO.hasManifestation, :book],
+        [:similar_work, RDF::DEICH.assumedFirstEdition, :first_edition],
         [:book, RDF::DC.language, :lang],
         [:book, RDF::DC.title, :book_title],
         [:book, RDF::DC.format, :format]
@@ -359,13 +360,13 @@ class Book
       query.optional([:book, RDF::FOAF.depiction, :cover_url])
       query.optional([:book, RDF::DEICH.originalLanguage, :original_language])
       query.minus([:work, RDF::FABIO.hasManifestation, :book])
+      query.order_by("desc(?first_edition)")
 
     puts "#{query.pp}" if ENV['RACK_ENV'] == 'development'
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
     return nil unless results
     @randomized_books = randomize_books(results)
-    results.order_by(:book_title)
     results.each do |same_author_books|
     @same_author_collection.push({
       :book => same_author_books[:book],
