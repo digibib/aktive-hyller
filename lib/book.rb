@@ -2,6 +2,7 @@
 require "rdf/virtuoso"
 require "nokogiri"
 require "faraday"
+require "typhoeus"
 
 class Book
   attr_accessor :book_id, :title, :format, :cover_url, :isbn, :creator_id, :creatorName, :responsible, :rating, :tnr, :lang,
@@ -190,33 +191,29 @@ class Book
   end
 
   def fetch_remote_data
-    for remote in %w[Novelist Bokkilden Goodreads Bokelskere]
-      #break if @review_collection.size >= 4
-      self.send(remote.to_sym)
-    end
+    # for remote in %w[Novelist Bokkilden Goodreads Bokelskere]
+    #   #break if @review_collection.size >= 4
+    #   self.send(remote.to_sym)
+    # end
+    hydra = Typhoeus::Hydra.new
+    req1 = Typhoeus::Request.new("http://www.goodreads.com/book/isbn", :timeout => 2000,
+      :params => {:format => 'xml', :key => "wDjpR0GY1xXIqTnx2QL37A",
+      :isbn => @isbn})
+    req1.on_complete  { |response| Goodreads(response) }
+    req2 = Typhoeus::Request.new("http://140.234.254.43/Services/SearchService.asmx/Search",
+      :timeout => 2000, :params => {:prof => SETTINGS['novelist']['profile'],
+        :pwd => SETTINGS['novelist']['password'], :db => "noh", :query => @isbn})
+    req2.on_complete { |response| Novelist(response) }
+
+    hydra.queue req1 if @isbn
+    hydra.queue req2 if @isbn
+    hydra.run
+    Bokelskere()
+    Bokkilden()
   end
 
-  def Goodreads
-    return nil unless @isbn
-
-    timing_start = Time.now
-    conn = Faraday.new "http://www.goodreads.com"
+  def Goodreads(result)
     gr_description = nil
-
-    begin
-      result = conn.get do |req|
-        req.url '/book/isbn'
-        req.params['isbn'] = @isbn
-        req.params['key'] = "wDjpR0GY1xXIqTnx2QL37A"
-        req.params['format'] = 'xml'
-        req.options[:timeout] = 2
-        req.options[:open_timeout] = 2
-      end
-    rescue Faraday::Error::TimeoutError
-      return
-      #puts "\nDEBUG:timeout getting data from GoodReads after #{Time.now - timing_start} seconds\n"
-    end
-
 
     return nil unless result.body
     return nil if result.body =~ /book not found/
@@ -239,7 +236,6 @@ class Book
     return nil if @rating[:rating]
     #puts "isbn til bokelskere: ", @isbn
 
-    timing_start = Time.now
     conn = Faraday.new "http://bokelskere.no"
     begin
       result = conn.get do |req|
@@ -249,8 +245,6 @@ class Book
         req.options[:open_timeout] = 4
       end
     rescue Faraday::Error::TimeoutError
-      return
-      #puts "\nDEBUG:timeout getting data from Bokelskere after #{Time.now - timing_start} seconds\n"
       result = nil
     end
 
@@ -267,29 +261,7 @@ class Book
     end
   end
 
-  def Novelist
-    return nil unless @isbn
-
-    timing_start = Time.now
-
-    #TODO undersøke andre muligheter for å få dns til ebscohost
-    #     hardkoder ip foreløpig for å ungå treg respons..
-    conn = Faraday.new "http://140.234.254.43"
-
-    begin
-      result = conn.get do |req|
-        req.url '/Services/SearchService.asmx/Search'
-        req.params['prof'] = SETTINGS['novelist']['profile']
-        req.params['pwd'] = SETTINGS['novelist']['password']
-        req.params['db'] = 'noh'
-        req.params['query'] = @isbn
-        req.options[:timeout] = 1
-        req.options[:open_timeout] = 2
-      end
-    rescue Faraday::Error::TimeoutError
-      return
-      #puts "\nDEBUG:timeout getting data from Novelist after #{Time.now - timing_start} seconds\n"
-    end
+  def Novelist(result)
 
     return nil if result.nil?
 
@@ -306,7 +278,6 @@ class Book
     @work_isbns = [@isbn] unless @work_isbns
     return nil if @work_isbns.empty?
 
-    timing_start = Time.now
     conn = Faraday.new "http://partner.bokkilden.no"
     bk_ingress = ""
 
