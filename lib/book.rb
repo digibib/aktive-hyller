@@ -445,6 +445,41 @@ class Book
       catch :found_book do
         solutions.each do |s|
           if ds[:similar_work] == s[:similar_work]
+            if s[:format] == RDF::URI("http://data.deichman.no/format/Book")
+              if s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/nob") || s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/nno")
+                results << s
+                throw :found_book
+              end
+            end
+          end
+        end
+        solutions.each do |s|
+          if ds[:similar_work] == s[:similar_work]
+            if s[:format] == RDF::URI("http://data.deichman.no/format/Book")
+              unless s[:original_language]
+                if s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/eng") ||
+                  s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/swe") ||
+                  s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/dan")
+                  results << s
+                  throw :found_book
+                end
+              end
+            end
+          end
+        end
+        solutions.each do |s|
+          if ds[:similar_work] == s[:similar_work]
+            if s[:format] == RDF::URI("http://data.deichman.no/format/Book")
+              if s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/eng") ||
+                s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/swe") ||
+                s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/dan")
+                throw :found_book
+              end
+            end
+          end
+        end
+        solutions.each do |s|
+          if ds[:similar_work] == s[:similar_work]
             if s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/nob") || s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/nno")
               results << s
               throw :found_book
@@ -453,22 +488,21 @@ class Book
         end
         solutions.each do |s|
           if ds[:similar_work] == s[:similar_work]
-            if (s[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/eng") &&
-                s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/eng")) ||
-                (s[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/swe") &&
-                s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/swe")) ||
-                (s[:original_language] == RDF::URI("http://lexvo.org/id/iso639-3/dan") &&
-                s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/dan"))
-              results << s
-              throw :found_book
+            unless s[:original_language]
+              if s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/eng") ||
+                s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/swe") ||
+                s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/dan")
+                results << s
+                throw :found_book
+              end
             end
           end
         end
         solutions.each do |s|
           if ds[:similar_work] == s[:similar_work]
             if s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/eng") ||
-                s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/swe") ||
-                s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/dan")
+              s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/swe") ||
+              s[:lang] == RDF::URI("http://lexvo.org/id/iso639-3/dan")
               results << s
               throw :found_book
             end
