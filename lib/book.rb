@@ -207,7 +207,6 @@ class Book
 
     hydra.queue req1 if @isbn
     hydra.queue req2 if @isbn
-    hydra.queue req2
     hydra.run
     Bokelskere()
     Bokkilden()
