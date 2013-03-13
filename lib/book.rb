@@ -196,19 +196,23 @@ class Book
     #   self.send(remote.to_sym)
     # end
     hydra = Typhoeus::Hydra.new
-    req1 = Typhoeus::Request.new("http://www.goodreads.com/book/isbn", :timeout => 2000,
+    req1 = Typhoeus::Request.new("http://www.goodreads.com/book/isbn", :timeout => 2,
       :params => {:format => 'xml', :key => "wDjpR0GY1xXIqTnx2QL37A",
       :isbn => @isbn})
-    req1.on_complete  { |response| Goodreads(response) }
+    req1.on_complete  { |response| Goodreads(response) unless response.timed_out? }
     req2 = Typhoeus::Request.new("http://140.234.254.43/Services/SearchService.asmx/Search",
-      :timeout => 2000, :params => {:prof => SETTINGS['novelist']['profile'],
+      :timeout => 2, :params => {:prof => SETTINGS['novelist']['profile'],
         :pwd => SETTINGS['novelist']['password'], :db => "noh", :query => @isbn})
-    req2.on_complete { |response| Novelist(response) }
+    req2.on_complete { |response| Novelist(response) unless response.timed_out? }
+    req3 = Typhoeus::Request.new("http://bokelskere.no/api/1.0/boker/info/#{@isbn}/", :timeout => 2)
+    req3.on_complete { |response| Bokelskere(response) unless response.timed_out? }
 
-    hydra.queue req1 if @isbn
-    hydra.queue req2 if @isbn
-    hydra.run
-    Bokelskere()
+    if @isbn
+      hydra.queue req1
+      hydra.queue req2
+      hydra.queue req3
+      hydra.run
+    end
     Bokkilden()
   end
 
@@ -216,7 +220,7 @@ class Book
     gr_description = nil
 
     return nil unless result.body
-    return nil if result.body =~ /book not found/
+    return nil if result.body =~ /error/
     xml = Nokogiri::XML result.body
     gr_description = xml.xpath('//description').first.content unless xml.xpath('//description').first.content.strip.empty?
     gr_num_raters = xml.xpath('//ratings_count').first.content.to_i
@@ -230,23 +234,9 @@ class Book
     @review_collection.push({:source => "Goodreads", :text => gr_description}) if gr_description
   end
 
-  def Bokelskere
-    return nil unless @isbn
+  def Bokelskere(result)
      # Don't bother with Bokelskere if we have ratings from Goodreads
     return nil if @rating[:rating]
-    #puts "isbn til bokelskere: ", @isbn
-
-    conn = Faraday.new "http://bokelskere.no"
-    begin
-      result = conn.get do |req|
-        req.url '/api/1.0/boker/info/' + @isbn.to_s + '/'
-        #req.params['format'] = 'json'
-        req.options[:timeout] = 2
-        req.options[:open_timeout] = 4
-      end
-    rescue Faraday::Error::TimeoutError
-      result = nil
-    end
 
     return nil unless result
     return nil unless result.body
@@ -278,34 +268,19 @@ class Book
     @work_isbns = [@isbn] unless @work_isbns
     return nil if @work_isbns.empty?
 
-    conn = Faraday.new "http://partner.bokkilden.no"
     bk_ingress = ""
 
-    begin
-      @work_isbns.each do |isbn|
-        res = conn.get do |req|
-          req.url '/SamboWeb/partner.do'
-          req.params['format'] = 'XML'
-          req.params['uttrekk'] = 5
-          req.params['pid'] = 0
-          req.params['ept'] = 3
-          req.params['xslId'] = 117
-          req.params['enkeltsok'] = isbn
-          req.options[:timeout] = 3
-          req.options[:open_timeout] = 4
+    @work_isbns.each do |isbn|
+      res = Typhoeus::Request.get("http://partner.bokkilden.no/SamboWeb/partner.do", :timeout => 2,
+        :params => {:format => "XML", :uttrekk => 5, :pid => 0, :ept => 3, :xslId => 117,
+              :enkeltsok => isbn})
+      if res.body
+        xml = Nokogiri::XML res.body
+        if xml.xpath('//Ingress').size() >= 1
+          bk_ingress = xml.xpath('//Ingress').first.content
         end
-
-        if res.body
-          xml = Nokogiri::XML res.body
-          if xml.xpath('//Ingress').size() >= 1
-            bk_ingress = xml.xpath('//Ingress').first.content
-          end
-          break unless bk_ingress.empty?
-        end
+        break unless bk_ingress.empty?
       end
-    rescue Faraday::Error::TimeoutError
-      return
-      #puts "\nDEBUG:timeout getting data from Bokkilden after #{Time.now - timing_start} seconds\n"
     end
 
     return nil if bk_ingress.empty?
