@@ -99,11 +99,22 @@ javascript:
       if(request) {request.abort();} //abort running requests
     });
 
-
     $('#indicator li:first').addClass("active");
 
-
     
+    $('#omtale-wrapper').iosSlider({
+          snapToChildren: true,
+          scrollbar: false,
+          desktopClickDrag: true,
+          onSlideChange: slideChange,
+    });
+        
+    function slideChange(args) {
+      $('#indicator li').removeClass('active');
+      $('#indicator li:eq(' + (args.currentSlideNumber - 1) + ')').addClass('active');
+    }
+    
+    /* iosslider deaktivert
     $('#omtale-wrapper').swipe({ 
       swipeStatus:swipe1, 
       allowPageScroll:"vertical",
@@ -122,7 +133,7 @@ javascript:
         }
       }
     }
-
+    */
     $('.liste-small').on('click', function(evt) {
       evt.preventDefault();
         var title = $(this).find('p.title').html();
