@@ -110,7 +110,7 @@ div.cover-small-missing { width:120px; height:170px; border: 5px solid white;
                           text-align: center; color:#444; display:table-cell; vertical-align:middle; }
 
 div#omtale-wrapper { width: 815px; height:460px; border: 2px solid #aaa;
-                     box-shadow:inset 0 0 10px #bbb; background:#eee; overflow:hidden;}
+                     box-shadow:inset 0 0 10px #bbb; background:#eee; /*overflow:hidden;*/}
 
 div#omtale-scroll  { float: right; margin-right:20px; }
 div.rating         { width:218px; height:60px; border: 1px solid #aaa; padding:14px;}
