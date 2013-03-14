@@ -101,35 +101,39 @@ javascript:
 
     $('#indicator li:first').addClass("active");
 
-    
+
     $('#omtale-wrapper').iosSlider({
           snapToChildren: true,
           scrollbar: false,
           desktopClickDrag: true,
           onSlideChange: slideChange,
+          onSlideStart: hideScrollBar,
+          onSlideComplete: showScrollBar
     });
-        
+
+    function hideScrollBar() { $('.review').css({ overflow: 'hidden' }); }
+    function showScrollBar() { $('.review').css({ overflow: 'auto' }); }
     function slideChange(args) {
       $('#indicator li').removeClass('active');
       $('#indicator li:eq(' + (args.currentSlideNumber - 1) + ')').addClass('active');
     }
-    
+
     /* iosslider deaktivert
-    $('#omtale-wrapper').swipe({ 
-      swipeStatus:swipe1, 
+    $('#omtale-wrapper').swipe({
+      swipeStatus:swipe1,
       allowPageScroll:"vertical",
       threshold:2000,
       maxTimeThreshold:5000
     });
-    
+
     function swipe1(event, phase, direction, distance) {
       //$(this).text( phase + " you have swiped " + distance + "px in direction:" + direction );
       if(phase=="move") {
         if (direction=="up") {
-          $(this).stop().animate({scrollTop: '-=100'}, 500); 
-        } 
+          $(this).stop().animate({scrollTop: '-=100'}, 500);
+        }
         if (direction=="down") {
-          $(this).stop().animate({scrollTop: '+=100'}, 500); 
+          $(this).stop().animate({scrollTop: '+=100'}, 500);
         }
       }
     }
