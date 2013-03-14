@@ -311,8 +311,8 @@ class Book
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
     return nil unless results
-    query.order_by(:book_title)
     @randomized_books = randomize_books(results)
+    results.order_by(:book_title)
     results.each do |same_author_books|
     @same_author_collection.push({
       :book => same_author_books[:book],
