@@ -101,7 +101,6 @@ javascript:
 
     $('#indicator li:first').addClass("active");
 
-
     $('#omtale-wrapper').iosSlider({
           snapToChildren: true,
           scrollbar: false,
@@ -111,8 +110,12 @@ javascript:
           onSlideComplete: showScrollBar
     });
 
-    function hideScrollBar() { $('.review').css({ overflow: 'hidden' }); }
-    function showScrollBar() { $('.review').css({ overflow: 'auto' }); }
+    function hideScrollBar(args) {
+      //$('.review').css({ overflow: 'hidden' });
+      }
+    function showScrollBar(args) {
+      //$('.review').css({ overflow: 'auto' });
+      }
     function slideChange(args) {
       $('#indicator li').removeClass('active');
       $('#indicator li:eq(' + (args.currentSlideNumber - 1) + ')').addClass('active');
