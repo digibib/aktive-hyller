@@ -28,7 +28,7 @@ set :sockets, []
 
 # In-memory session object
 session = {}
-session[:locale] = 'nb'
+session[:locale] = 'nb' # default
 session[:books] = {}    # {:tnr => book_object}
 session[:history] = []  # Array of Hash
                         # ex: {:path => "/omtale" :book => session[:books][:tnr]}
