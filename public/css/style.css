@@ -43,7 +43,7 @@ div.no-review      { padding:1em; font-size: 1.5em;}
 div.no-review p    { line-height: 1.2em;}
 div.no-review li   { margin-left: 1em; padding: 0.2em;}
 
-div.review         { font-size: 1.3em; padding:40px; width:92%; height:80%; overflow:auto; }
+div.review         { margin-top:20px;font-size: 1.3em; padding: 20px 40px; width:88%; height:77%; overflow:auto; }
 p.source         { font-size: 0.7em; margin-top:1em; font-weight:bold;}
 
 div#debug          { background-color:yellow; border: 1px solid black; border-radius: 2px;}
