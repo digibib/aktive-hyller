@@ -1,4 +1,4 @@
-*                  { margin:0; padding:0; border:0; /*cursor: none;*/ }
+*                  { margin:0; padding:0; border:0; cursor: none; }
 .select-disable     { -khtml-user-select: none; -moz-user-select: none;
                     -o-user-select: none;  user-select: none; }
 button::-moz-focus-inner { border: 0; }
