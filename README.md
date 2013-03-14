@@ -140,6 +140,7 @@ To hide tooltip and deactivate status messages:
 to handle scrolling and sensitivity:
 
 * [Grab and drag]: http://grabanddrag.mozdev.org/installation.html
+* make sure to disable "deactive dragging of linkes" under General tab (does exactly the opposite...)
 
 ### other Firefox settings
 in address window `about:config`
@@ -156,11 +157,12 @@ cat <<EOF | tee ~/code/aktivehyller.sh && chmod +x ~/code/aktivehyller.sh
 FIREFOX=/usr/bin/firefox
 sleep 3
 while true
+do
   rm -rf ~/.mozilla/firefox/*.default/startupCache
   rm -rf ~/.mozilla/firefox/*.default/Cache
   firefox -private http://localhost:4567/timeout
   sleep 3s
-end
+done
 EOF
 ```
 ### screensaver based browser reset
