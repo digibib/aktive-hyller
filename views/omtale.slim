@@ -101,6 +101,19 @@ javascript:
 
     $('#indicator li:first').addClass("active");
 
+    var scrollTimer;
+
+    $('.review').scroll(function(){
+      $('#omtale-wrapper').iosSlider('lock');
+      $('.review').css({ overflow: 'auto' });
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout( enableSwipe, 250 );
+    })
+
+    function enableSwipe() {
+      $('#omtale-wrapper').iosSlider('unlock');
+    }
+
     $('#omtale-wrapper').iosSlider({
           snapToChildren: true,
           scrollbar: false,
@@ -111,11 +124,13 @@ javascript:
     });
 
     function hideScrollBar(args) {
-      //$('.review').css({ overflow: 'hidden' });
-      }
+      //$('.review').delay(200).css({ overflow: 'hidden' });
+    }
+
     function showScrollBar(args) {
       //$('.review').css({ overflow: 'auto' });
       }
+
     function slideChange(args) {
       $('#indicator li').removeClass('active');
       $('#indicator li:eq(' + (args.currentSlideNumber - 1) + ')').addClass('active');
