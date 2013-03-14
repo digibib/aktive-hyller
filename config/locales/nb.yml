@@ -11,16 +11,10 @@ fetching_info: Henter informasjon om
 nothing_found: Ops! Klarte ikke å finne noe om denne.
 wrong_format: Beklager! Foreløpig kan jeg bare hjelpe deg med bøker og lydbøker
 no_reviews_html: |
-  <p>Her finnes det dessverre ingen omtaler!</p>
+  <p>Vi har foreløpig ingen omtaler av denne boka.</p>
   <br/>
-  <p>Husk at du også kan:</p>
-    <ul>
-      <li> Se flere bøker av samme forfatter</li>
-      <li> Finne noe som ligner</li>
-      <li> Legge på en ny bok</li>
-    </ul>
-  <br/>
-  <p><em>Ta gjerne kontakt med en ansatt hvis du lurer på noe!</em></p>
+  <p>Spør oss gjerne hvis du lurer på noe.</p>
+
 based_on: Basert på
 ranking: vurdering
 plural: er

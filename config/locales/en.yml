@@ -11,16 +11,10 @@ fetching_info: Gathering information about
 nothing_found: Sorry, could not find any information on this book.
 wrong_format: Sorry! We can only provide info on books and audio books for now
 no_reviews_html: |
-  <p>No reviews found!</p>
+  <p>There are no reviews for this book in our base.</p>
   <br/>
-  <p>Don't forget you can also:</p>
-    <ul>
-      <li> Find other books by this author</li>
-      <li> Find similar books</li>
-      <li> Place a new book on shelf</li>
-    </ul>
-  <br/>
-  <p><em>Please contact an employee if you have any questions!</em></p>
+  <p>Please get in touch if you have any questions.</p>
+  
 based_on: Based on
 ranking: rating
 plural: s
