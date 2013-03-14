@@ -222,10 +222,13 @@ class Book
     return nil unless result.body
     return nil if result.body =~ /error/
     xml = Nokogiri::XML result.body
-    gr_description = xml.xpath('//description').first.content unless xml.xpath('//description').first.content.strip.empty?
-    gr_num_raters = xml.xpath('//ratings_count').first.content.to_i
-    gr_rating = xml.xpath('//ratings_sum').first.content.to_i
-
+    begin
+      gr_description = xml.xpath('//description').first.content unless xml.xpath('//description').first.content.strip.empty?
+      gr_num_raters = xml.xpath('//ratings_count').first.content.to_i
+      gr_rating = xml.xpath('//ratings_sum').first.content.to_i
+    rescue NoMethodError
+      return nil
+    end
     if gr_rating
       @rating[:rating] = gr_rating
       @rating[:num_raters] = gr_num_raters
