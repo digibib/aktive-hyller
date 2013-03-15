@@ -22,12 +22,13 @@ class Book
     @book_id = RDF::URI(url)
     query    = QUERY.select(:title, :format, :isbn, :work_id, :creator_id, :responsible, :abstract, :krydder, :lang)
     query.distinct.from(DEFAULT_GRAPH)
-    query.sample(:cover_url, :workAbstract, :workKrydder)
+    query.sample(:cover_url, :alt_cover_url, :workAbstract, :workKrydder)
     query.group_digest(:creatorName, ', ', 1000, 1)
     query.where([@book_id, RDF::DC.title, :title],
              [@book_id, RDF::DC.language, :lang],
              [@book_id, RDF::DC.format, :format])
     query.optional([@book_id, RDF::FOAF.depiction, :cover_url])
+    query.optional([:book, RDF::IFACE.altDepictedBy, :alt_cover_url])
     query.optional([@book_id, RDF::DC.abstract, :abstract])
     query.optional([@book_id, RDF::DEICH.krydder_beskrivelse, :krydder])
     query.optional([@book_id, RDF::BIBO.isbn, :isbn])
@@ -47,7 +48,7 @@ class Book
     unless results.empty?
       @title       = results.first[:title]
       @format      = results.first[:format]
-      @cover_url   = results.first[:cover_url]
+      @cover_url   = results.first[:cover_url] || results.first[:alt_cover_url]
       @isbn        = results.first[:isbn].to_s if results.first[:isbn]
       @work_id     = results.first[:work_id] unless results.first[:work_id].to_s.empty?
       @creator_id  = results.first[:creator_id]
@@ -76,15 +77,10 @@ class Book
         timings += "#{Time.now - timing_start} s."
         @work_isbns = results.bindings[:work_isbns].to_a.uniq
       end
-      # return either cover_url, same_language_image or any_image
-      unless @cover_url
-        @cover_url = fetch_cover_url(@book_id)
-      end
     else
       @book_id = nil
     end
 
-    #fetch_cover_url(self.book_id) unless self.cover_url
 
     timing_start = Time.now
     timings += "\nSPARQL - get local reviews: "
@@ -294,7 +290,7 @@ class Book
   def fetch_same_author_books
     # this query fetches other works by same author
     query = QUERY.select(:similar_work, :lang, :original_language, :format, :book_title, :book)
-      query.sample(:cover_url)
+      query.sample(:cover_url, :alt_cover_url)
       query.distinct
       query.from(DEFAULT_GRAPH)
       query.where(
@@ -307,6 +303,7 @@ class Book
         [:book, RDF::DC.format, :format]
         )
       query.optional([:book, RDF::FOAF.depiction, :cover_url])
+      query.optional([:book, RDF::IFACE.altDepictedBy, :alt_cover_url])
       query.optional([:book, RDF::DEICH.originalLanguage, :original_language])
       query.minus([:work, RDF::FABIO.hasManifestation, :book])
 
@@ -321,7 +318,7 @@ class Book
     @same_author_collection.push({
       :book => same_author_books[:book],
       :title => same_author_books[:book_title],
-      :cover_url => same_author_books[:cover_url] ? same_author_books[:cover_url] : fetch_cover_url(same_author_books[:book])
+      :cover_url => same_author_books[:cover_url] || same_author_books[:alt_cover_url]
       })
     end
   end
@@ -341,7 +338,7 @@ class Book
     bookgraph       = {:context => RDF::URI("http://data.deichman.no/books")}
 
     query = QUERY.select(:book, :book_title, :lang, :original_language, :format, :similar_work)
-    query.sample(:cover_url)
+    query.sample(:cover_url, :alt_cover_url)
     query.group_digest(:creatorName, ', ', 1000, 1)
     query.distinct
     query.from(DEFAULT_GRAPH)
@@ -356,6 +353,7 @@ class Book
         [:book, RDF::DC.format, :format]
         )
     query.optional([:book, RDF::FOAF.depiction, :cover_url])
+    query.optional([:book, RDF::IFACE.altDepictedBy, :alt_cover_url])
     query.optional([:book, RDF::DEICH.originalLanguage, :original_language])
     query.optional([:book, RDF::DC.creator, :similar_book_creator],
         [:similar_book_creator, RDF::FOAF.name, :creatorName])
@@ -372,7 +370,7 @@ class Book
       @similar_works_collection.push({
         :book => similar_book[:book],
         :title => similar_book[:book_title],
-        :cover_url => similar_book[:cover_url] ? similar_book[:cover_url] : fetch_cover_url(similar_book[:book]),
+        :cover_url => similar_book[:cover_url] || similar_book[:alt_cover_url],
         :creatorName => similar_book[:creatorName]
         })
     end
