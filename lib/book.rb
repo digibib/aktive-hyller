@@ -152,9 +152,10 @@ class Book
     puts "#{query.pp}" if ENV['RACK_ENV'] == 'development'
 
     results = REPO.select(query)
-    #puts results
-    # return either same_language_image or any_image
-    results.first[:same_language_format_image] ? results.first[:same_language_format_image] : results.first[:same_language_image] ? results.first[:same_language_image] : results.first[:any_image]
+
+    [results.first[:same_language_format_image],
+     results.first[:same_language_image],
+     results.first[:any_image]].compact.first
   end
 
   def fetch_local_reviews(limit=4)
