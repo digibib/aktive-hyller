@@ -28,7 +28,7 @@ class Book
              [@book_id, RDF::DC.language, :lang],
              [@book_id, RDF::DC.format, :format])
     query.optional([@book_id, RDF::FOAF.depiction, :cover_url])
-    query.optional([:book, RDF::IFACE.altDepictedBy, :alt_cover_url])
+    query.optional([@book_id, RDF::IFACE.altDepictedBy, :alt_cover_url])
     query.optional([@book_id, RDF::DC.abstract, :abstract])
     query.optional([@book_id, RDF::DEICH.krydder_beskrivelse, :krydder])
     query.optional([@book_id, RDF::BIBO.isbn, :isbn])
