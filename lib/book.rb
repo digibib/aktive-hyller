@@ -77,34 +77,30 @@ class Book
         timings += "#{Time.now - timing_start} s."
         @work_isbns = results.bindings[:work_isbns].to_a.uniq
       end
+      timing_start = Time.now
+      timings += "\nSPARQL - get local reviews: "
+      fetch_local_reviews
+      timings += "#{Time.now - timing_start} s."
+
+      timing_start = Time.now
+      timings += "\nSPARQL - same author books: "
+      fetch_same_author_books
+      timings += "#{Time.now - timing_start} s."
+
+      timing_start = Time.now
+      timings += "\nSPARQL - similar works: "
+      fetch_similar_works
+       timings += "#{Time.now - timing_start} s."
+
+      timing_start = Time.now
+      timings += "\nHTTP - get remote data: "
+      fetch_remote_data
+      timings += "#{Time.now - timing_start} s.\n\n"
+      puts timings
+      enforce_review_order
     else
       @book_id = nil
     end
-
-
-    timing_start = Time.now
-    timings += "\nSPARQL - get local reviews: "
-    fetch_local_reviews
-    timings += "#{Time.now - timing_start} s."
-
-    timing_start = Time.now
-    timings += "\nSPARQL - same author books: "
-    fetch_same_author_books
-    timings += "#{Time.now - timing_start} s."
-
-    timing_start = Time.now
-    timings += "\nSPARQL - similar works: "
-    fetch_similar_works
-    timings += "#{Time.now - timing_start} s."
-
-    timing_start = Time.now
-    timings += "\nHTTP - get remote data: "
-    fetch_remote_data
-    timings += "#{Time.now - timing_start} s.\n\n"
-    puts timings
-    enforce_review_order
-
-    #puts "isbn_array: ", @work_isbns
   end
 
   #private
