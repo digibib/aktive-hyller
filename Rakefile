@@ -19,9 +19,9 @@ Subject: #{opts[:subject]}
 #{message}
 END_OF_MESSAGE
 
-  smtp = Net::SMTP.new('smtp.gmail.com', 587)
-  smtp.enable_starttls
-  smtp.start("gmail.com", SETTINGS["gmail"]["username"], SETTINGS["gmail"]["password"], :login) do
+  smtp = Net::SMTP.new(SETTINGS["smtp"]["host"], SETTINGS["smtp"]["port"])
+  smtp.enable_starttls if SETTINGS["smtp"]["starttls"]
+  smtp.start(SETTINGS["smtp"]["domain"], SETTINGS["smtp"]["username"], SETTINGS["smtp"]["password"], SETTINGS["smtp"]["authentication"]) do
     smtp.send_message msg, opts[:from], to
   end
 end

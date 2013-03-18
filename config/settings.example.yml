@@ -30,6 +30,11 @@ email:
   monthly:
     - example3@example.com
 
-gmail:
+smtp:
+  starttls: true
+  host: smtp.gmail.com
+  port: 587
+  domain: deichman.no      # 'your.domain.com' for GoogleApps
+  authentication: :plain  # false, :plain or :login 
   username: username
   password: password
