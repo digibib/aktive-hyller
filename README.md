@@ -329,6 +329,16 @@ Be sure to set a valid hostname. Check `/var/log/mail.log` to ensure that the ma
 
 ## Screen Saver
 
+### No Screen saver
+
+If you only want start image you will only need to send a GET to /timeout and browser will reset itself
+
+### Video
+
+Install video player 
+
+```sudo apt-get install libav-tools mplayer```
+
 you will need to activate xscreensaver and make a new play format in ~/.xscreensaver:
 ```
 "Aktiv hylle screensaver" mplayer -x 1680 -y 1050 -wid $XSCREENSAVER_WINDOW -fs -loop 0 \

@@ -197,10 +197,12 @@ class Book
       :params => {:format => 'xml', :key => "wDjpR0GY1xXIqTnx2QL37A",
       :isbn => @isbn})
     req1.on_complete  { |response| Goodreads(response) unless response.timed_out? }
-    req2 = Typhoeus::Request.new("http://140.234.254.43/Services/SearchService.asmx/Search",
-      :timeout => 2, :params => {:prof => SETTINGS['novelist']['profile'],
-        :pwd => SETTINGS['novelist']['password'], :db => "noh", :query => @isbn})
-    req2.on_complete { |response| Novelist(response) unless response.timed_out? }
+    if SETTINGS['novelist']
+      req2 = Typhoeus::Request.new("http://140.234.254.43/Services/SearchService.asmx/Search",
+        :timeout => 2, :params => {:prof => SETTINGS['novelist']['profile'],
+          :pwd => SETTINGS['novelist']['password'], :db => "noh", :query => @isbn})
+      req2.on_complete { |response| Novelist(response) unless response.timed_out? }
+    end
     req3 = Typhoeus::Request.new("http://bokelskere.no/api/1.0/boker/info/#{@isbn}/", :timeout => 2)
     req3.on_complete { |response| Bokelskere(response) unless response.timed_out? }
 
