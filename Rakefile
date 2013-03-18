@@ -97,14 +97,14 @@ namespace :email do
 
   task :weekly do
     SETTINGS["email"]["weekly"].each do |recipient|
-      body = File.read('logs/day.txt')
+      body = File.read('logs/week.txt')
       send_email(recipient, body)
     end
   end
 
   task :monthly do
     SETTINGS["email"]["monthly"].each do |recipient|
-      body = File.read('logs/day.txt')
+      body = File.read('logs/month.txt')
       send_email(recipient, body)
     end
   end
