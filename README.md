@@ -145,7 +145,8 @@ to handle scrolling and sensitivity:
 ### other Firefox settings
 in address window `about:config`
 
-    nglayout.enable_drag_images til false
+    nglayout.enable_drag_images => false  (don't allow dragging images)
+    browser.link.open_newwindow => 1      (open new pages in active tab)
 
 ### Automatic start script for firefox
 
@@ -160,14 +161,16 @@ while true
 do
   rm -rf ~/.mozilla/firefox/*.default/startupCache
   rm -rf ~/.mozilla/firefox/*.default/Cache
-  firefox -private http://localhost:4567/timeout
+  firefox http://localhost:4567/timeout
   sleep 3s
 done
 EOF
 ```
 ### screensaver based browser reset
 
-xscreensaver can be set to trigger events, and this is a good way to script timeout in firefox browser:
+xscreensaver can be set to trigger events, and this is a good way to script timeout in firefox browser.
+This script creates a loop that sends a GET to /timeout when screensaver kicks in and returns to start page:
+(make sure to make about:config settings as described above to avoid multiple tabs to open)
 
 ```
 cat <<EOF | tee ~/code/xscreensaver-timeout.sh && chmod +x ~/code/xscreensaver-timeout.sh
@@ -176,8 +179,8 @@ cat <<EOF | tee ~/code/xscreensaver-timeout.sh && chmod +x ~/code/xscreensaver-t
 process() {
 while read input; do
   case "$input" in
-    BLANK*)   (echo 'GET /timeout ';sleep 1) | telnet localhost 4567  ;;
-    UNBLANK*)	 echo "start something? " ;;
+    BLANK*)   (echo 'GET /timeout ';sleep 1) | telnet localhost 4567 && /usr/bin/firefox -remote "openurl(localhost:4567)" ;;
+    UNBLANK*)	 echo "do nothing yet ..." ;;
     LOCK*)	   echo "lock .... do nothing yet" ;;
   esac
 done
