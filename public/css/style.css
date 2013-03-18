@@ -54,9 +54,9 @@ div#nysgjerrig-tittel { margin-top:100px; font-size: 6em; font-weight: bold; tex
 div#nysgjerrig-undertittel { margin:200px;font-size: 4em; text-align: center}
 
 div#header         { margin-left:400px; height: 100px; width: 1225px; padding-top:35px; }
-p#title            { font-size: 2.5em; font-weight: bold; color: #333;}
+p#title            { font-size: 2.5em; font-weight: bold; color: #333; }
 p#sub-title        { margin-top: 15px;font-size: 1.6em; font-weight: bold; color: #333;}
-div#header-text    { float: left; width: 800px;}
+div#header-text    { float: left; }
 div#flags          { float: right; }
 img.flag           { margin-left: 150px; display:none;}
 div.buffer         { clear:both; margin-top:60px;}
