@@ -29,3 +29,7 @@ email:
     - example2@example.com
   monthly:
     - example3@example.com
+
+gmail:
+  username: username
+  passord: password

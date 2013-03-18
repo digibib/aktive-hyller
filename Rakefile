@@ -1,7 +1,30 @@
 require "pry"
 require "./app"
 require "date"
-require "pony"
+require 'net/smtp'
+
+SETTINGS = YAML::load(File.open(File.join('config', 'settings.yml')))
+
+def send_email(to, message, opts={})
+  opts[:from]        ||= 'digitalutvikling@gmail.com'
+  opts[:from_alias]  ||= "Digital Deichman"
+  opts[:subject]     ||= "Aktive hyller statistikkrapport"
+
+  msg = <<END_OF_MESSAGE
+Content-type: text/plain; charset=UTF-8
+From: #{opts[:from_alias]} <#{opts[:from]}>
+To: <#{to}>
+Subject: #{opts[:subject]}
+
+#{message}
+END_OF_MESSAGE
+
+  smtp = Net::SMTP.new('smtp.gmail.com', 587)
+  smtp.enable_starttls
+  smtp.start("gmail.com", SETTINGS["gmail"]["username"], SETTINGS["gmail"]["password"], :login) do
+    smtp.send_message msg, opts[:from], to
+  end
+end
 
 task :console do
   binding.pry
@@ -66,32 +89,23 @@ end
 
 namespace :email do
   task :daily do
-    SETTINGS["email"]["daily"].each do |recipent|
-      Pony.mail :to => recipent,
-                :from => "petter.goksoyr.asen@kul.oslo.kommune.no",
-                :subject => "Aktive hyller statistikkrapport",
-                :charset => 'UTF-8',
-                :body => File.read('logs/day.txt')
+    SETTINGS["email"]["daily"].each do |recipient|
+      body = File.read('logs/day.txt')
+      send_email(recipient, body)
     end
   end
 
   task :weekly do
-    SETTINGS["email"]["weekly"].each do |recipent|
-      Pony.mail :to => recipent,
-                :from => "petter.goksoyr.asen@kul.oslo.kommune.no",
-                :subject => "Aktive hyller statistikkrapport",
-                :charset => 'UTF-8',
-                :body => File.read('logs/week.txt')
+    SETTINGS["email"]["weekly"].each do |recipient|
+      body = File.read('logs/day.txt')
+      send_email(recipient, body)
     end
   end
 
   task :monthly do
-    SETTINGS["email"]["month"].each do |recipent|
-      Pony.mail :to => recipent,
-                :from => "petter.goksoyr.asen@kul.oslo.kommune.no",
-                :subject => "Aktive hyller statistikkrapport",
-                :charset => 'UTF-8',
-                :body => File.read('logs/month.txt')
+    SETTINGS["email"]["monthly"].each do |recipient|
+      body = File.read('logs/day.txt')
+      send_email(recipient, body)
     end
   end
 end

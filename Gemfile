@@ -14,7 +14,7 @@ gem "typhoeus"
 gem 'capistrano'
 gem 'rvm-capistrano'
 gem "sqlite3"
-gem "pony"
+
 
 group :development do
   gem "pry"
