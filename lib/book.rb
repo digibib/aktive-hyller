@@ -208,7 +208,7 @@ class Book
 
     if @isbn
       hydra.queue req1
-      hydra.queue req2
+      hydra.queue req2 if SETTINGS['novelist']
       hydra.queue req3
       hydra.run
     end
