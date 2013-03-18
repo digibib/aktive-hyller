@@ -305,7 +305,15 @@ sudo apt-get install sqlite3
 
 Set up a cronjob to run `rake log:process` each night:
 
-``` TODO ```
+``` 
+cat <<EOF | sudo tee /etc/cron.daily/aktive-hyller-daily && sudo chmod +x /etc/cron.daily/aktive-hyller-daily
+#!/bin/bash
+# daily log report
+source /home/aktiv/.rvm/scripts/rvm
+cd /home/aktiv/code/aktive-hyller
+rake log:process >> logs/mail.log 2>&1
+EOF
+ ```
 
 The statistics report will be accesible provided you know the IP-address of the station:
 ```
@@ -316,16 +324,31 @@ In addition, you can set email adresses in `config/settings.yml` of those who wi
 
 The `rake log:process` task will aslo send the daily email reports. You need to set up additional two cronjobs to send the weekly and monthly reports:
 
-``` TODO rake email:weekly```
+Weekly report
+``` 
+cat <<EOF | sudo tee /etc/cron.weekly/aktive-hyller-weekly && sudo chmod +x /etc/cron.weekly/aktive-hyller-weekly
+#!/bin/bash
+# weekly log report
+source /home/aktiv/.rvm/scripts/rvm
+cd /home/aktiv/code/aktive-hyller
+rake email:weekly >> logs/mail.log 2>&1
+EOF
+```
 
-``` TODO rake email:monthly```
+Monthly report
+```
+cat <<EOF | sudo tee /etc/cron.monthly/aktive-hyller-monthly && sudo chmod +x /etc/cron.monthly/aktive-hyller-monthly
+#!/bin/bash
+# monthly log report
+source /home/aktiv/.rvm/scripts/rvm
+cd /home/aktiv/code/aktive-hyller
+rake email:monthly >> logs/mail.log 2>&1
+EOF
+```
 
-## Configure sendmail
-The applications relies on the Linux mail agent `sendmail` to deliver emails:
-
-```sudo apt-get install sendmail```
-
-Be sure to set a valid hostname. Check `/var/log/mail.log` to ensure that the mails are sendt. Theese mails are likely to be treated as spam, so recipients should check their spam-folders if it doesn't arrive.
+Mails are handlet by ssmtp which needs a dev account at Google API.
+https://developers.google.com/google-apps/gmail/
+the gmail dev sccount settings must be inserted into Settings file under 'gmail'
 
 ## Screen Saver
 
