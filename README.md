@@ -142,6 +142,9 @@ to handle scrolling and sensitivity:
 * [Grab and drag]: http://grabanddrag.mozdev.org/installation.html
 * make sure to disable "deactive dragging of linkes" under General tab (does exactly the opposite...)
 
+to make sure fullscreen kicks in 
+* [FF Fullscreen]: https://addons.mozilla.org/en-us/firefox/addon/FF_Fullscreen/
+
 ### other Firefox settings
 in address window `about:config`
 
