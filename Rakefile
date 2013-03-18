@@ -71,17 +71,17 @@ namespace :log do
 
     # sise dag
     today = Time.now.strftime("%Y-%m-%d")
-    %x[./stats.rb #{today} #{today} > logs/day.txt]
+    %x[./stats.rb #{today} #{today} > logs/daily.txt]
     print "day,"
 
     # inneværende uke
     d = Date.today - Time.now.wday + 1
-    %x[./stats.rb #{d.strftime("%Y-%m-%d")} #{today} > logs/week.txt]
+    %x[./stats.rb #{d.strftime("%Y-%m-%d")} #{today} > logs/weekly.txt]
     print " week,"
 
     # inneværende måned
     d=Date.new(Time.now.year, Time.now.month, 1)
-    %x[./stats.rb #{d.strftime("%Y-%m-%d")} #{today} > logs/month.txt]
+    %x[./stats.rb #{d.strftime("%Y-%m-%d")} #{today} > logs/monthly.txt]
     print " month "
     print "OK\n"
   end
@@ -90,21 +90,21 @@ end
 namespace :email do
   task :daily do
     SETTINGS["email"]["daily"].each do |recipient|
-      body = File.read('logs/day.txt')
+      body = File.read('logs/daily.txt')
       send_email(recipient, body)
     end
   end
 
   task :weekly do
     SETTINGS["email"]["weekly"].each do |recipient|
-      body = File.read('logs/week.txt')
+      body = File.read('logs/weekly.txt')
       send_email(recipient, body)
     end
   end
 
   task :monthly do
     SETTINGS["email"]["monthly"].each do |recipient|
-      body = File.read('logs/month.txt')
+      body = File.read('logs/monthly.txt')
       send_email(recipient, body)
     end
   end
