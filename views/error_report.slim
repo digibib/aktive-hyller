@@ -1,0 +1,31 @@
+javascript:
+  var longpress = false;
+  
+  (function($) {
+    $.fn.longClick = function(callback, timeout) {
+        var timer;
+        timeout = timeout || 1000;
+        $(this).mousedown(function() {
+            timer = setTimeout(function() { callback(); }, timeout);
+            return false;
+        });
+        $(document).mouseup(function() {
+            clearTimeout(timer);
+            return false;
+        });
+    };
+
+  })(jQuery);
+
+  $("button#avslutt").longClick(function() { 
+    $.ajax({
+      url: '/error_report',
+      type: 'PUT',
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(textStatus + errorThrown); 
+      },
+      success: function(msg) {
+        alert("Feilmelding sendt til Digital Utvikling!"); 
+      }
+    });
+  });

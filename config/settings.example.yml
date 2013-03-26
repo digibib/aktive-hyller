@@ -38,3 +38,6 @@ smtp:
   authentication: :plain  # false, :plain or :login 
   username: username
   password: password
+
+error_report: 
+    - example1@example.com
