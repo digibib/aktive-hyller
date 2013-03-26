@@ -26,7 +26,7 @@ R18n::I18n.default = 'nb'
 R18n.default_places { File.join('config', 'locales') }
 
 def send_error_report(to, message, opts={})
-  %x[DISPLAY=:0.0 ; /usr/bin/scrot -q 50 /tmp/screenshot.png ]
+  %x[DISPLAY=#{SETTINGS["error_report"]["display"]} ; /usr/bin/scrot -q 50 /tmp/screenshot.png ]
   screenshot = Base64.encode64 File.open('/tmp/screenshot.png', "rb").read
   
   marker = "AUNIQUEMARKERFROMTHEABYSS"

@@ -39,5 +39,7 @@ smtp:
   username: username
   password: password
 
-error_report: 
+error_report:
+  display: :0.0 # unix DISPLAY env for screenshot
+  emails:
     - example1@example.com
