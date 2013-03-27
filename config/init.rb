@@ -32,7 +32,7 @@ def send_error_report(to, message, opts={})
   marker = "AUNIQUEMARKERFROMTHEABYSS"
   opts[:from]        ||= 'digitalutvikling@gmail.com'
   opts[:from_alias]  ||= "Digital Deichman"
-  opts[:subject]     ||= "Aktive hyller statistikkrapport"
+  opts[:subject]     ||= "Aktive hyller feilmelding"
   
   msg = <<END_OF_MESSAGE
 From: #{opts[:from_alias]} <#{opts[:from]}>
