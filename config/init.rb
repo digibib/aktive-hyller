@@ -4,6 +4,7 @@ require "bundler/setup"
 require "rdf"
 require "rdf/virtuoso"
 require "sinatra/r18n" # internationalization
+require "net/smtp"
 
 # read configuration file
 SETTINGS = YAML::load(File.open(File.join('config', 'settings.yml')))
@@ -23,3 +24,41 @@ end
 
 R18n::I18n.default = 'nb'
 R18n.default_places { File.join('config', 'locales') }
+
+def send_error_report(to, message, opts={})
+  %x[/usr/bin/xwd -display localhost:0.0 -root |xwdtopnm|pnmtopng > /tmp/screenshot.png ]
+  screenshot = Base64.encode64 File.open('/tmp/screenshot.png', "rb").read
+  
+  marker = "AUNIQUEMARKERFROMTHEABYSS"
+  opts[:from]        ||= 'digitalutvikling@gmail.com'
+  opts[:from_alias]  ||= "Digital Deichman"
+  opts[:subject]     ||= "Aktive hyller feilmelding"
+  
+  msg = <<END_OF_MESSAGE
+From: #{opts[:from_alias]} <#{opts[:from]}>
+To: <#{to}>
+Subject: #{opts[:subject]}
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary=#{marker}
+
+--#{marker}
+Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding:8bit
+
+#{message}
+--#{marker}
+Content-Type: image/png; name=screenshot.png
+Content-Transfer-Encoding:base64
+Content-Disposition: attachment; filename=screenshot.png
+
+#{screenshot}
+--#{marker}
+END_OF_MESSAGE
+  
+  
+  smtp = Net::SMTP.new(SETTINGS["smtp"]["host"], SETTINGS["smtp"]["port"])
+  smtp.enable_starttls if SETTINGS["smtp"]["starttls"]
+  smtp.start(SETTINGS["smtp"]["domain"], SETTINGS["smtp"]["username"], SETTINGS["smtp"]["password"], SETTINGS["smtp"]["authentication"]) do
+    smtp.send_message msg, opts[:from], to
+  end
+end

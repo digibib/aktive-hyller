@@ -19,6 +19,7 @@ div id="fade-to-white"
 
 == render :slim, :'websocket' if SETTINGS["rfid"]
 == render :slim, :'barcode' if SETTINGS["barcode"]
+== render :slim, :'error_report' if SETTINGS["error_report"]
 
 javascript:
   $(document).ready(function () {

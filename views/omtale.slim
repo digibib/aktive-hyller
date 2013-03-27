@@ -87,8 +87,9 @@ div id="content-bottom"
           div.cover-small
             div.cover-small-missing #{t.menu.see_more}
 
-== render :slim, :'websocket' if SETTINGS["rfid"]
-== render :slim, :'barcode' if SETTINGS["barcode"]
+== render :slim, :'websocket'    if SETTINGS["rfid"]
+== render :slim, :'barcode'      if SETTINGS["barcode"]
+== render :slim, :'error_report' if SETTINGS["error_report"]
 
 javascript:
   $(document).ready(function () {
