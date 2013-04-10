@@ -22,38 +22,66 @@ sudo apt-get install openssh-server vim xnest
 best handled by Ruby Version Manager (https://rvm.io/rvm/install/)
 
     curl -L https://get.rvm.io | bash -s stable --ruby
+    
+close terminal and open new to activate rvm
 
-#### find your system's dependencies:
+#### install Ruby and dependencies
 
     rvm requirements
 
 and install these.
+On newer rvm this can be done automatically with
+
+    rvm autolibs enable
 
 then install ruby.
 
     rvm reinstall 1.9.3
+    
+in Ubuntu, ~/.bash_profile is overridden if ~/.bashrc exists, so rvm config must be copied to ~./bashrc or to ~./bash_login to load automatically:
+
+```
+cat <<EOF | tee -a ~/.bash_login
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+EOF
+```
 
 ## App and RFID reader / BARCODE scanner
 
 clone the repositories
 
-    mkdir -p code && cd code
+    mkdir -p code && cd ~/code
     git clone https://github.com/digibib/aktive-hyller
 
 ### RFID reader
 
-    git clone https://github.com/digibib/rfidgeek.git ~/code/rfidgeek
+    cd ~/code
+    git clone https://github.com/digibib/rfidgeek.git 
     
 needs access to dialout group
 
     sudo usermod -a -G dialout [username]
 
-restart window manager
+restart window manager (or machine)
+    
+    sudo service lightdm restart
+    
+#### RFID websocket integration
 
+checkout sinatra branch
+
+    cd ~/code/rfidgeek
+    git checkout feature/sinatra-integration
+ 
+copy configuration and adjust port to sinatra APP port. rfidgeek also comes with integrated websocket server for testing. this can be diabled in config
+
+    cp config/config.yml-dist config/config.yml
+    
 ### Settings
 
 create settings file:
 
+    cd ~/code/aktive-hyller
     cp config/settings-example.yml config/settings.yml
     
 set ports and hostname for websocket if RFID reader. Activate websocket server for testing.
