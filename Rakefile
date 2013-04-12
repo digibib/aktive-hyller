@@ -31,20 +31,21 @@ end
 namespace :setup do
   desc "Install and setup on Ubuntu system"
   task :install do
-    home = File.dirname(__FILE__)
+    pwd  = File.dirname(__FILE__)
+    home = ENV['HOME']
     puts "installing automated start scripts for firefox and xscreensaver"
     %x[mkdir -p #{home}/.config/autostart]
-    %x[ln -s #{home}/scripts/aktivehyller.desktop #{home}/.config/autostart/aktivehyller.desktop ]
-    %x[ln -s #{home}/scripts/xscreensaver-timeout.desktop #{home}/.config/autostart/xscreensaver-timeout.desktop ]
+    %x[ln -s #{pwd}/scripts/aktivehyller.desktop #{home}/.config/autostart/aktivehyller.desktop ]
+    %x[ln -s #{pwd}/scripts/xscreensaver-timeout.desktop #{home}/.config/autostart/xscreensaver-timeout.desktop ]
     
     puts "generating foreman Procfile"
-    `cat <<EOF | tee #{home}/../Procfile
-    app: #{home}/.rvm/scripts/rvm; cd #{home}/code/aktive-hyller; ruby app.rb
-    rfid: sleep 3; #{home}/.rvm/scripts/rvm; cd #{home}/code/rfidgeek; ruby rfid.rb
-    EOF`
+    `cat <<EOF | tee #{home}/code/Procfile
+app: #{home}/.rvm/scripts/rvm; cd #{pwd}; ruby app.rb
+rfid: sleep 3; #{home}/.rvm/scripts/rvm; cd #{home}/code/rfidgeek; ruby rfid.rb
+EOF`
    
    puts "installing upstart file"
-   %x[rvmsudo foreman export upstart /etc/init -a aktivehyller -p 4567 -u aktiv -l #{home}/code/aktive-hyller/logs/upstart]
+   %x[rvmsudo foreman export upstart /etc/init -f #{home}/code/Procfile -a aktivehyller -p 4567 -u aktiv -l #{pwd}/logs/upstart]
 
    puts "modifying upstart to automatic start on all run levels"
    `rvmsudo sed -i '/started\ network-interface/ a\
@@ -52,8 +53,8 @@ namespace :setup do
    puts "Setting up logs"
    Rake::Task["log:setup"].invoke
    puts "activating cron tasks for log"
-   %x[rvmsudo ln -s #{home}/scripts/aktivehyller-cronjobs /etc/cron.d/aktivehyller-cronjobs ]
-   puts "Done. Now setup config files (#{home}/config/settings.yml) and run Rake configure"
+   %x[rvmsudo ln -s #{pwd}/scripts/aktivehyller-cronjobs /etc/cron.d/aktivehyller-cronjobs ]
+   puts "Done. Now setup config files (#{pwd}/config/settings.yml) and run Rake configure"
   end
   
   desc "Configure CSS"
