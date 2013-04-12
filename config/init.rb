@@ -6,6 +6,12 @@ require "rdf/virtuoso"
 require "sinatra/r18n" # internationalization
 require "net/smtp"
 
+# fix utf-8 encoding for Bundler
+if RUBY_VERSION =~ /1.9/
+  Encoding.default_external = Encoding::UTF_8
+  Encoding.default_internal = Encoding::UTF_8
+end
+
 # read configuration file
 SETTINGS = YAML::load(File.open(File.join('config', 'settings.yml')))
 

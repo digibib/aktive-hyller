@@ -54,7 +54,7 @@ get '/' do
   # Clear session history
   session[:history] = []
   session[:current] = nil
-  session[:log] = {:start => Time.now, :rfid => 0, :omtale => 0, :flere => 0, :relaterte => 0}
+  session[:log] = "starting"
   logger.info("Sesjon - -")
 
   slim(:index, :layout => false)
@@ -76,7 +76,7 @@ end
 
 get '/omtale' do
   redirect '/' unless session[:current]
-
+  session[:log] = {:start => Time.now, :rfid => 0, :omtale => 0, :flere => 0, :relaterte => 0} if session[:log] == "starting"
   session[:log][:omtale] += 1
   session[:history].push({:path => '/omtale', :tnr => session[:current].tnr})
   logger.info("Omtalevisning #{session[:current].book_id} #{session[:current].review_collection.size} \"#{session[:current].creatorName || session[:current].responsible || 'ukjent'}\" \"#{session[:current].title}\"")
@@ -181,10 +181,14 @@ get '/ws' do
 end
 
 put '/error_report' do
-  msg = "En feil har blitt oppdaget på tittelnr: #{session[:current].tnr} \n Lykke til med å finne feilen ...;)"
-  SETTINGS["error_report"]["emails"].each do |recipient|
-    send_error_report(recipient, msg, :subject => "Aktiv hylle - feilmelding!")
-    logger.info("Error message sent to #{recipient}") 
+  if SETTINGS["error_report"]["emails"]
+    msg = "En feil har blitt oppdaget på tittelnr: #{session[:current].tnr} \n Lykke til med å finne feilen ...;)"
+    SETTINGS["error_report"]["emails"].each do |recipient|
+      send_error_report(recipient, msg, :subject => "Aktiv hylle - feilmelding!")
+      logger.info("Error message sent to #{recipient}")
+    end
+    "message sent!"
+  else
+    "no emails to send to!"
   end
-  "message sent!"
 end
