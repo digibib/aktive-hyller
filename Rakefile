@@ -38,7 +38,7 @@ namespace :setup do
     %x[ln -s #{home}/scripts/xscreensaver-timeout.desktop #{home}/.config/autostart/xscreensaver-timeout.desktop ]
     
     puts "generating foreman Procfile"
-    `cat <<EOF | tee #{home}/code/Procfile
+    `cat <<EOF | tee #{home}/../Procfile
     app: #{home}/.rvm/scripts/rvm; cd #{home}/code/aktive-hyller; ruby app.rb
     rfid: sleep 3; #{home}/.rvm/scripts/rvm; cd #{home}/code/rfidgeek; ruby rfid.rb
     EOF`
