@@ -33,7 +33,7 @@ namespace :setup do
   task :install do
     puts "installing automated start scripts for firefox and xscreensaver"
     %x[mkdir -p ~/.config/autostart]
-    %x[ln -s scripts/aktivehyller.desktop ~/.config/autostart/aktivehyller.desktop && ln -s scripts/xscreensaver-timeout.desktop ~/.config/autostart/xscreensaver-timeout.desktop]
+    %x[ln -s ~/.config/autostart/aktivehyller.desktop scripts/aktivehyller.desktop && ln -s ~/.config/autostart/xscreensaver-timeout.desktop scripts/xscreensaver-timeout.desktop ]
     
     puts "generating foreman Procfile"
     `cat <<EOF | tee ~/code/Procfile
@@ -50,7 +50,7 @@ namespace :setup do
    puts "Setting up logs"
    Rake::Task["log:setup"].invoke
    puts "activating cron tasks for log"
-   %x[rvmsudo ln -s scripts/aktivehyller-cronjobs /etc/cron.d/aktivehyller-cronjobs]
+   %x[rvmsudo ln -s /etc/cron.d/aktivehyller-cronjobs scripts/aktivehyller-cronjobs]
    puts "Done. Now setup config files (config/settings.yml) and run Rake configure"
   end
   
