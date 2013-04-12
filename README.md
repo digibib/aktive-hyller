@@ -146,7 +146,7 @@ add virtualhost directive:
 
 ## MARC to RDF conversion
 
-More to come...
+* [marc2rdf]: http://github.com/digibib/marc2rdf
 
 ## Touchscreen
 
@@ -176,8 +176,22 @@ to make sure fullscreen kicks in
 ### other Firefox settings
 in address window `about:config`
 
-    nglayout.enable_drag_images => false  (don't allow dragging images)
-    browser.link.open_newwindow => 1      (open new pages in active tab)
+    nglayout.enable_drag_images            => false  (don't allow dragging images)
+    browser.link.open_newwindow            => 1      (open new pages in active tab)
+    browser.sessionstore.resume_from_crash => false (don't open annoying "Oops, something went wrong!)
+
+## Setup and Configuration (Automatic)
+
+for an Ubuntu/Debian installation, most settings below can be automatized by rake tasks. For a complete list of tasks:
+
+    rake -T
+    
+Setup and configuration:
+
+    rake setup:install
+    rake setup:configure
+
+## Setup and Configuration (Manual)
 
 ### Automatic start script for firefox
 
@@ -229,7 +243,7 @@ cat <<EOF | tee ~/.config/autostart/aktivehyller.desktop
 Encoding=UTF-8
 Name=autologout
 Comment=autologout
-Exec=/home/aktiv/code/aktive-hyller/aktivehyller.sh
+Exec=~/code/aktive-hyller/aktivehyller.sh
 Type=Application
 Categories=;
 NotShowIn=GNOME;
@@ -241,41 +255,15 @@ EOF
 cat <<EOF | tee ~/.config/autostart/xscreensaver-timeout.desktop
 [Desktop Entry]
 Encoding=UTF-8
-Name=autologout
-Comment=autologout
-Exec=/home/aktiv/code/aktive-hyller/xscreensaver-timeout.sh
+Name=xscreensaver-timeout
+Comment=xscreensaver-timeout
+Exec=~/code/aktive-hyller/xscreensaver-timeout.sh
 Type=Application
 Categories=;
 NotShowIn=GNOME;
 NoDisplay=true
 EOF
 ```
-
-### remote access ###
-
-openssh, as described above
-
-### remote desktop
-
-settings in /etc/lightdm/lightdm.conf:
-
-```
-[SeatDefaults]
-xserver-allow-tcp=true #  TCP/IP connections are allowed to this X server
-# xdmcp-port = XDMCP UDP/IP port to communicate on
-# xdmcp-key = Authentication key to use for XDM-AUTHENTICATION-1 (stored in keys.conf)
-session-setup-script = su - aktiv -c aktivehyller.sh # Script to run when starting a user session (runs as root)
-autologin-user=aktiv
-
-[XDMCPServer]
-enabled=true
-```
-
-'xnest' allows for testing on external desktop
-1. connect with x forwarding
-    ssh -X user@iptoserver
-2. start session on local computer
-    Xnest :1 -ac -geometry 800x480 -once -query localhost
 
 #### automatisk start on boot
 
@@ -351,7 +339,7 @@ EOF
 
 The statistics report will be accesible provided you know the IP-address of the station:
 ```
-http://ip.address/stats/{day|week|month}
+http://ip.address/stats/{daily|weekly|monthly}
 ```
 
 In addition, you can set email adresses in `config/settings.yml` of those who wish to recieve the daily, weekly or monthly reports by email.
@@ -394,7 +382,7 @@ If you only want start image you will only need to send a GET to /timeout and br
 
 Install video player 
 
-```sudo apt-get install libav-tools mplayer```
+```sudo apt-get install libav-tools```
 
 you will need to activate xscreensaver and make a new play format in ~/.xscreensaver:
 ```
@@ -403,3 +391,28 @@ you will need to activate xscreensaver and make a new play format in ~/.xscreens
 ```
 
 this one can now be selected in xscreensaver-demo
+
+### remote access ###
+
+openssh, as described above
+
+### remote desktop
+
+settings in /etc/lightdm/lightdm.conf:
+
+```
+[SeatDefaults]
+xserver-allow-tcp=true #  TCP/IP connections are allowed to this X server
+# xdmcp-port = XDMCP UDP/IP port to communicate on
+# xdmcp-key = Authentication key to use for XDM-AUTHENTICATION-1 (stored in keys.conf)
+autologin-user=aktiv
+
+[XDMCPServer]
+enabled=true
+```
+
+'xnest' allows for testing on external desktop
+1. connect with x forwarding
+    ssh -X user@iptoserver
+2. start session on local computer
+    Xnest :1 -ac -geometry 800x480 -once -query localhost

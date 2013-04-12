@@ -13,7 +13,7 @@ from_date, to_date = ARGV
 constraint = "BETWEEN date('#{from_date}') AND date('#{to_date}')"
 s = {}
 
-db = SQLite3::Database.open "logs/stats.db"
+db = SQLite3::Database.open "../logs/stats.db"
 
 # Number of sessions
 s[:num] = db.get_first_value "select count(*) from sessions where date(start) "+constraint

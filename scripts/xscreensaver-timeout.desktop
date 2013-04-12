@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=xscreensaver-timeout
+Comment=xscreensaver-timeout
+Exec=~/code/aktive-hyller/xscreensaver-timeout.sh
+Type=Application
+Categories=;
+NotShowIn=GNOME;
+NoDisplay=true
+EOF

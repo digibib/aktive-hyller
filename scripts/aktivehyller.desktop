@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=autologout
+Comment=autologout
+Exec=~/code/aktive-hyller/aktivehyller.sh
+Type=Application
+Categories=;
+NotShowIn=GNOME;
+NoDisplay=true
