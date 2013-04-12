@@ -48,8 +48,8 @@ EOF`
    %x[rvmsudo foreman export upstart /etc/init -f #{home}/code/Procfile -a aktivehyller -p 4567 -u aktiv -l #{pwd}/logs/upstart]
 
    puts "modifying upstart to automatic start on all run levels"
-   `rvmsudo sed -i '/started\ network-interface/a\t\tand runlevel[2345]' /etc/init/aktivehyller.conf`
-   `rvmsudo sed -i '/stopping\ network-interface/a\t\tand runlevel[016]' /etc/init/aktivehyller.conf`
+   `rvmsudo sed -i '/started\ network-interface/a\ \ and runlevel[2345]' /etc/init/aktivehyller.conf`
+   `rvmsudo sed -i '/stopping\ network-interface/a\ \ and runlevel[016]' /etc/init/aktivehyller.conf`
    puts "Setting up logs"
    Rake::Task["log:setup"].invoke
    puts "activating cron tasks for log (must be root)"

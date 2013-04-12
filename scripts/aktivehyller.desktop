@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Name=autologout
 Comment=autologout
-Exec=~/code/aktive-hyller/scripts/aktivehyller.sh
+Exec=/home/aktiv/code/aktive-hyller/scripts/aktivehyller.sh
 Type=Application
 Categories=;
 NotShowIn=GNOME;
