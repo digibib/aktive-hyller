@@ -298,7 +298,7 @@ class Book
         [:similar_work, RDF::FABIO.hasManifestation, :book],
         [:book, RDF::DC.language, :lang],
         [:book, RDF::DC.title, :book_title],
-        [:book, RDF::DC.format, :format]
+        [:book, RDF::DC.format, RDF::URI('http://data.deichman.no/format/Book')]
         )
       query.optional([:book, RDF::FOAF.depiction, :cover_url])
       query.optional([:book, RDF::IFACE.altDepictedBy, :alt_cover_url])
