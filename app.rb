@@ -48,13 +48,13 @@ get '/' do
 
   # Generate session log line
   session[:log][:stop] = Time.now
-                       # start stop rfid omtale flere relaterte
+  # start stop rfid omtale flere relaterte
   logger.info("Finito #{session[:log][:start].strftime("%Y-%m-%dT%H:%M:%S.%L")} #{session[:log][:stop].strftime("%Y-%m-%dT%H:%M:%S.%L")} #{session[:log][:rfid]} #{session[:log][:omtale]} #{session[:log][:flere]} #{session[:log][:relaterte]}")
 
   # Clear session history
   session[:history] = []
   session[:current] = nil
-  session[:log] = "starting"
+  session[:log] = {:start => Time.now, :stop => nil, :rfid => 0, :omtale => 0, :flere => 0, :relaterte => 0}
   logger.info("Sesjon - -")
 
   slim(:index, :layout => false)
@@ -76,7 +76,7 @@ end
 
 get '/omtale' do
   redirect '/' unless session[:current]
-  session[:log] = {:start => Time.now, :rfid => 0, :omtale => 0, :flere => 0, :relaterte => 0} if session[:log] == "starting"
+  session[:log] = {:start => Time.now, :stop => nil, :rfid => 0, :omtale => 0, :flere => 0, :relaterte => 0}
   session[:log][:omtale] += 1
   session[:history].push({:path => '/omtale', :tnr => session[:current].tnr})
   logger.info("Omtalevisning #{session[:current].book_id} #{session[:current].review_collection.size} \"#{session[:current].creatorName || session[:current].responsible || 'ukjent'}\" \"#{session[:current].title}\"")
