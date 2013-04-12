@@ -49,12 +49,14 @@ EOF`
 
    puts "modifying upstart to automatic start on all run levels"
    `rvmsudo sed -i '/started\ network-interface/ a\
-           new line string' /etc/init/aktivehyller.conf`
+    \t\tand runlevel[2345] ' /etc/init/aktivehyller.conf`
+   `rvmsudo sed -i '/stopped\ network-interface/ a\
+    \t\tand runlevel[016] ' /etc/init/aktivehyller.conf`
    puts "Setting up logs"
    Rake::Task["log:setup"].invoke
-   puts "activating cron tasks for log"
-   %x[rvmsudo ln -s #{pwd}/scripts/aktivehyller-cronjobs /etc/cron.d/aktivehyller-cronjobs ]
-   puts "Done. Now setup config files (#{pwd}/config/settings.yml) and run Rake configure"
+   puts "activating cron tasks for log (must be root)"
+   %x[rvmsudo chown root.root #{pwd}/scripts/aktivehyller-cronjobs && rvmsudo ln -s #{pwd}/scripts/aktivehyller-cronjobs /etc/cron.d/aktivehyller-cronjobs ]
+   puts "Done.\n\n Now setup config files (#{pwd}/config/settings.yml) and run rake configure"
   end
   
   desc "Configure CSS"
