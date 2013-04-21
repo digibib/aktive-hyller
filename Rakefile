@@ -37,13 +37,13 @@ namespace :setup do
     %x[mkdir -p #{home}/.config/autostart]
     %x[ln -s #{pwd}/scripts/aktivehyller.desktop #{home}/.config/autostart/aktivehyller.desktop ]
     %x[ln -s #{pwd}/scripts/xscreensaver-timeout.desktop #{home}/.config/autostart/xscreensaver-timeout.desktop ]
-    
+
     puts "generating foreman Procfile"
     `cat <<EOF | tee #{home}/code/Procfile
 app: #{home}/.rvm/scripts/rvm; cd #{pwd}; ruby app.rb
 rfid: sleep 3; #{home}/.rvm/scripts/rvm; cd #{home}/code/rfidgeek; ruby rfid.rb
 EOF`
-   
+
    puts "installing upstart file"
    %x[rvmsudo foreman export upstart /etc/init -f #{home}/code/Procfile -a aktivehyller -p 4567 -u aktiv -l #{pwd}/logs/upstart]
 
@@ -56,7 +56,7 @@ EOF`
    %x[rvmsudo chown root.root #{pwd}/scripts/aktivehyller-cronjobs && rvmsudo ln -s #{pwd}/scripts/aktivehyller-cronjobs /etc/cron.d/aktivehyller-cronjobs ]
    puts "Done.\n\n Now setup config files (#{pwd}/config/settings.yml) and run rake configure"
   end
-  
+
   desc "Configure CSS"
   task :configure do
     cssfile = File.read("public/css/style.css")
@@ -84,7 +84,7 @@ namespace :log do
     %x[./scripts/log2sql.sh]
     print "OK\n"
     Rake::Task["log:stats"].execute
-    Rake::Task["email:daily"].execute
+    #Rake::Task["email:daily"].execute
   end
 
   desc "Clear stats.db file and create tables"
