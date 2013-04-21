@@ -3,11 +3,12 @@
 process() {
 while read input; do 
   case "$input" in
-    BLANK*)    (echo 'GET /timeout ';sleep 1) | telnet localhost 4567 && /usr/bin/firefox -remote "openurl(localhost:4567)" ;;
-    UNBLANK*)	echo "start something? " ;;
-    LOCK*)	echo "lock .... do nothing yet" ;;
+    BLANK*)    (sleep 1 ; echo 'GET /timeout ') | telnet localhost 4567 
+                /usr/bin/firefox --display=localhost:0.0 -remote "openurl(localhost:4567)" ;;
+    UNBLANK*)	  echo "start something? " ;;
+    LOCK*)	    echo "lock .... do nothing yet" ;;
   esac
 done
 }
 
-/usr/bin/xscreensaver-command -watch | process
+/usr/bin/xscreensaver-command -d localhost:0.0 -watch | process
