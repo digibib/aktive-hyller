@@ -25,7 +25,7 @@ s[:sum], s[:avg], s[:min], s[:max] = db.get_first_row "select sum(length), avg(l
 s[:omtale_sum], s[:omtale_avg], s[:omtale_max] = db.get_first_row "select sum(omtale), avg(omtale), max(omtale) from sessions where date(start) " + constraint
 
 # Antall besøk: rfid, flere, relaterte
-s[:rfid], s[:flere], s[:relaterte] = db.get_first_row "select sum(rfid), avg(flere), max(relaterte) from sessions where date(start) " + constraint
+s[:rfid], s[:flere], s[:relaterte] = db.get_first_row "select sum(rfid), sum(flere), sum(relaterte) from sessions where date(start) " + constraint
 
 s[:anbf_count], s[:anbf_avg] = db.get_first_row "select count(*), avg(antall) from omtaler where date(time) " + constraint
 s[:null_treff] = db.get_first_value "select count(*) from omtaler where antall=0 and date(time) "+ constraint
