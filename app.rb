@@ -33,7 +33,7 @@ session[:books] = {}    # {:tnr => book_object}
 session[:history] = []  # Array of Hash
                         # ex: {:path => "/omtale" :book => session[:books][:tnr]}
 session[:current] = nil # Current book in session
-session[:log] = {:start => Time.now, :stop => nil, :rfid => 0, :omtale => 0, :flere => 0, :relaterte => 0}
+session[:log] = {:start => "pending", :stop => nil, :rfid => 0, :omtale => 0, :flere => 0, :relaterte => 0}
 
 # before each request
 before do
@@ -49,13 +49,17 @@ get '/' do
   # Generate session log line
   session[:log][:stop] = Time.now
   # start stop rfid omtale flere relaterte
-  logger.info("Finito #{session[:log][:start].strftime("%Y-%m-%dT%H:%M:%S.%L")} #{session[:log][:stop].strftime("%Y-%m-%dT%H:%M:%S.%L")} #{session[:log][:rfid]} #{session[:log][:omtale]} #{session[:log][:flere]} #{session[:log][:relaterte]}")
+  if session[:log][:start] == "pending"
+    session[:log][:start] = "starting"
+  else
+    logger.info("Finito #{session[:log][:start].strftime("%Y-%m-%dT%H:%M:%S.%L")} #{session[:log][:stop].strftime("%Y-%m-%dT%H:%M:%S.%L")} #{session[:log][:rfid]} #{session[:log][:omtale]} #{session[:log][:flere]} #{session[:log][:relaterte]}")
+  end
 
   # Clear session history
   session[:history] = []
   session[:current] = nil
-  session[:log] = {:start => "pending", :stop => nil, :rfid => 0, :omtale => 0, :flere => 0, :relaterte => 0}
-  logger.info("Startskjerm - -")
+  session[:log] = {:start => "starting", :stop => nil, :rfid => 0, :omtale => 0, :flere => 0, :relaterte => 0}
+  logger.info("Venteskjerm - -")
 
   slim(:index, :layout => false)
 end
@@ -76,7 +80,10 @@ end
 
 get '/omtale' do
   redirect '/' unless session[:current]
-  session[:log][:start] = Time.now if session[:log][:start] == "pending"
+  if session[:log][:start] == "starting"
+    session[:log][:start] = Time.now
+    logger.info("Sesjonstart - - ")
+  end
   session[:log][:omtale] += 1
   session[:history].push({:path => '/omtale', :tnr => session[:current].tnr})
   logger.info("Omtalevisning #{session[:current].book_id} #{session[:current].review_collection.size} \"#{session[:current].creatorName || session[:current].responsible || 'ukjent'}\" \"#{session[:current].title}\"")
