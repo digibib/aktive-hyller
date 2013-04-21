@@ -50,7 +50,7 @@ puts "  lignende : %d" % (s[:relaterte] || 0)
 puts
 puts "Omtalevisning"
 puts "----------------------------"
-puts "  avg pr. sesjon  : %d" % (s[:omtale_avg] || 0)
+puts "  avg pr. sesjon  : %2.1f" % (s[:omtale_avg] || 0)
 puts "  max pr. sesjon  : %d" % (s[:omtale_max] || 0)
 puts
 puts "Anbefalinger"
