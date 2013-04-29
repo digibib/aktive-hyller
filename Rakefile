@@ -74,6 +74,10 @@ EOF`
       modified.gsub!(leftbar_regex_activated, '/*\1*/')
     end
     File.open("public/css/style.css", "w") {|f| f.puts modified}
+    puts "linking orange star images"
+    %x[ln -s #{pwd}/public/img/star_half_orange.png #{pwd}/public/img/star_half.png ]
+    %x[ln -s #{pwd}/public/img/star_whole_orange.png #{pwd}/public/img/star_whole.png ]
+    puts "Done.\n\n Now do remaining changes in Firefox browser"
   end
 end
 
