@@ -49,9 +49,7 @@ get '/' do
   # Generate session log line
   session[:log][:stop] = Time.now
   # start stop rfid omtale flere relaterte
-  if session[:log][:start] == "pending"
-    session[:log][:start] = "starting"
-  else
+  if session[:log][:start].kind_of? Time
     logger.info("Finito #{session[:log][:start].strftime("%Y-%m-%dT%H:%M:%S.%L")} #{session[:log][:stop].strftime("%Y-%m-%dT%H:%M:%S.%L")} #{session[:log][:rfid]} #{session[:log][:omtale]} #{session[:log][:flere]} #{session[:log][:relaterte]}")
   end
 

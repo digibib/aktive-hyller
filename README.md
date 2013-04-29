@@ -9,13 +9,31 @@ update and install necessary packages:
 
 ```bash
 sudo update && sudo upgrade
-sudo apt-get install openssh-server vim xnest
+sudo apt-get install openssh-server vim vino
 ```
 
-### Firefox, git and curl
+vino needs to be enabled at boot or login:
+```
+cat <<EOF | tee ~/.config/autostart/vino-server.desktop 
+[Desktop Entry]
+Name=Desktop Sharing
+Comment=GNOME Desktop Sharing Server
+Exec=/usr/lib/vino/vino-server --sm-disable
+Icon=preferences-desktop-remote-desktop
+OnlyShowIn=GNOME;Unity;LXDE;
+Terminal=false
+Type=Application
+AutostartCondition=GSettings org.gnome.Vino enabled
+X-GNOME-Autostart-Phase=Applications
+X-GNOME-AutoRestart=true
+NoDisplay=true
+X-Ubuntu-Gettext-Domain=vino
+EOF
+```
 
-    sudo apt-get install firefox
-    sudo apt-get install build-essential git-core curl
+### Firefox, git, imagetools  and curl
+
+    sudo apt-get install firefox build-essential git-core curl imagemagick
 
 ### Ruby
 
