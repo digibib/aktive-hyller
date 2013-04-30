@@ -189,7 +189,7 @@ put '/error_report' do
   if SETTINGS["error_report"]["emails"]
     msg = "En feil har blitt oppdaget på tittelnr: #{session[:current].tnr} \n Lykke til med å finne feilen ...;)"
     SETTINGS["error_report"]["emails"].each do |recipient|
-      send_error_report(recipient, msg, :subject => "Aktiv hylle - feilmelding!", :display =>SETTINGS["error_report"]["display"])
+      send_error_report(recipient, msg, :subject => "Aktiv hylle - feilmelding!", :display => SETTINGS["error_report"]["display"])
       logger.info("Error message sent to #{recipient}")
     end
     "message sent!"
