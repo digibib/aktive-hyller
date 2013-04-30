@@ -1,14 +1,14 @@
 # Aktive hyller Setup and Configuration
 
 ## Linux install for Aktive Hyller
-Install lubuntu 12.04 LTS or newer
+Install lubuntu 12.04 LTS or newer. 13.04 is recommended for best driver support.
 
 update and install necessary packages:
 
 ### Remote management
 
 ```bash
-sudo update && sudo upgrade
+sudo apt-get update && sudo upgrade
 sudo apt-get install openssh-server vim vino
 ```
 
@@ -30,8 +30,19 @@ NoDisplay=true
 X-Ubuntu-Gettext-Domain=vino
 EOF
 ```
+## Ubuntu stability settings
 
-### Firefox, git, imagetools  and curl
+deactivate crash reporting:
+
+    sudo sed -i 's/enabled=./enabled=0/' /etc/default/apport
+    
+deactivate update manager:
+
+    sudo sed -i 's/X-GNOME-Autostart-Delay=60/X-GNOME-Autostart-enabled=false/' /etc/xdg/autostart/update-notifier.desktop
+
+## Install
+
+###  Firefox, git, imagetools  and curl
 
     sudo apt-get install firefox build-essential git-core curl imagemagick
 
@@ -94,77 +105,15 @@ checkout sinatra branch
 copy configuration and adjust port to sinatra APP port. rfidgeek also comes with integrated websocket server for testing. this can be diabled in config
 
     cp config/config.yml-dist config/config.yml
-    
+
 ### Settings
 
 create settings file:
 
     cd ~/code/aktive-hyller
-    cp config/settings-example.yml config/settings.yml
+    cp config/settings.example.yml config/settings.yml
     
 set ports and hostname for websocket if RFID reader. Activate websocket server for testing.
-
-settings for logo, background, RFID and/or Barcode scanner, etc. are all in config/settings.yml
-
-to update configuration:
-
-    rake configure
-
-## Virtuoso install
-
-    sudo apt-get install virtuoso-server virtuoso-vad-conductor
-
-global config:
-
-    /etc/default/virtuoso-opensource-6.1
-
-database settings:
-    /etc/virtuoso-opensource-6.1/virtuoso.ini
-
-### Virtuoso through apache proxy
-
-need mod_proxy:
-
-    sudo apt-get install libapache2-mod-proxy-html
-
-add virtualhost directive:
-
-```
-    <VirtualHost *:80>
-    Alias /robots.txt /var/www/robots.txt
-    Alias /favicon.ico /var/www/favicon.ico
-
-    DocumentRoot /var/www/hostname
-    ServerName hostname
-
-    ProxyRequests Off
-    ProxyPreserveHost on
-    ProxyTimeout        300
-    # Proxy ACL
-    <Proxy *>
-        Order deny,allow
-        Allow from all
-    </Proxy>
-
-   <Proxy /sparql>
-    Allow from all
-    ProxyPass http://hostname:8890/sparql timeout=300
-    ProxyPassReverse http://hostname:8890/sparql
-   </Proxy>
-   <Proxy /sparql-auth>
-    Allow from all
-    ProxyPass http://hostname:8890/sparql-auth timeout=300
-    ProxyPassReverse http://hostname:8890/sparql-auth
-   </Proxy>
-
-    LimitRequestLine 1000000
-    LimitRequestFieldSize 16380
-</Virtualhost>
-```
-
-## MARC to RDF conversion
-
-* [marc2rdf]: http://github.com/digibib/marc2rdf
 
 ## Touchscreen
 
@@ -209,6 +158,12 @@ Setup and configuration:
     rake setup:install
     rake setup:configure
 
+settings for logo, background, RFID and/or Barcode scanner, etc. are all in config/settings.yml
+
+to update configuration:
+
+    rake configure
+    
 ## Setup and Configuration (Manual)
 
 ### Automatic start script for firefox
@@ -410,27 +365,60 @@ you will need to activate xscreensaver and make a new play format in ~/.xscreens
 
 this one can now be selected in xscreensaver-demo
 
-### remote access ###
+## Content
 
-openssh, as described above
+### Virtuoso install
 
-### remote desktop
+    sudo apt-get install virtuoso-server virtuoso-vad-conductor
 
-settings in /etc/lightdm/lightdm.conf:
+global config:
+
+    /etc/default/virtuoso-opensource-6.1
+
+database settings:
+    /etc/virtuoso-opensource-6.1/virtuoso.ini
+
+### Virtuoso through apache proxy
+
+need mod_proxy:
+
+    sudo apt-get install libapache2-mod-proxy-html
+
+add virtualhost directive:
 
 ```
-[SeatDefaults]
-xserver-allow-tcp=true #  TCP/IP connections are allowed to this X server
-# xdmcp-port = XDMCP UDP/IP port to communicate on
-# xdmcp-key = Authentication key to use for XDM-AUTHENTICATION-1 (stored in keys.conf)
-autologin-user=aktiv
+    <VirtualHost *:80>
+    Alias /robots.txt /var/www/robots.txt
+    Alias /favicon.ico /var/www/favicon.ico
 
-[XDMCPServer]
-enabled=true
+    DocumentRoot /var/www/hostname
+    ServerName hostname
+
+    ProxyRequests Off
+    ProxyPreserveHost on
+    ProxyTimeout        300
+    # Proxy ACL
+    <Proxy *>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+
+   <Proxy /sparql>
+    Allow from all
+    ProxyPass http://hostname:8890/sparql timeout=300
+    ProxyPassReverse http://hostname:8890/sparql
+   </Proxy>
+   <Proxy /sparql-auth>
+    Allow from all
+    ProxyPass http://hostname:8890/sparql-auth timeout=300
+    ProxyPassReverse http://hostname:8890/sparql-auth
+   </Proxy>
+
+    LimitRequestLine 1000000
+    LimitRequestFieldSize 16380
+</Virtualhost>
 ```
 
-'xnest' allows for testing on external desktop
-1. connect with x forwarding
-    ssh -X user@iptoserver
-2. start session on local computer
-    Xnest :1 -ac -geometry 800x480 -once -query localhost
+## MARC to RDF conversion
+
+* [marc2rdf]: http://github.com/digibib/marc2rdf
