@@ -13,7 +13,9 @@ sudo apt-get install openssh-server vim vino
 ```
 
 vino needs to be enabled at boot or login:
+
 ```
+mkdir -p ~/.config/autostart
 cat <<EOF | tee ~/.config/autostart/vino-server.desktop 
 [Desktop Entry]
 Name=Desktop Sharing
@@ -63,14 +65,16 @@ On newer rvm this can be done automatically with
 
     rvm autolibs enable
 
-then install ruby.
+then install and activate ruby, with bundler.
 
     rvm reinstall 1.9.3
+    rvm use 1.9.3 --default
+    gem install bundler
     
-in Ubuntu, ~/.bash_profile is overridden if ~/.bashrc exists, so rvm config must be copied to ~./bashrc or to ~./bash_login to load automatically:
+in Ubuntu, ~/.bash_profile is overridden if ~/.bashrc exists, so rvm config must be copied to ~./bashrc
 
 ```
-cat <<EOF | tee -a ~/.bash_login
+cat <<EOF | tee -a ~/.bashrc
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 EOF
 ```
@@ -79,7 +83,7 @@ EOF
 
 clone the repositories
 
-    mkdir -p code && cd ~/code
+    mkdir -p ~/code && cd ~/code
     git clone https://github.com/digibib/aktive-hyller
 
 ### RFID reader

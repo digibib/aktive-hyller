@@ -43,7 +43,13 @@ namespace :setup do
 app: #{home}/.rvm/scripts/rvm; cd #{pwd}; ruby app.rb
 rfid: sleep 3; #{home}/.rvm/scripts/rvm; cd #{home}/code/rfidgeek; ruby rfid.rb
 EOF`
-
+   
+   puts "Installing required gems via bundler"
+   puts "Bundling rfidgeek"
+   %x[cd #{home}/code/rfidgeek && bundle ]
+   puts "Bundling aktive-hyller"
+   %x[cd #{home}/code/aktive-hyller && bundle ]
+   
    puts "installing upstart file"
    %x[rvmsudo foreman export upstart /etc/init -f #{home}/code/Procfile -a aktivehyller -p 4567 -u aktiv -l #{pwd}/logs/upstart]
 

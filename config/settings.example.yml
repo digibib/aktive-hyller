@@ -40,6 +40,6 @@ smtp:
   password: password
 
 error_report:
-  display: :0.0 # unix DISPLAY env for screenshot
+  display: ':0.0' # unix DISPLAY env for screenshot
   emails:
     - example1@example.com
