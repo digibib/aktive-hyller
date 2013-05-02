@@ -11,4 +11,4 @@ while read input; do
 done
 }
 
-/usr/bin/xscreensaver-command -d localhost:0.0 -watch | process
+/usr/bin/xscreensaver-command -d :0.0 -watch | process
