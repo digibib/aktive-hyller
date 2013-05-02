@@ -85,13 +85,15 @@ clone the repositories
 
     mkdir -p ~/code && cd ~/code
     git clone https://github.com/digibib/aktive-hyller
-    cd aktive-hyller && bundle
+    cd aktive-hyller 
+    git checkout develop && bundle
 
 ### RFID reader
 
     cd ~/code
     git clone https://github.com/digibib/rfidgeek.git
-    cd rfidgeek && bundle
+    cd rfidgeek 
+    git checkout feature/sinatra-integration && bundle
     
 needs access to dialout group
 
@@ -103,10 +105,8 @@ restart window manager (or machine)
     
 #### RFID websocket integration
 
-checkout sinatra branch
 
     cd ~/code/rfidgeek
-    git checkout feature/sinatra-integration
  
 copy configuration and adjust port to sinatra APP port. rfidgeek also comes with integrated websocket server for testing. this can be diabled in config
 
