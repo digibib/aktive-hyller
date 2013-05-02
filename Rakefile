@@ -60,7 +60,7 @@ EOF`
    Rake::Task["log:setup"].invoke
    puts "activating cron tasks for log (must be root)"
    %x[rvmsudo chown root.root #{pwd}/scripts/aktivehyller-cronjobs && rvmsudo ln -s #{pwd}/scripts/aktivehyller-cronjobs /etc/cron.d/aktivehyller-cronjobs ]
-   puts "Done.\n\n Now setup config files (#{pwd}/config/settings.yml) and run rake configure"
+   puts "Done.\n\n Now setup config files (#{pwd}/config/settings.yml) and run:\nrake setup:configure"
   end
 
   desc "Configure CSS"

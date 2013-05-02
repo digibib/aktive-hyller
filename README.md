@@ -8,7 +8,7 @@ update and install necessary packages:
 ### Remote management
 
 ```bash
-sudo apt-get update && sudo upgrade
+sudo apt-get update && sudo apt-get upgrade
 sudo apt-get install openssh-server vim vino
 ```
 
@@ -85,11 +85,13 @@ clone the repositories
 
     mkdir -p ~/code && cd ~/code
     git clone https://github.com/digibib/aktive-hyller
+    cd aktive-hyller && bundle
 
 ### RFID reader
 
     cd ~/code
-    git clone https://github.com/digibib/rfidgeek.git 
+    git clone https://github.com/digibib/rfidgeek.git
+    cd rfidgeek && bundle
     
 needs access to dialout group
 
@@ -168,6 +170,26 @@ to update configuration:
 
     rake configure
     
+### Screen Saver
+
+#### No Screen saver
+
+If you only want start image you will only need to send a GET to /timeout and browser will reset itself
+
+#### Video
+
+Install video player:
+
+```sudo apt-get install libav-tools```
+
+you will need to activate xscreensaver and make a new play format in ~/.xscreensaver:
+```
+"Aktiv hylle screensaver" mplayer -x 1680 -y 1050 -wid $XSCREENSAVER_WINDOW -fs -loop 0 \
+                          [/path/to/movie] >> /dev/null 2>&1 \n\
+```
+
+this one can now be selected in xscreensaver-demo
+
 ## Setup and Configuration (Manual)
 
 ### Automatic start script for firefox
@@ -349,25 +371,6 @@ Mails are handlet by ssmtp which needs a dev account at Google API.
 https://developers.google.com/google-apps/gmail/
 the gmail dev sccount settings must be inserted into Settings file under 'gmail'
 
-## Screen Saver
-
-### No Screen saver
-
-If you only want start image you will only need to send a GET to /timeout and browser will reset itself
-
-### Video
-
-Install video player 
-
-```sudo apt-get install libav-tools```
-
-you will need to activate xscreensaver and make a new play format in ~/.xscreensaver:
-```
-"Aktiv hylle screensaver" mplayer -x 1680 -y 1050 -wid $XSCREENSAVER_WINDOW -fs -loop 0 \
-                          [/path/to/movie] >> /dev/null 2>&1 \n\
-```
-
-this one can now be selected in xscreensaver-demo
 
 ## Content
 
