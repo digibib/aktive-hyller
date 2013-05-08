@@ -7,12 +7,12 @@ def send_email(to, message, opts={})
   opts[:from]        ||= 'digitalutvikling@gmail.com'
   opts[:from_alias]  ||= "Digital Deichman"
   opts[:subject]     ||= "Aktive hyller statistikkrapport"
-
+  ip = %x[ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{print $1}']
   msg = <<END_OF_MESSAGE
 Content-type: text/plain; charset=UTF-8
 From: #{opts[:from_alias]} <#{opts[:from]}>
 To: <#{to}>
-Subject: #{opts[:subject]} for '#{SETTINGS["name"]}'
+Subject: #{opts[:subject]} for '#{SETTINGS["name"]}' IP: #{ip}
 
 #{message}
 END_OF_MESSAGE
