@@ -12,7 +12,7 @@ def send_email(to, message, opts={})
 Content-type: text/plain; charset=UTF-8
 From: #{opts[:from_alias]} <#{opts[:from]}>
 To: <#{to}>
-Subject: #{opts[:subject]}
+Subject: #{opts[:subject]} for '#{SETTINGS["name"]}'
 
 #{message}
 END_OF_MESSAGE

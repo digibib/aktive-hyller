@@ -1,3 +1,6 @@
+# name of station
+name: my-station
+
 # supported readers
 rfid: true
 barcode: true
