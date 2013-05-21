@@ -110,9 +110,9 @@ class Book
     # kilder som ikke er i 'order' kommer først (i.e alle deichmankildene)
 
     if @lang == RDF::URI("http://lexvo.org/id/iso639-3/eng")
-      order = ["Novelist", "Goodreads", "Ønskebok", "Bibliotekbasen", "Bokkilden", "Katalogkrydder"]
+      order = ["Novelist", "Goodreads", "Ønskebok", "Bokkilden", "Bibliotekbasen", "Katalogkrydder"]
      else
-      order = ["Ønskebok", "Bibliotekbasen", "Bokkilden", "Katalogkrydder", "Goodreads", "Novelist"]
+      order = ["Ønskebok", "Novelist", "Bokkilden", "Bibliotekbasen", "Katalogkrydder", "Goodreads"]
     end
 
     @review_collection.sort! do |a,b|
