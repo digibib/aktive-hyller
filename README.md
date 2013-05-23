@@ -344,11 +344,11 @@ cat <<EOF | sudo tee /etc/cron.d/aktivehyller-cronjobs && sudo chmod 600 /etc/cr
 # Cron tasks for logging of Aktive Shelves
 # m h dom mon dow user	command
 # Daily log at 20:00
-00 20 * * * aktiv /bin/bash -c 'source /home/aktiv/.rvm/scripts/rvm && cd /home/aktiv/code/aktive-hyller && rake log:process' >> logs/mail.log 2>&1
+00 20 * * * aktiv /bin/bash -c 'source /home/aktiv/.rvm/scripts/rvm && cd /home/aktiv/code/aktive-hyller && rake log:process >> logs/mail.log 2>&1' >/dev/null 2>&1
 # Weekly log
-@weekly aktiv /bin/bash -c 'source /home/aktiv/.rvm/scripts/rvm && cd /home/aktiv/code/aktive-hyller && rake email:weekly' >> logs/mail.log 2>&1
+@weekly aktiv /bin/bash -c 'source /home/aktiv/.rvm/scripts/rvm && cd /home/aktiv/code/aktive-hyller && rake email:weekly >> logs/mail.log 2>&1' >/dev/null 2>&1
 # Daily log
-@monthly aktiv /bin/bash -c 'source /home/aktiv/.rvm/scripts/rvm && cd /home/aktiv/code/aktive-hyller && rake email:monthly' >> logs/mail.log 2>&1
+@monthly aktiv /bin/bash -c 'source /home/aktiv/.rvm/scripts/rvm && cd /home/aktiv/code/aktive-hyller && rake email:monthly >> logs/mail.log 2>&1' >/dev/null 2>&1
 EOF
 ``` 
 
