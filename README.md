@@ -321,22 +321,11 @@ EOF
 
 Make sure sqlite3 is installed on your system:
 ```
-sudo apt-get install sqlite3
-```
+    sudo apt-get install sqlite3
 
-Set up a cronjob to run `rake log:process` each night:
-
-``` 
-cat <<EOF | sudo tee /etc/cron.daily/aktive-hyller-daily && sudo chmod +x /etc/cron.daily/aktive-hyller-daily
-#!/bin/bash
-# daily log report
-source /home/aktiv/.rvm/scripts/rvm
-cd /home/aktiv/code/aktive-hyller
-rake log:process >> logs/mail.log 2>&1
-EOF
- ```
 
 The statistics report will be accesible provided you know the IP-address of the station:
+
 ```
 http://ip.address/stats/{daily|weekly|monthly}
 ```
@@ -345,31 +334,27 @@ In addition, you can set email adresses in `config/settings.yml` of those who wi
 
 The `rake log:process` task will aslo send the daily email reports. You need to set up additional two cronjobs to send the weekly and monthly reports:
 
-Weekly report
+## mail reports
+
+setup cronjobs for daily, weekly and monthly reports, either by using cronfile in scripts/aktivehyller-cronjobs or by creating own:
+(make sure it's read/writable only by owner as cron expects this
+
 ``` 
-cat <<EOF | sudo tee /etc/cron.weekly/aktive-hyller-weekly && sudo chmod +x /etc/cron.weekly/aktive-hyller-weekly
-#!/bin/bash
-# weekly log report
-source /home/aktiv/.rvm/scripts/rvm
-cd /home/aktiv/code/aktive-hyller
-rake email:weekly >> logs/mail.log 2>&1
+cat <<EOF | sudo tee /etc/cron.d/aktivehyller-cronjobs && sudo chmod 600 /etc/cron.d/aktivehyller-cronjobs
+# Cron tasks for logging of Aktive Shelves
+# m h dom mon dow user	command
+# Daily log at 20:00
+00 20 * * * aktiv /bin/bash -c 'source /home/aktiv/.rvm/scripts/rvm && cd /home/aktiv/code/aktive-hyller && rake log:process' >> logs/mail.log 2>&1
+# Weekly log
+@weekly aktiv /bin/bash -c 'source /home/aktiv/.rvm/scripts/rvm && cd /home/aktiv/code/aktive-hyller && rake email:weekly' >> logs/mail.log 2>&1
+# Daily log
+@monthly aktiv /bin/bash -c 'source /home/aktiv/.rvm/scripts/rvm && cd /home/aktiv/code/aktive-hyller && rake email:monthly' >> logs/mail.log 2>&1
 EOF
-```
+``` 
 
-Monthly report
-```
-cat <<EOF | sudo tee /etc/cron.monthly/aktive-hyller-monthly && sudo chmod +x /etc/cron.monthly/aktive-hyller-monthly
-#!/bin/bash
-# monthly log report
-source /home/aktiv/.rvm/scripts/rvm
-cd /home/aktiv/code/aktive-hyller
-rake email:monthly >> logs/mail.log 2>&1
-EOF
-```
-
-Mails are handlet by ssmtp which needs a dev account at Google API.
+Mails are handlet by Net::Smtp, and for using gmails smtp service you need a dev account at Google API.
 https://developers.google.com/google-apps/gmail/
-the gmail dev sccount settings must be inserted into Settings file under 'gmail'
+the gmail dev account settings must be inserted into Settings file under 'gmail'
 
 
 ## Content
