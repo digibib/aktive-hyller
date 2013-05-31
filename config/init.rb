@@ -19,6 +19,7 @@ SETTINGS = YAML::load(File.open(File.join('config', 'settings.yml')))
 REPO             = RDF::Virtuoso::Repository.new(SETTINGS["sparql_endpoint"])
 DEFAULT_GRAPH    = RDF::URI(SETTINGS["default_graph"])
 SIMILARITY_GRAPH = RDF::URI(SETTINGS["similarity_graph"])
+SOURCES_GRAPH    = RDF::URI(SETTINGS["sources_graph"])
 RESOURCE_PREFIX  = RDF::URI(SETTINGS["resource_prefix"])
 REVIEW_GRAPH     = RDF::URI('http://data.deichman.no/reviews')
 QUERY            = RDF::Virtuoso::Query
