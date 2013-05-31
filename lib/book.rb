@@ -107,10 +107,10 @@ class Book
 
   def enforce_review_order
     # Sorter etter rangeringen i arrayen 'order'
-    # kilder som ikke er i 'order' kommer først (i.e alle deichmankildene)
+    # kilder som ikke er i 'order' kommer først (i.e bokanbefalingsbasen -Ønskebok)
 
     if @lang == RDF::URI("http://lexvo.org/id/iso639-3/eng")
-      order = ["Novelist", "Goodreads", "Ønskebok", "Bokkilden", "Bibliotekbasen", "Katalogkrydder"]
+      order = ["Novelist", "Goodreads", "Deichmanske bibliotek", "Tronheim folkebibliotek", "Lillehammer bibliotek", "Tønsberg og Nøtterøy bibliotek", "Ønskebok", "Bokkilden", "Bibliotekbasen", "Katalogkrydder"]
      else
       order = ["Ønskebok", "Novelist", "Bokkilden", "Bibliotekbasen", "Katalogkrydder", "Goodreads"]
     end
@@ -156,6 +156,7 @@ class Book
       query.distinct
       query.from(REVIEW_GRAPH)
       query.from_named(DEFAULT_GRAPH)
+      query.from_named(SOURCES_GRAPH)
       if self.work_id
         query.where([self.work_id, RDF::REV::hasReview, :review_id, :context=>DEFAULT_GRAPH])
       else
@@ -164,7 +165,7 @@ class Book
       query.where([:review_id, RDF::REV.title, :review_title],
                   [:review_id, RDF::REV.text, :review_text])
       query.optional([:review_id, RDF::DC.source, :source_id],
-                     [:source_id, RDF::FOAF.name, :review_source])
+                     [:source_id, RDF::FOAF.name, :review_source, :context=>SOURCES_GRAPH])
       query.optional([:review_id, RDF::REV.reviewer, :reviewer])
 
     print "#{query.pp}"
