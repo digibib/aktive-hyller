@@ -163,7 +163,8 @@ class Book
         query.where([self.book_id, RDF::REV::hasReview, :review_id, :context=>DEFAULT_GRAPH])
       end
       query.where([:review_id, RDF::REV.title, :review_title],
-                  [:review_id, RDF::REV.text, :review_text])
+                  [:review_id, RDF::REV.text, :review_text],
+                  [:review_id, RDF::DC.issued, :issued])
       query.optional([:review_id, RDF::DC.source, :source_id],
                      [:source_id, RDF::FOAF.name, :review_source, :context=>SOURCES_GRAPH])
       query.optional([:review_id, RDF::REV.reviewer, :reviewer])
