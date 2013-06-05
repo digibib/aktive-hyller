@@ -6,7 +6,7 @@ require "typhoeus"
 
 class Book
   attr_accessor :book_id, :title, :format, :cover_url, :isbn, :creator_id, :creatorName, :responsible, :rating, :tnr, :lang,
-                :work_id, :work_isbn, :review_collection, :same_author_collection, :similar_works_collection, :abstract, :randomized_books
+                :work_id, :work_isbns, :review_collection, :same_author_collection, :similar_works_collection, :abstract, :randomized_books
 
   def initialize(tnr)
     timing_start = Time.now
