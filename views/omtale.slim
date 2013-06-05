@@ -27,12 +27,12 @@ div id="content-left"
           <br/> #{t.from} #{rating[:source]}
 
 div id="content-right"
-  div id="omtale-wrapper" class="iosSlider"
-    div id="scroller" class="slider"
+  div id="omtale-wrapper"
+    div id="scroller"
       - if not book.review_collection.empty?
         - book.review_collection.each_with_index do |r, i|
           div class="slide"
-            div class="review"
+            div class="review #{'current' if i == 0}" id="omtale_#{i}" style="#{'display:none' unless i == 0}"
               p #{{r[:text]}}
               p class="source" #{r[:source]}
       - else
@@ -44,6 +44,14 @@ div id="content-right"
         ul id="indicator"
           - for i in (1..book.review_collection.size)
             li #{i}
+
+    div id="left_arrow"
+      img src="/img/arrow_left_inactive.png"
+    div id="right_arrow"
+      - if book.review_collection.size > 1
+        img src="/img/arrow_right_active.png"
+      - else
+        img src="/img/arrow_right_inactive.png"
 
 
 div.clearfix
@@ -101,6 +109,45 @@ javascript:
     });
 
     $('#indicator li:first').addClass("active");
+
+    $('#left_arrow').on('click', function(){
+      var current = parseInt($('.current').attr('id').substr(7));
+      var numReviews = $('.review').size();
+
+      if (current > 0) {
+        var next = current - 1;
+        $('.current').removeClass('current').hide();
+        $('#omtale_'+next).addClass('current').show();
+
+        $('#indicator li').removeClass('active');
+        $('#indicator li:eq(' + next + ')').addClass('active');
+
+        $('#right_arrow img').attr('src', "/img/arrow_right_active.png");
+        if (next == 0) {
+          $('#left_arrow img').attr('src', "/img/arrow_left_inactive.png");
+        }
+      }
+    });
+
+    $('#right_arrow').on('click', function(){
+      var current = parseInt($('.current').attr('id').substr(7));
+      var numReviews = $('.review').size();
+
+      if (current < (numReviews -1)) {
+        var next = current + 1;
+        $('.current').removeClass('current').hide();
+        $('#omtale_'+next).addClass('current').show();
+
+        $('#indicator li').removeClass('active');
+        $('#indicator li:eq(' + next + ')').addClass('active');
+
+        $('#left_arrow img').attr('src', "/img/arrow_left_active.png");
+        if (next == numReviews -1) {
+          $('#right_arrow img').attr('src', "/img/arrow_right_inactive.png");
+        }
+      }
+
+    });
 
     $('.liste-small').on('click', function(evt) {
       evt.preventDefault();
