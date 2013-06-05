@@ -29,14 +29,6 @@ javascript:
       $('#vi-leter').hide();
       if(request) {request.abort();} //abort running requests
     });
-  
-
-    // loading animation
-    i = 0;
-    setInterval(function() {
-      i = ++i % 4;
-      $("#loading").html(""+Array(i+1).join("."));
-    }, 500);
 
     $('a.liste-link').on('click', function(evt) {
       evt.preventDefault();
