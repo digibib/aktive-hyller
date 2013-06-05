@@ -27,6 +27,13 @@ div id="content-left"
           <br/> #{t.from} #{rating[:source]}
 
 div id="content-right"
+  div id="left_arrow"
+    img src="/img/arrow_left_inactive.png"
+  div id="right_arrow"
+    - if book.review_collection.size > 1
+      img src="/img/arrow_right_active.png"
+    - else
+      img src="/img/arrow_right_inactive.png"
   div id="omtale-wrapper"
     div id="scroller"
       - if not book.review_collection.empty?
@@ -45,13 +52,6 @@ div id="content-right"
           - for i in (1..book.review_collection.size)
             li #{i}
 
-    div id="left_arrow"
-      img src="/img/arrow_left_inactive.png"
-    div id="right_arrow"
-      - if book.review_collection.size > 1
-        img src="/img/arrow_right_active.png"
-      - else
-        img src="/img/arrow_right_inactive.png"
 
 
 div.clearfix

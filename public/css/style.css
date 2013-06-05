@@ -73,7 +73,7 @@ div#top-buttons    { float: right; margin: 24px;}
 div#contents       { padding: 0; float: left; width: 1365px; overflow:hidden; position: relative;}
 div#content-left   { margin-left: 94px; height: 460px; width: 300px; float: left; }
 
-div#content-right  { float: left; margin-left:85px; width:785px; height: 460px; }
+div#content-right  { float: left; margin-left:85px; width:785px; height: 460px; position: relative;}
 div#content-bottom { clear:both; margin-top: 55px; width:1365px; height:367px;
                      background: #555; color: #fff; padding:10px;}
 div.flere          { float:left; width: 660px; padding-left:10px; }
@@ -109,7 +109,7 @@ div.cover-small-missing { width:120px; height:170px; border: 5px solid white;
                           background: -moz-linear-gradient(top,  #eee,  #b5b5b5);
                           text-align: center; color:#444; display:table-cell; vertical-align:middle; }
 
-div#omtale-wrapper { width: 815px; height:460px; border: 2px solid #aaa;
+div#omtale-wrapper { width: 815px; height:460px; border: 2px solid #aaa; overflow:hidden;
                      box-shadow:inset 0 0 10px #bbb; background:#eee; position:relative;}
 
 div#omtale-scroll  { float: right; margin-right:20px; }
@@ -120,7 +120,8 @@ div.ratings        { margin-top: 14px; font-size: 0.9em; display:table; text-ali
 .inne              { background: green; opacity:0.7; color: #fff;}
 
 #scrollable        { position:relative; overflow:hidden; height: 575px; }
-#scroller          { height: 390px; overflow: hidden;}
+#scroller          { height: 390px; overflow: auto; width: 840px;}
+
 img.rating         { margin-top: 20px; margin-bottom: 10px;;}
 img.scroll-icon    { width: 60px;}
 
@@ -156,7 +157,7 @@ div#fade-to-white  { position: absolute; top: 0; left: 0; width:100%; padding: 5
     left:50%;
 }
 
-#right_arrow  { position: absolute; top: 210px; right: -50px;}
+#right_arrow  { position: absolute; top: 210px; right: -80px;}
 #left_arrow  { position: absolute; top: 210px; left: -50px;}
 
 #indicator li { display:block; float:left; list-style:none; width:8px; height:8px;
