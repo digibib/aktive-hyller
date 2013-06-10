@@ -8,6 +8,7 @@ barcode: true
 # data access
 sparql_endpoint:   http://localhost:8890/sparql
 default_graph:     http://example.com/books
+sources_graph:     http://example.com/sources
 similarity_graph:  http://data.deichman.no/noeSomLigner
 resource_prefix:   http://example.com/resource/
 book_status_api:   http://bibsyst/???????

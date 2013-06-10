@@ -84,7 +84,7 @@ get '/omtale' do
   end
   session[:log][:omtale] += 1
   session[:history].push({:path => '/omtale', :tnr => session[:current].tnr})
-  logger.info("Omtalevisning #{session[:current].book_id} #{session[:current].review_collection.size} \"#{session[:current].creatorName || session[:current].responsible || 'ukjent'}\" \"#{session[:current].title || 'usannsynligatnoenhardennetittelen'}\"")
+  logger.info("Omtalevisning #{session[:current].book_id} #{session[:current].review_collection.size} \"#{session[:current].authors || session[:current].responsible || 'ukjent'}\" \"#{session[:current].title || 'usannsynligatnoenhardennetittelen'}\"")
   slim :omtale, :locals => {:book => session[:current], :lang => session[:locale]}
 end
 
@@ -111,7 +111,7 @@ get '/relaterte' do
 
   session[:log][:relaterte] += 1
   session[:history].push({:path => '/relaterte', :tnr => session[:current].tnr})
-  logger.info("Relaterte \"#{session[:current].creatorName || session[:current].responsible} - #{session[:current].title}\" #{session[:current].similar_works_collection.size}")
+  logger.info("Relaterte \"#{session[:current].authors || session[:current].responsible} - #{session[:current].title}\" #{session[:current].similar_works_collection.size}")
   slim :relaterte, :locals => {:book => session[:current], :lang => session[:locale]}
 end
 

@@ -22,15 +22,15 @@ html
         div id="header-text"
           - if request.path == "/omtale"
             p id="title" #{book.title}
-            p id="sub-title" #{book.creatorName}
+            p id="sub-title" #{book.authors}
           - elsif request.path == "/flere"
             p id="title" #{t.menu.more_by_author}
-            p id="sub-title" #{book.creatorName}
+            p id="sub-title" #{book.authors}
           - elsif request.path == "/relaterte"
             p id="title" #{t.menu.similar_works}
             p id="sub-title"
               span "#{book.title}"&nbsp;
-              span style="font-weight:normal" #{t.made_by} #{book.creatorName}
+              span style="font-weight:normal" #{t.made_by} #{book.authors}
       div id="contents"
         == yield
       div id="vi-leter"

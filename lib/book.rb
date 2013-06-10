@@ -4,38 +4,43 @@ require "nokogiri"
 require "faraday"
 require "typhoeus"
 
+Book   = Struct.new(:book_id, :title, :format, :cover_url, :isbn, :authors, :responsible, :rating, :tnr, :lang,
+                :work_id, :work_isbns, :review_collection, :same_author_collection, :similar_works_collection, :abstract, :krydder, :randomized_books)
+Author = Struct.new(:creator_id, :creatorName)
+
 class Book
-  attr_accessor :book_id, :title, :format, :cover_url, :isbn, :creator_id, :creatorName, :responsible, :rating, :tnr, :lang,
-                :work_id, :work_isbns, :review_collection, :same_author_collection, :similar_works_collection, :abstract, :randomized_books
+#  attr_accessor :book_id, :title, :format, :cover_url, :isbn, :creator_id, :creatorName, :responsible, :rating, :tnr, :lang,
+#                :work_id, :work_isbns, :review_collection, :same_author_collection, :similar_works_collection, :abstract, :randomized_books
 
   def initialize(tnr)
     timing_start = Time.now
     timings = "\nSPARQL - get book info: "
 
-    @tnr = tnr
-    @rating                   = {} # ratings format {:source, :num_raters, :rating}
-    @review_collection        = []
-    @same_author_collection   = []
-    @similar_works_collection = []
-
+    self.tnr = tnr
+    self.rating                   = {} # ratings format {:source, :num_raters, :rating}
+    self.review_collection        = []
+    self.same_author_collection   = []
+    self.similar_works_collection = []
+    self.authors = []
+    
     url      = RESOURCE_PREFIX + tnr.to_s
-    @book_id = RDF::URI(url)
-    query    = QUERY.select(:title, :format, :isbn, :work_id, :creator_id, :responsible, :abstract, :krydder, :lang)
+    self.book_id = RDF::URI(url)
+    query    = QUERY.select(:title, :format, :isbn, :work_id, :creatorName, :creator_id, :responsible, :abstract, :krydder, :lang)
     query.distinct.from(DEFAULT_GRAPH)
+    # sample stops after first hit
     query.sample(:cover_url, :alt_cover_url, :workAbstract, :workKrydder)
-    query.group_digest(:creatorName, ', ', 1000, 1)
-    query.where([@book_id, RDF::DC.title, :title],
-             [@book_id, RDF::DC.language, :lang],
-             [@book_id, RDF::DC.format, :format])
-    query.optional([@book_id, RDF::FOAF.depiction, :cover_url])
-    query.optional([@book_id, RDF::IFACE.altDepictedBy, :alt_cover_url])
-    query.optional([@book_id, RDF::DC.abstract, :abstract])
-    query.optional([@book_id, RDF::DEICH.krydder_beskrivelse, :krydder])
-    query.optional([@book_id, RDF::BIBO.isbn, :isbn])
-    query.optional([@book_id, RDF::DC.creator, :creator_id],
+    query.where([self.book_id, RDF::DC.title, :title],
+             [self.book_id, RDF::DC.language, :lang],
+             [self.book_id, RDF::DC.format, :format])
+    query.optional([self.book_id, RDF::FOAF.depiction, :cover_url])
+    query.optional([self.book_id, RDF::IFACE.altDepictedBy, :alt_cover_url])
+    query.optional([self.book_id, RDF::DC.abstract, :abstract])
+    query.optional([self.book_id, RDF::DEICH.krydder_beskrivelse, :krydder])
+    query.optional([self.book_id, RDF::BIBO.isbn, :isbn])
+    query.optional([self.book_id, RDF::DC.creator, :creator_id],
                 [:creator_id, RDF::FOAF.name, :creatorName])
-    query.optional([@book_id, RDF::RDA.statementOfResponsibility, :responsible])
-    query.optional([:work_id, RDF::FABIO.hasManifestation, @book_id])
+    query.optional([self.book_id, RDF::RDA.statementOfResponsibility, :responsible])
+    query.optional([:work_id, RDF::FABIO.hasManifestation, self.book_id])
     query.optional([:work_id, RDF::FABIO.hasManifestation, :book],
                 [:book, RDF::DC.abstract, :workAbstract])
     query.optional([:work_id, RDF::FABIO.hasManifestation, :book],
@@ -43,9 +48,11 @@ class Book
 
 
     print "#{query.pp}"
-    results       = REPO.select(query)
+    solutions = REPO.select(query)
     timings += "#{Time.now - timing_start} s."
-    unless results.empty?
+    unless solutions.empty?
+      cluster(solutions, :binding => "work_id")
+=begin
       @title       = results.first[:title]
       @format      = results.first[:format]
       @cover_url   = results.first[:cover_url] || results.first[:alt_cover_url]
@@ -67,16 +74,18 @@ class Book
       end
 
       # fetch isbns for work into array
-      if @work_id
+=end
+      if self.work_id
         timing_start = Time.now
         timings += "\nSPARQL - get work isbns: "
         query = QUERY.select(:work_isbns)
-        query.select.where([@work_id, RDF::BIBO.isbn, :work_isbns])
+        query.select.where([self.work_id, RDF::BIBO.isbn, :work_isbns])
         #puts "#{query}"
         results     = REPO.select(query)
         timings += "#{Time.now - timing_start} s."
-        @work_isbns = results.bindings[:work_isbns].to_a.uniq
+        self.work_isbns = results.bindings[:work_isbns].to_a.uniq
       end
+      
       timing_start = Time.now
       timings += "\nSPARQL - get local reviews: "
       fetch_local_reviews
@@ -87,35 +96,72 @@ class Book
       fetch_same_author_books
       timings += "#{Time.now - timing_start} s."
 
+
       timing_start = Time.now
       timings += "\nSPARQL - similar works: "
       fetch_similar_works
-       timings += "#{Time.now - timing_start} s."
-
+      timings += "#{Time.now - timing_start} s."
       timing_start = Time.now
       timings += "\nHTTP - get remote data: "
       fetch_remote_data
       timings += "#{Time.now - timing_start} s.\n\n"
       puts timings
       enforce_review_order
+
     else
-      @book_id = nil
+      self.book_id = nil
     end
   end
 
   #private
+  
+  # This method clusters solutions on binding
+  # params: 
+  #   :binding => binding to cluster
+  def cluster(solutions, params)
+    return solutions unless params[:binding]
+    binding = params[:binding].to_sym
+    result = RDF::Query::Solutions.new
+      # make a clone of distinct works first
+      distinct = Marshal.load(Marshal.dump(solutions)).select(binding).distinct
+      distinct.each do |d|
+        # make sure distinct filter is run on Marshal clone of solutions before populating
+        cluster = Marshal.load(Marshal.dump(solutions)).filter {|solution| solution[binding] == d[binding] }
+        puts cluster.inspect
+        result << populate_cluster(cluster)
+      end 
+    result
+  end
+  
+  # populates book class from cluster and add Authors
+  def populate_cluster(cluster)
+    # first populate self from first result in cluster
+    self.members.each {|name| self[name] = cluster.first[name] unless cluster.first[name].nil? } 
+    self.abstract = cluster.first[:workAbstract] unless self.abstract                                # pick workAbstrack if abstract not found
+    self.krydder  = cluster.first[:krydder] ? cluster.first[:krydder] : cluster.first[:workKrydder]  # pick workKrydder if krydder not found
+    # here comes clustering
+    authors = []
+    cluster.each do |s|
+      # self.authors << Author.new(s[:creator_id], s[:creatorName]) unless self.authors.find {|a| a[:creator_id] == s[:creator_id] }
+      # for now we only need Author's name
+      authors << s[:creatorName] unless authors.find {|a| a == s[:creatorName] }
+    end
+    # make comma separated author
+    self.authors = authors.join(', ')
+    self
+  end
 
   def enforce_review_order
     # Sorter etter rangeringen i arrayen 'order'
     # kilder som ikke er i 'order' kommer først (i.e bokanbefalingsbasen -Ønskebok)
 
-    if @lang == RDF::URI("http://lexvo.org/id/iso639-3/eng")
+    if self.lang == RDF::URI("http://lexvo.org/id/iso639-3/eng")
       order = ["Novelist", "Goodreads", "Deichmanske bibliotek", "Tronheim folkebibliotek", "Lillehammer bibliotek", "Tønsberg og Nøtterøy bibliotek", "Ønskebok", "Bokkilden", "Bibliotekbasen", "Katalogkrydder"]
      else
       order = ["Ønskebok", "Novelist", "Bokkilden", "Bibliotekbasen", "Katalogkrydder", "Goodreads"]
     end
 
-    @review_collection.sort! do |a,b|
+    self.review_collection.sort! do |a,b|
       (order.index(a[:source]) || -1) <=> (order.index(b[:source]) || -1)
     end
 
@@ -177,12 +223,12 @@ class Book
     # can also be iterated as RDF::Query::Solution with bindings from query
     reviews.limit(limit) if limit
     for r in reviews
-      @review_collection.push({:title => r[:review_title].to_s, :text => r[:review_text].to_s,
+      self.review_collection.push({:title => r[:review_title].to_s, :text => r[:review_text].to_s,
         :source => r[:review_source].to_s})
     end
-    @review_collection.push({:text => @abstract.to_s, :source => "Bibliotekbasen"}) if @abstract
-    @review_collection.push({:text => @krydder.to_s, :source => "Katalogkrydder"}) if @krydder
-    return @review_collection
+    self.review_collection.push({:text => self.abstract.to_s, :source => "Bibliotekbasen"}) if self.abstract
+    self.review_collection.push({:text => self.krydder.to_s, :source => "Katalogkrydder"}) if self.krydder
+    return self.review_collection
   end
 
   def fetch_remote_data
@@ -190,7 +236,7 @@ class Book
     #   #break if @review_collection.size >= 4
     #   self.send(remote.to_sym)
     # end
-    english_isbn = @work_isbns.select { |isbn| isbn.to_s.match(/^0|^9780/) }.first
+    english_isbn = self.work_isbns.select { |isbn| isbn.to_s.match(/^0|^9780/) }.first
     hydra = Typhoeus::Hydra.new
     req1 = Typhoeus::Request.new("http://www.goodreads.com/book/isbn", :timeout => 2,
       :params => {:format => 'xml', :key => "wDjpR0GY1xXIqTnx2QL37A",
@@ -202,10 +248,10 @@ class Book
           :pwd => SETTINGS['novelist']['password'], :db => "noh", :query => english_isbn})
       req2.on_complete { |response| Novelist(response) unless response.timed_out? }
     end
-    req3 = Typhoeus::Request.new("http://bokelskere.no/api/1.0/boker/info/#{@isbn}/", :timeout => 2)
+    req3 = Typhoeus::Request.new("http://bokelskere.no/api/1.0/boker/info/#{self.isbn}/", :timeout => 2)
     req3.on_complete { |response| Bokelskere(response) unless response.timed_out? }
 
-    if @isbn
+    if self.isbn
       hydra.queue req1
       hydra.queue req2 if SETTINGS['novelist']
       hydra.queue req3
@@ -228,16 +274,16 @@ class Book
       return nil
     end
     if gr_rating
-      @rating[:rating] = gr_rating
-      @rating[:num_raters] = gr_num_raters
-      @rating[:source] = "Goodreads"
+      self.rating[:rating] = gr_rating
+      self.rating[:num_raters] = gr_num_raters
+      self.rating[:source] = "Goodreads"
     end
-    @review_collection.push({:source => "Goodreads", :text => gr_description}) if gr_description
+    self.review_collection.push({:source => "Goodreads", :text => gr_description}) if gr_description
   end
 
   def Bokelskere(result)
      # Don't bother with Bokelskere if we have ratings from Goodreads
-    return nil if @rating[:rating]
+    return nil if self.rating[:rating]
 
     return nil unless result
     return nil unless result.body
@@ -246,9 +292,9 @@ class Book
 
     jsonres = JSON.parse(result.body)
     if jsonres['antall_terningkast'].to_i > 0
-      @rating[:num_raters] = jsonres['antall_terningkast']
-      @rating[:rating] = (jsonres['gjennomsnittelig_terningkast'] / 1.2) * @rating[:num_raters]
-      @rating[:source] = "Bokelskere"
+      self.rating[:num_raters] = jsonres['antall_terningkast']
+      self.rating[:rating] = (jsonres['gjennomsnittelig_terningkast'] / 1.2) * self.rating[:num_raters]
+      self.rating[:source] = "Bokelskere"
     end
   end
 
@@ -262,16 +308,16 @@ class Book
     end
 
     return nil unless nl_description
-    @review_collection.push({:source => "Novelist", :text => nl_description})
+    self.review_collection.push({:source => "Novelist", :text => nl_description})
   end
 
   def Bokkilden
-    @work_isbns = [@isbn] unless @work_isbns
-    return nil if @work_isbns.empty?
+    self.work_isbns = [self.isbn] unless self.work_isbns
+    return nil if self.work_isbns.empty?
 
     bk_ingress = ""
 
-    @work_isbns.each do |isbn|
+    self.work_isbns.each do |isbn|
       res = Typhoeus::Request.get("http://partner.bokkilden.no/SamboWeb/partner.do", :timeout => 2,
         :params => {:format => "XML", :uttrekk => 5, :pid => 0, :ept => 3, :xslId => 117,
               :enkeltsok => isbn.to_s})
@@ -285,12 +331,12 @@ class Book
     end
 
     return nil if bk_ingress.empty?
-    @review_collection.push({:text => bk_ingress, :source => "Bokkilden"})
+    self.review_collection.push({:text => bk_ingress, :source => "Bokkilden"})
   end
 
   def fetch_same_author_books
     # this query fetches other works by same author
-    query = QUERY.select(:similar_work, :lang, :original_language, :format, :book_title, :book)
+    query = QUERY.select(:similar_work, :lang, :original_language, :book_title, :book)
       query.sample(:cover_url, :alt_cover_url)
       query.distinct
       query.from(DEFAULT_GRAPH)
@@ -313,10 +359,10 @@ class Book
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
     return nil unless results
-    @randomized_books = randomize_books(results)
+    self.randomized_books = randomize_books(results)
     results.order_by(:book_title)
     results.each do |same_author_books|
-    @same_author_collection.push({
+    self.same_author_collection.push({
       :book => same_author_books[:book],
       :title => same_author_books[:book_title],
       :cover_url => same_author_books[:cover_url] || same_author_books[:alt_cover_url]
@@ -360,7 +406,7 @@ class Book
         [:similar_book_creator, RDF::FOAF.name, :creatorName])
     query.minus([:similar_work, RDF::DC.creator, :creator])
 
-    #puts query
+    puts query
     puts "#{query.pp}" if ENV['RACK_ENV'] == 'development'
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
@@ -368,7 +414,7 @@ class Book
     return nil unless results
 
     results.each do |similar_book|
-      @similar_works_collection.push({
+      self.similar_works_collection.push({
         :book => similar_book[:book],
         :title => similar_book[:book_title],
         :cover_url => similar_book[:cover_url] || similar_book[:alt_cover_url],
