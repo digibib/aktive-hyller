@@ -6,7 +6,6 @@ require "typhoeus"
 
 Book   = Struct.new(:book_id, :title, :format, :cover_url, :isbn, :authors, :responsible, :rating, :tnr, :lang,
                 :work_id, :work_isbns, :review_collection, :same_author_collection, :similar_works_collection, :abstract, :krydder, :randomized_books)
-Author = Struct.new(:creator_id, :creatorName)
 
 # Hash to struct method
 class Hash
