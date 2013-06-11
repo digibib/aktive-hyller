@@ -8,20 +8,33 @@ Book   = Struct.new(:book_id, :title, :format, :cover_url, :isbn, :authors, :res
                 :work_id, :work_isbns, :review_collection, :same_author_collection, :similar_works_collection, :abstract, :krydder, :randomized_books)
 Author = Struct.new(:creator_id, :creatorName)
 
+# Hash to struct method
+class Hash
+  def to_struct(name)
+    cls = Struct.const_get(name) rescue Struct.new(name, *keys)
+    struct = cls.new
+    struct.members.each {|k| struct[k] = self[k.to_s]}
+    struct
+  end
+end
+
 class Book
 #  attr_accessor :book_id, :title, :format, :cover_url, :isbn, :creator_id, :creatorName, :responsible, :rating, :tnr, :lang,
 #                :work_id, :work_isbns, :review_collection, :same_author_collection, :similar_works_collection, :abstract, :randomized_books
 
-  def initialize(tnr)
-    timing_start = Time.now
-    timings = "\nSPARQL - get book info: "
-
-    self.tnr = tnr
+  def initialize
     self.rating                   = {} # ratings format {:source, :num_raters, :rating}
     self.review_collection        = []
     self.same_author_collection   = []
     self.similar_works_collection = []
     self.authors = []
+  end
+  
+  def find(tnr)
+    timing_start = Time.now
+    timings = "\nSPARQL - get book info: "
+
+    self.tnr = tnr
     
     url      = RESOURCE_PREFIX + tnr.to_s
     self.book_id = RDF::URI(url)
@@ -51,7 +64,10 @@ class Book
     solutions = REPO.select(query)
     timings += "#{Time.now - timing_start} s."
     unless solutions.empty?
-      cluster(solutions, :binding => "work_id")
+      books = cluster(solutions, :binding => "work_id")
+      
+      # populate self with book
+      to_self(books.first)
 =begin
       @title       = results.first[:title]
       @format      = results.first[:format]
@@ -107,7 +123,7 @@ class Book
       timings += "#{Time.now - timing_start} s.\n\n"
       puts timings
       enforce_review_order
-
+      return self
     else
       self.book_id = nil
     end
@@ -121,24 +137,27 @@ class Book
   def cluster(solutions, params)
     return solutions unless params[:binding]
     binding = params[:binding].to_sym
-    result = RDF::Query::Solutions.new
+    books = RDF::Query::Solutions.new
       # make a clone of distinct works first
       distinct = Marshal.load(Marshal.dump(solutions)).select(binding).distinct
       distinct.each do |d|
         # make sure distinct filter is run on Marshal clone of solutions before populating
         cluster = Marshal.load(Marshal.dump(solutions)).filter {|solution| solution[binding] == d[binding] }
-        puts cluster.inspect
-        result << populate_cluster(cluster)
+        #puts cluster.inspect
+        # populate one book or array of books
+        books << populate_book(cluster)
       end 
-    result
+    books
   end
   
-  # populates book class from cluster and add Authors
-  def populate_cluster(cluster)
+  # populates self book class or array of books from cluster and add Authors
+  def populate_book(cluster)
     # first populate self from first result in cluster
-    self.members.each {|name| self[name] = cluster.first[name] unless cluster.first[name].nil? } 
-    self.abstract = cluster.first[:workAbstract] unless self.abstract                                # pick workAbstrack if abstract not found
-    self.krydder  = cluster.first[:krydder] ? cluster.first[:krydder] : cluster.first[:workKrydder]  # pick workKrydder if krydder not found
+    book = Book.new
+    book.members.each {|name| book[name] = cluster.first[name] unless cluster.first[name].nil? } 
+    book.cover_url = cluster.first[:cover_url] ? cluster.first[:cover_url] : cluster.first[:alt_cover_url]  # pick work cover_url if no cover on manifestation
+    book.abstract  = cluster.first[:workAbstract] unless book.abstract                                      # pick workAbstrack if abstract not found
+    book.krydder   = cluster.first[:krydder] ? cluster.first[:krydder] : cluster.first[:workKrydder]        # pick workKrydder if krydder not found
     # here comes clustering
     authors = []
     cluster.each do |s|
@@ -147,10 +166,14 @@ class Book
       authors << s[:creatorName] unless authors.find {|a| a == s[:creatorName] }
     end
     # make comma separated author
-    self.authors = authors.join(', ')
-    self
+    book.authors = authors.join(', ')
+    book
   end
 
+  def to_self(book)
+    self.members.each {|name| self[name] = book[name] unless book[name].nil?}
+  end
+  
   def enforce_review_order
     # Sorter etter rangeringen i arrayen 'order'
     # kilder som ikke er i 'order' kommer først (i.e bokanbefalingsbasen -Ønskebok)
@@ -336,7 +359,7 @@ class Book
 
   def fetch_same_author_books
     # this query fetches other works by same author
-    query = QUERY.select(:similar_work, :lang, :original_language, :book_title, :book)
+    query = QUERY.select(:similar_work, :lang, :original_language, :title, :book_id)
       query.sample(:cover_url, :alt_cover_url)
       query.distinct
       query.from(DEFAULT_GRAPH)
@@ -344,23 +367,30 @@ class Book
         [self.book_id, RDF::DC.creator, :creator],
         [:work, RDF::FABIO.hasManifestation, self.book_id],
         [:similar_work, RDF::DC.creator, :creator],
-        [:similar_work, RDF::FABIO.hasManifestation, :book],
-        [:book, RDF::DC.language, :lang],
-        [:book, RDF::DC.title, :book_title],
-        [:book, RDF::DC.format, RDF::URI('http://data.deichman.no/format/Book')]
+        [:similar_work, RDF::FABIO.hasManifestation, :book_id],
+        [:book_id, RDF::DC.language, :lang],
+        [:book_id, RDF::DC.title, :title],
+        [:book_id, RDF::DC.format, RDF::URI('http://data.deichman.no/format/Book')]
         )
-      query.optional([:book, RDF::FOAF.depiction, :cover_url])
-      query.optional([:book, RDF::IFACE.altDepictedBy, :alt_cover_url])
-      query.optional([:book, RDF::DEICH.originalLanguage, :original_language])
-      query.minus([:work, RDF::FABIO.hasManifestation, :book])
+      query.optional([:book_id, RDF::FOAF.depiction, :cover_url])
+      query.optional([:book_id, RDF::IFACE.altDepictedBy, :alt_cover_url])
+      query.optional([:book_id, RDF::DEICH.originalLanguage, :original_language])
+      query.minus([:work, RDF::FABIO.hasManifestation, :book_id])
 
-    puts query
+    #puts query
     puts "#{query.pp}" if ENV['RACK_ENV'] == 'development'
     solutions = REPO.select(query)
+    return nil if solutions.empty?
+    # choose manifestations
     results = select_manifestations(solutions)
     return nil unless results
+    
+    results.order_by(:title)
+    # cluster on similar work
+    books = cluster(results, :binding => "similar_work")
+    # make an initial randomization
     self.randomized_books = randomize_books(results)
-    results.order_by(:book_title)
+=begin    
     results.each do |same_author_books|
     self.same_author_collection.push({
       :book => same_author_books[:book],
@@ -368,8 +398,12 @@ class Book
       :cover_url => same_author_books[:cover_url] || same_author_books[:alt_cover_url]
       })
     end
+=end
+    books.each {|b| self.same_author_collection << b}
+    
   end
 
+  # this method randomizes solutions and puts all results with coverart first
   def randomize_books(solutions)
     randomized_books = Marshal.load(Marshal.dump(solutions)).shuffle
     results = []
@@ -384,9 +418,9 @@ class Book
     similaritygraph = {:context => RDF::URI('http://data.deichman.no/noeSomLigner')}
     bookgraph       = {:context => RDF::URI("http://data.deichman.no/books")}
 
-    query = QUERY.select(:book, :book_title, :lang, :original_language, :format, :similar_work)
+    query = QUERY.select(:book_id, :title, :lang, :creatorName, :creator_id, :original_language, :format, :similar_work)
     query.sample(:cover_url, :alt_cover_url)
-    query.group_digest(:creatorName, ', ', 1000, 1)
+    #query.group_digest(:creatorName, ', ', 1000, 1)
     query.distinct
     query.from(DEFAULT_GRAPH)
     query.from_named(SIMILARITY_GRAPH)
@@ -394,33 +428,37 @@ class Book
         [:work, RDF::FABIO.hasManifestation, book_id],
         [:work, RDF::DC.creator, :creator],
         [:work, :predicate, :similar_work, :context => SIMILARITY_GRAPH],
-        [:similar_work, RDF::FABIO.hasManifestation, :book],
-        [:book, RDF::DC.title, :book_title],
-        [:book, RDF::DC.language, :lang],
-        [:book, RDF::DC.format, :format]
+        [:similar_work, RDF::FABIO.hasManifestation, :book_id],
+        [:book_id, RDF::DC.title, :title],
+        [:book_id, RDF::DC.language, :lang],
+        [:book_id, RDF::DC.format, :format]
         )
-    query.optional([:book, RDF::FOAF.depiction, :cover_url])
-    query.optional([:book, RDF::IFACE.altDepictedBy, :alt_cover_url])
-    query.optional([:book, RDF::DEICH.originalLanguage, :original_language])
-    query.optional([:book, RDF::DC.creator, :similar_book_creator],
+    query.optional([:book_id, RDF::FOAF.depiction, :cover_url])
+    query.optional([:book_id, RDF::IFACE.altDepictedBy, :alt_cover_url])
+    query.optional([:book_id, RDF::DEICH.originalLanguage, :original_language])
+    query.optional([:book_id, RDF::DC.creator, :similar_book_creator],
         [:similar_book_creator, RDF::FOAF.name, :creatorName])
     query.minus([:similar_work, RDF::DC.creator, :creator])
 
-    puts query
+    #puts query
     puts "#{query.pp}" if ENV['RACK_ENV'] == 'development'
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
-
     return nil unless results
-
-    results.each do |similar_book|
+    
+    # cluster on similar work
+    books = cluster(results, :binding => "similar_work")
+=begin
+    books.each do |similar_book|
       self.similar_works_collection.push({
-        :book => similar_book[:book],
-        :title => similar_book[:book_title],
-        :cover_url => similar_book[:cover_url] || similar_book[:alt_cover_url],
-        :creatorName => similar_book[:creatorName]
+        :book => similar_book[:book_id],
+        :title => similar_book[:title],
+        :cover_url => similar_book[:cover_url],
+        :creatorName => similar_book[:authors]
         })
     end
+=end
+    books.each {|b| self.similar_works_collection << b}
   end
 
   def select_manifestations(solutions)

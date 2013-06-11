@@ -3,9 +3,9 @@ div id="liste-wrapper"
     - book.similar_works_collection.each_with_index do |similar_work, index|
       a href="/omtale" class="liste-link"
         li
-          input[class="tnr_id" type="hidden" value="#{similar_work[:book].to_s.match(/tnr_(.*)/)[1]}"]
+          input[class="tnr_id" type="hidden" value=(similar_work[:book_id].to_s.match(/tnr_(.*)/)[1])]
           p class="liste-tittel" #{similar_work[:title]}
-          p class="liste-forfatter" #{similar_work[:creatorName]}
+          p class="liste-forfatter" #{similar_work[:authors]}
           hr style="width:100%;"
           div class="liste-bilde"
             - if similar_work[:cover_url]
@@ -13,7 +13,7 @@ div id="liste-wrapper"
             - else
               div id="omtale-bilde-liste"
                 div id="inner-border-liste"
-                  div.book-author-liste #{similar_work[:creatorName]}
+                  div.book-author-liste #{similar_work[:authors]}
                   div.book-title-liste #{similar_work[:title]}
 div id="fade-to-white"
 

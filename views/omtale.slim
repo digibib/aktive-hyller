@@ -62,14 +62,14 @@ div id="content-bottom"
       - num = book.same_author_collection.size < 5 ? book.same_author_collection.size : 3
       - book.randomize_books(book.same_author_collection)[0...num].each do |b|
         div.liste-small
-          input[class="tnr_id" type="hidden" value="#{b[:book].to_s.match(/tnr_(.*)/)[1]}"]
+          input[class="tnr_id" type="hidden" value=(b.book_id.to_s.match(/tnr_(.*)/)[1])]
           - if b[:cover_url]
             div.cover-small
               img src="#{b[:cover_url]}"
           - else
-            div.cover-small-missing #{b[:creatorName]} <strong> #{b[:title]}</strong>
+            div.cover-small-missing #{b[:authors]} <strong> #{b[:title]}</strong>
           p.title: strong #{b[:title]}
-          /p.author #{b[:creatorName]}
+          /p.author #{b[:authors]}
       - if book.same_author_collection.size > 4
         a href="/flere"
           div.cover-small
@@ -81,15 +81,15 @@ div id="content-bottom"
       - num = book.similar_works_collection.size < 5 ? book.similar_works_collection.size : 3
       - book.randomize_books(book.similar_works_collection)[0...num].each do |b|
         div.liste-small
-          input[class="tnr_id" type="hidden" value="#{b[:book].to_s.match(/tnr_(.*)/)[1]}"]
+          input[class="tnr_id" type="hidden" value=(b.book_id.to_s.match(/tnr_(.*)/)[1])]
           - if b[:cover_url]
             div.cover-small
               img src="#{b[:cover_url]}"
           - else
             div.cover-small-missing
-              p #{b[:creatorName]} <strong> #{b[:title]}</strong>
+              p #{b[:authors]} <strong> #{b[:title]}</strong>
           p class="title wider": strong #{b[:title]}
-          p class="author wider" #{b[:creatorName]}
+          p class="author wider" #{b[:authors]}
       - if book.similar_works_collection.size > 4
         a href="/relaterte"
           div.cover-small

@@ -91,7 +91,8 @@ end
 get '/omtale/:tnr' do
   # Help route to fetch book manually by tnr
   tnr = params[:tnr].strip.to_i
-  session[:books][tnr] = Book.new(tnr)
+  book = Book.new.find(tnr)
+  session[:books][tnr] = book
   session[:current] = session[:books][tnr]
 
   redirect '/omtale'
@@ -102,7 +103,7 @@ get '/flere' do
 
   session[:log][:flere] += 1
   session[:history].push({:path => '/flere', :tnr => session[:current].tnr})
-  logger.info("Flere \"#{session[:current].creatorName || session[:current].responsible}\" #{session[:current].same_author_collection.size}")
+  logger.info("Flere \"#{session[:current].authors || session[:current].responsible}\" #{session[:current].same_author_collection.size}")
   slim :flere, :locals => {:book => session[:current], :lang => session[:locale]}
 end
 
@@ -148,7 +149,7 @@ end
 
 get '/populate/:tnr' do
   tnr = params[:tnr].strip.to_i
-  session[:books][:new] = session[:books][tnr] || Book.new(tnr)
+  session[:books][:new] = session[:books][tnr] || Book.new.find(tnr)
   "success!"
 end
 
