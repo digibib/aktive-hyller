@@ -39,11 +39,11 @@ namespace :setup do
     %x[ln -s #{pwd}/scripts/aktivehyller.desktop #{home}/.config/autostart/aktivehyller.desktop ]
     %x[ln -s #{pwd}/scripts/xscreensaver-timeout.desktop #{home}/.config/autostart/xscreensaver-timeout.desktop ]
 
-    puts "generating foreman Procfile"
-    `cat <<EOF | tee #{home}/code/Procfile
-app: #{home}/.rvm/scripts/rvm; cd #{pwd}; ruby app.rb
-rfid: sleep 3; #{home}/.rvm/scripts/rvm; cd #{home}/code/rfidgeek; ruby rfid.rb
-EOF`
+    #puts "generating foreman Procfile"
+    #`cat <<EOF | tee #{home}/code/Procfile
+#app: #{home}/.rvm/scripts/rvm; cd #{pwd}; ruby app.rb
+#rfid: sleep 3; #{home}/.rvm/scripts/rvm; cd #{home}/code/rfidgeek; ruby rfid.rb
+#EOF`
    
    puts "Installing required gems via bundler"
    puts "Bundling rfidgeek"
