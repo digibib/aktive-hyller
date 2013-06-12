@@ -178,7 +178,7 @@ class Book
     # kilder som ikke er i 'order' kommer først (i.e bokanbefalingsbasen -Ønskebok)
 
     if self.lang == RDF::URI("http://lexvo.org/id/iso639-3/eng")
-      order = ["Novelist", "Goodreads", "Deichmanske bibliotek", "Tronheim folkebibliotek", "Lillehammer bibliotek", "Tønsberg og Nøtterøy bibliotek", "Ønskebok", "Bokkilden", "Bibliotekbasen", "Katalogkrydder"]
+      order = ["Novelist", "Goodreads", "Deichmanske bibliotek", "Trondheim folkebibliotek", "Lillehammer bibliotek", "Tønsberg og Nøtterøy bibliotek", "Ønskebok", "Bokkilden", "Bibliotekbasen", "Katalogkrydder"]
      else
       order = ["Ønskebok", "Novelist", "Bokkilden", "Bibliotekbasen", "Katalogkrydder", "Goodreads"]
     end
