@@ -84,14 +84,15 @@ get '/omtale' do
   end
   session[:log][:omtale] += 1
   session[:history].push({:path => '/omtale', :tnr => session[:current].tnr})
-  logger.info("Omtalevisning #{session[:current].book_id} #{session[:current].review_collection.size} \"#{session[:current].creatorName || session[:current].responsible || 'ukjent'}\" \"#{session[:current].title || 'usannsynligatnoenhardennetittelen'}\"")
+  logger.info("Omtalevisning #{session[:current].book_id} #{session[:current].review_collection.size} \"#{session[:current].authors || session[:current].responsible || 'ukjent'}\" \"#{session[:current].title || 'usannsynligatnoenhardennetittelen'}\"")
   slim :omtale, :locals => {:book => session[:current], :lang => session[:locale]}
 end
 
 get '/omtale/:tnr' do
   # Help route to fetch book manually by tnr
   tnr = params[:tnr].strip.to_i
-  session[:books][tnr] = Book.new(tnr)
+  book = Book.new.find(tnr)
+  session[:books][tnr] = book
   session[:current] = session[:books][tnr]
 
   redirect '/omtale'
@@ -102,7 +103,7 @@ get '/flere' do
 
   session[:log][:flere] += 1
   session[:history].push({:path => '/flere', :tnr => session[:current].tnr})
-  logger.info("Flere \"#{session[:current].creatorName || session[:current].responsible}\" #{session[:current].same_author_collection.size}")
+  logger.info("Flere \"#{session[:current].authors || session[:current].responsible}\" #{session[:current].same_author_collection.size}")
   slim :flere, :locals => {:book => session[:current], :lang => session[:locale]}
 end
 
@@ -111,7 +112,7 @@ get '/relaterte' do
 
   session[:log][:relaterte] += 1
   session[:history].push({:path => '/relaterte', :tnr => session[:current].tnr})
-  logger.info("Relaterte \"#{session[:current].creatorName || session[:current].responsible} - #{session[:current].title}\" #{session[:current].similar_works_collection.size}")
+  logger.info("Relaterte \"#{session[:current].authors || session[:current].responsible} - #{session[:current].title}\" #{session[:current].similar_works_collection.size}")
   slim :relaterte, :locals => {:book => session[:current], :lang => session[:locale]}
 end
 
@@ -148,7 +149,7 @@ end
 
 get '/populate/:tnr' do
   tnr = params[:tnr].strip.to_i
-  session[:books][:new] = session[:books][tnr] || Book.new(tnr)
+  session[:books][:new] = session[:books][tnr] || Book.new.find(tnr)
   "success!"
 end
 

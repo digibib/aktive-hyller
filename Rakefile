@@ -33,16 +33,17 @@ namespace :setup do
   task :install do
     pwd  = File.dirname(__FILE__)
     home = ENV['HOME']
+    
     puts "installing automated start scripts for firefox and xscreensaver"
     %x[mkdir -p #{home}/.config/autostart]
     %x[ln -s #{pwd}/scripts/aktivehyller.desktop #{home}/.config/autostart/aktivehyller.desktop ]
     %x[ln -s #{pwd}/scripts/xscreensaver-timeout.desktop #{home}/.config/autostart/xscreensaver-timeout.desktop ]
 
-    puts "generating foreman Procfile"
-    `cat <<EOF | tee #{home}/code/Procfile
-app: #{home}/.rvm/scripts/rvm; cd #{pwd}; ruby app.rb
-rfid: sleep 3; #{home}/.rvm/scripts/rvm; cd #{home}/code/rfidgeek; ruby rfid.rb
-EOF`
+    #puts "generating foreman Procfile"
+    #`cat <<EOF | tee #{home}/code/Procfile
+#app: #{home}/.rvm/scripts/rvm; cd #{pwd}; ruby app.rb
+#rfid: sleep 3; #{home}/.rvm/scripts/rvm; cd #{home}/code/rfidgeek; ruby rfid.rb
+#EOF`
    
    puts "Installing required gems via bundler"
    puts "Bundling rfidgeek"
@@ -53,9 +54,9 @@ EOF`
    puts "installing upstart file"
    %x[rvmsudo foreman export upstart /etc/init -f #{home}/code/Procfile -a aktivehyller -p 4567 -u aktiv -l #{pwd}/logs/upstart]
 
-   puts "modifying upstart to automatic start on all run levels"
-   `rvmsudo sed -i '/started\ network-interface/a\ \ and runlevel[2345]' /etc/init/aktivehyller.conf`
-   `rvmsudo sed -i '/stopping\ network-interface/a\ \ and runlevel[016]' /etc/init/aktivehyller.conf`
+   #puts "modifying upstart to automatic start on all run levels"
+   #`rvmsudo sed -i '/started\ network-interface/a\ \ and runlevel[2345]' /etc/init/aktivehyller.conf`
+   #`rvmsudo sed -i '/stopping\ network-interface/a\ \ and runlevel[016]' /etc/init/aktivehyller.conf`
    puts "Setting up logs"
    Rake::Task["log:setup"].invoke
    puts "activating cron tasks for log (must be root)"
