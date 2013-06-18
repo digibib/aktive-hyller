@@ -28,13 +28,13 @@ class Book
     self.similar_works_collection = []
     self.authors = []
   end
-  
+
   def find(tnr)
     timing_start = Time.now
     timings = "\nSPARQL - get book info: "
 
     self.tnr = tnr
-    
+
     url      = RESOURCE_PREFIX + tnr.to_s
     self.book_id = RDF::URI(url)
     query    = QUERY.select(:title, :format, :isbn, :work_id, :creatorName, :creator_id, :responsible, :abstract, :krydder, :lang)
@@ -64,7 +64,7 @@ class Book
     timings += "#{Time.now - timing_start} s."
     unless solutions.empty?
       books = cluster(solutions, :binding => "work_id")
-      
+
       # populate self with book
       to_self(books.first)
 =begin
@@ -129,7 +129,7 @@ class Book
       fetch_book_status
       timings += "#{Time.now - timing_start} s.\n\n"
       puts timings
-      puts "på hylla: #{self.book_on_shelf}"
+      #puts "på hylla: #{self.book_on_shelf}"
       enforce_review_order
       return self
     else
@@ -138,9 +138,9 @@ class Book
   end
 
   #private
-  
+
   # This method clusters solutions on binding
-  # params: 
+  # params:
   #   :binding => binding to cluster
   def cluster(solutions, params)
     return solutions unless params[:binding]
@@ -154,15 +154,15 @@ class Book
         #puts cluster.inspect
         # populate one book or array of books
         books << populate_book(cluster)
-      end 
+      end
     books
   end
-  
+
   # populates self book class or array of books from cluster and add Authors
   def populate_book(cluster)
     # first populate self from first result in cluster
     book = Book.new
-    book.members.each {|name| book[name] = cluster.first[name] unless cluster.first[name].nil? } 
+    book.members.each {|name| book[name] = cluster.first[name] unless cluster.first[name].nil? }
     book.cover_url = cluster.first[:cover_url] ? cluster.first[:cover_url] : cluster.first[:alt_cover_url]  # pick work cover_url if no cover on manifestation
     book.abstract  = cluster.first[:workAbstract] unless book.abstract                                      # pick workAbstrack if abstract not found
     book.krydder   = cluster.first[:krydder] ? cluster.first[:krydder] : cluster.first[:workKrydder]        # pick workKrydder if krydder not found
@@ -181,7 +181,7 @@ class Book
   def to_self(book)
     self.members.each {|name| self[name] = book[name] unless book[name].nil?}
   end
-  
+
   def enforce_review_order
     # Sorter etter rangeringen i arrayen 'order'
     # kilder som ikke er i 'order' kommer først (i.e bokanbefalingsbasen -Ønskebok)
@@ -402,13 +402,13 @@ class Book
     # choose manifestations
     results = select_manifestations(solutions)
     return nil unless results
-    
+
     results.order_by(:title)
     # cluster on similar work
     books = cluster(results, :binding => "similar_work")
     # make an initial randomization
     self.randomized_books = randomize_books(results)
-=begin    
+=begin
     results.each do |same_author_books|
     self.same_author_collection.push({
       :book => same_author_books[:book],
@@ -418,7 +418,7 @@ class Book
     end
 =end
     books.each {|b| self.same_author_collection << b}
-    
+
   end
 
   # this method randomizes solutions and puts all results with coverart first
@@ -463,7 +463,7 @@ class Book
     solutions = REPO.select(query)
     results = select_manifestations(solutions)
     return nil unless results
-    
+
     # cluster on similar work
     books = cluster(results, :binding => "similar_work")
 =begin
