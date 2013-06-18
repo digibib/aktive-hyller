@@ -4,7 +4,7 @@ require "nokogiri"
 require "faraday"
 require "typhoeus"
 
-Book   = Struct.new(:book_id, :title, :format, :cover_url, :isbn, :authors, :responsible, :rating, :tnr, :lang,
+Book   = Struct.new(:book_id, :title, :format, :cover_url, :isbn, :authors, :responsible, :rating, :tnr, :lang, :work_tnrs,
                 :work_id, :work_isbns, :review_collection, :same_author_collection, :similar_works_collection, :abstract, :krydder, :randomized_books)
 
 # Hash to struct method
@@ -92,15 +92,19 @@ class Book
 =end
       if self.work_id
         timing_start = Time.now
-        timings += "\nSPARQL - get work isbns: "
-        query = QUERY.select(:work_isbns)
+        timings += "\nSPARQL - get work isbns & titlenrs: "
+        query = QUERY.select(:work_isbns, :work_tnr)
         query.select.where([self.work_id, RDF::BIBO.isbn, :work_isbns])
-        #puts "#{query}"
+        query.where([self.work_id, RDF::FABIO.hasManifestation, :work_tnr],
+                           [self.book_id, RDF::DC.language, :language])
+        query.filter("?language = <http://lexvo.org/id/iso639-3/dan> || ?language = <http://lexvo.org/id/iso639-3/nob> || ?language = <http://lexvo.org/id/iso639-3/nno> || ?language = <http://lexvo.org/id/iso639-3/swe> || ?language = <http://lexvo.org/id/iso639-3/eng>")
         results     = REPO.select(query)
         timings += "#{Time.now - timing_start} s."
         self.work_isbns = results.bindings[:work_isbns].to_a.uniq
+        self.work_tnrs = results.bindings[:work_tnr].to_a.uniq.map { |s| s.to_s[/[\d]*$/,0] }
+        #puts "num isbn: #{self.work_isbns.count}\nnum titlenr: #{self.work_tnrs.count}"
       end
-      
+
       timing_start = Time.now
       timings += "\nSPARQL - get local reviews: "
       fetch_local_reviews
