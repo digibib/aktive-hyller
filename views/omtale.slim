@@ -10,7 +10,10 @@ div id="content-left"
         div id="inner-border"
           div.book-author #{book.authors}
           div.book-title #{book.title}
-      /div class="hyllestatus inne" Boka er kanskje inne
+    - if book.book_on_shelf
+      div class="hyllestatus inne" Boka er inne
+    - else
+      div class="hyllestatus ute" Boka er utlånt
   div.ratings
     - rating = book.rating
     -if rating[:source] and rating[:num_raters] > 0

@@ -4,7 +4,7 @@ require "nokogiri"
 require "faraday"
 require "typhoeus"
 
-Book   = Struct.new(:book_id, :title, :format, :cover_url, :isbn, :authors, :responsible, :rating, :tnr, :lang, :work_tnrs,
+Book   = Struct.new(:book_id, :title, :format, :cover_url, :isbn, :authors, :responsible, :rating, :tnr, :lang, :work_tnrs, :book_on_shelf,
                 :work_id, :work_isbns, :review_collection, :same_author_collection, :similar_works_collection, :abstract, :krydder, :randomized_books)
 
 # Hash to struct method
@@ -123,8 +123,13 @@ class Book
       timing_start = Time.now
       timings += "\nHTTP - get remote data: "
       fetch_remote_data
+      timings += "#{Time.now - timing_start} s."
+      timing_start = Time.now
+      timings += "\nHTTP - get eksemplarstatus: "
+      fetch_book_status
       timings += "#{Time.now - timing_start} s.\n\n"
       puts timings
+      puts "på hylla: #{self.book_on_shelf}"
       enforce_review_order
       return self
     else
@@ -191,6 +196,16 @@ class Book
       (order.index(a[:source]) || -1) <=> (order.index(b[:source]) || -1)
     end
 
+  end
+
+  def fetch_book_status
+    res = Typhoeus.get("https://www.deich.folkebibl.no/cgi-bin/rest_service/copies/latest/data/#{self.work_tnrs.join(',')} fields=simple loc=#{SETTINGS['book_on_shelf'].join(':')}")
+    res = JSON.parse(res.response_body)
+    if res["elements"].select { |k,v| v["available"] > 0 }.empty?
+      self.book_on_shelf = false
+    else
+      self.book_on_shelf = true
+    end
   end
 
   def fetch_cover_url(book_id = self.book_id)
