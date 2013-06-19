@@ -159,8 +159,8 @@ div#fade-to-white  { position: absolute; top: 0; left: 0; width:100%; padding: 5
     left:50%;
 }
 
-#right_arrow  { position: absolute; top: 210px; right: -80px;}
-#left_arrow  { position: absolute; top: 210px; left: -50px;}
+#right_arrow  { position: absolute; top: 120px; right: -80px;}
+#left_arrow  { position: absolute; top: 120px; left: -50px;}
 
 #indicator li { display:block; float:left; list-style:none; width:8px; height:8px;
                 background: #aaa; border-radius:4px; text-indent:-9999em;
