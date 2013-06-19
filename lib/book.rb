@@ -277,7 +277,7 @@ class Book
     #   #break if @review_collection.size >= 4
     #   self.send(remote.to_sym)
     # end
-    english_isbn = self.work_isbns.select { |isbn| isbn.to_s.match(/^0|^9780/) }.first
+    english_isbn = self.work_isbns.select { |isbn| isbn.to_s.match(/^0|^9780/) }.first || self.work_isbns.first.to_s
     hydra = Typhoeus::Hydra.new
     req1 = Typhoeus::Request.new("http://www.goodreads.com/book/isbn", :timeout => 2,
       :params => {:format => 'xml', :key => "wDjpR0GY1xXIqTnx2QL37A",
