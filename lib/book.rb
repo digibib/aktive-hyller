@@ -187,13 +187,13 @@ class Book
     # kilder som ikke er i 'order' kommer først (i.e bokanbefalingsbasen -Ønskebok)
 
     if self.lang == RDF::URI("http://lexvo.org/id/iso639-3/eng")
-      order = ["Novelist", "Goodreads", "Deichmanske bibliotek", "Trondheim folkebibliotek", "Lillehammer bibliotek", "Tønsberg og Nøtterøy bibliotek", "Ønskebok", "Bokkilden", "Bibliotekbasen", "Katalogkrydder"]
+      order = ["Novelist", "Goodreads", "Bokanbefalingsbasen", "Ønskebok", "Bokkilden", "Bibliotekbasen", "Katalogkrydder"]
      else
       order = ["Ønskebok", "Novelist", "Bokkilden", "Bibliotekbasen", "Katalogkrydder", "Goodreads"]
     end
 
     self.review_collection.sort! do |a,b|
-      (order.index(a[:source]) || -1) <=> (order.index(b[:source]) || -1)
+      (order.index(a[:sort_source]) || -1) <=> (order.index(b[:sort_source]) || -1)
     end
 
   end
@@ -264,11 +264,16 @@ class Book
     # can also be iterated as RDF::Query::Solution with bindings from query
     reviews.limit(limit) if limit
     for r in reviews
-      self.review_collection.push({:title => r[:review_title].to_s, :text => r[:review_text].to_s,
-        :source => r[:review_source].to_s})
+      unless r[:review_source].to_s == "Ønskebok"
+        self.review_collection.push({:title => r[:review_title].to_s, :text => r[:review_text].to_s,
+        :source => r[:review_source].to_s, :sort_source => "Bokanbefalingsbasen"})
+      else
+        self.review_collection.push({:title => r[:review_title].to_s, :text => r[:review_text].to_s,
+        :source => r[:review_source].to_s, :sort_source => r[:review_source].to_s})
+      end
     end
-    self.review_collection.push({:text => self.abstract.to_s, :source => "Bibliotekbasen"}) if self.abstract
-    self.review_collection.push({:text => self.krydder.to_s, :source => "Katalogkrydder"}) if self.krydder
+    self.review_collection.push({:text => self.abstract.to_s, :source => "Bibliotekbasen", :sort_source => "Bibliotekbasen"}) if self.abstract
+    self.review_collection.push({:text => self.krydder.to_s, :source => "Katalogkrydder", :sort_source => "Katalogkrydder"}) if self.krydder
     return self.review_collection
   end
 
@@ -319,7 +324,7 @@ class Book
       self.rating[:num_raters] = gr_num_raters
       self.rating[:source] = "Goodreads"
     end
-    self.review_collection.push({:source => "Goodreads", :text => gr_description}) if gr_description
+    self.review_collection.push({:source => "Goodreads", :sort_source => "Goodreads", :text => gr_description}) if gr_description
   end
 
   def Bokelskere(result)
@@ -349,7 +354,7 @@ class Book
     end
 
     return nil unless nl_description
-    self.review_collection.push({:source => "Novelist", :text => nl_description})
+    self.review_collection.push({:source => "Novelist", :sort_source => "Novelist", :text => nl_description})
   end
 
   def Bokkilden
@@ -372,7 +377,7 @@ class Book
     end
 
     return nil if bk_ingress.empty?
-    self.review_collection.push({:text => bk_ingress, :source => "Bokkilden"})
+    self.review_collection.push({:text => bk_ingress, :source => "Bokkilden", :sort_source => "Bokkilden"})
   end
 
   def fetch_same_author_books
