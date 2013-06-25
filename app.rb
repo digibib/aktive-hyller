@@ -149,8 +149,13 @@ end
 
 get '/populate/:tnr' do
   tnr = params[:tnr].strip.to_i
-  session[:books][:new] = session[:books][tnr] || Book.new.find(tnr)
+  begin
+    timeout(5) { session[:books][:new] = session[:books][tnr] || Book.new.find(tnr) }
+  rescue Timeout::Error
+    status 500
+  else
   "success!"
+  end
 end
 
 get '/copy' do

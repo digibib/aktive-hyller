@@ -156,7 +156,12 @@ javascript:
       evt.preventDefault();
         var title = $(this).find('p.title').html();
         var tnr = $(this).find('input.tnr_id').val();
+        // Save tnr & title in case of retry
+        $('#seeking_tnr').val(tnr);
+        $('#seeking_title').val(title);
+
         // show overlay
+        $('button#retry-knapp').hide();
         $('#overlay').show();
         $('button#avbryt-knapp').html('Avbryt');
         $('div#vi-leter p').html("#{t.fetching_info} \"" + title + '" <div id="loading"></div>' );
@@ -173,8 +178,38 @@ javascript:
         });
 
         request.fail(function(jqXHR, textStatus, errorThrown) {
+          $('div#vi-leter p').html('&#9760; Beklager, dette tok for lang tid!' );
+          $('button#retry-knapp').show();
           return;
         });
     });
 
+    $('#retry-knapp').on('click', function(evt) {
+      evt.preventDefault();
+        var tnr = $('#seeking_tnr').val();
+        var title = $('#seeking_title').val();
+
+        // show overlay
+        $('button#retry-knapp').hide();
+        $('#overlay').show();
+        $('button#avbryt-knapp').html('Avbryt');
+        $('div#vi-leter p').html("#{t.fetching_info} \"" + title + '" <div id="loading"></div>' );
+        $('#vi-leter').show();
+
+        request = $.ajax({
+          url: '/populate/'+tnr,
+          type: 'GET'});
+
+        request.done(function(msg) {
+          $.get('/copy', function(data) {
+            window.location.replace("/omtale");
+          });
+        });
+
+        request.fail(function(jqXHR, textStatus, errorThrown) {
+          $('div#vi-leter p').html('&#9760; Beklager, dette tok for lang tid!' );
+          $('button#retry-knapp').show();
+          return;
+        });
+    });
   });

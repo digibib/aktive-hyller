@@ -18,8 +18,8 @@ div#overlay        { position: fixed; width:100%; height: 100%; top:0; left: 0;
 div#vi-leter       { color: #fff; position:fixed; display:none;
                      top: 470px; left:0px; z-index:1000; width:1680px; text-align:center;}
 #vi-leter p        { font-size:3em; }
-div#avbryt         { z-index: 1000; position: fixed; top: 570px; left: 720px;}
-
+div#avbryt         { z-index: 1000; position: fixed; top: 570px; left: 620px;}
+#retry-knapp { display:none;}
 div.clearfix       { clear:both;}
 div#barcode_search { text-align: center; padding: 20px;}
 #loading           { width:60px; display:inline-block; text-align:left;}

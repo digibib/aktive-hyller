@@ -8,6 +8,8 @@ html
 
   body
     div id="container" class="select-disable dim"
+      input type="hidden" id="seeking_tnr"
+      input type="hidden" id="seeking_title"
       div id="left-bar"
         div class="logo"
           img class="logo" src="img/logo.png"
@@ -37,4 +39,5 @@ html
         p #{t.looking}
         div id="avbryt"
           button[class="top-button" id="avbryt-knapp"] == t.cancel
+          button[class="top-button" id="retry-knapp"] == "Prøv på nytt"
       div[id="overlay"]
