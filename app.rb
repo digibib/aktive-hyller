@@ -39,7 +39,8 @@ session[:log] = {:start => "pending", :stop => nil, :rfid => 0, :omtale => 0, :f
 before do
   @history = session[:history]
   # Force locale on each request to counter annoying autodetect
-  R18n.set(session[:locale])
+  session[:locale] = params[:locale] if params[:locale]
+  #R18n.set(session[:locale])
 end
 
 # Routing

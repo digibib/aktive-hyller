@@ -15,8 +15,6 @@ gem 'capistrano'
 gem 'rvm-capistrano'
 gem "sqlite3"
 gem "foreman"
-gem "subcontractor"
-
 
 group :development do
   gem "pry"

@@ -31,6 +31,7 @@ end
 
 R18n::I18n.default = 'nb'
 R18n.default_places { File.join('config', 'locales') }
+R18n.set('nb')
 
 def send_error_report(to, message, opts={})
   %x[/usr/bin/xwd -display "#{opts[:display]}" -root |xwdtopnm|pnmtopng > /tmp/screenshot.png ]
