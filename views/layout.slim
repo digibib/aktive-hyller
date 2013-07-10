@@ -5,12 +5,11 @@ html
     title #{t.header.title}
     link href='/css/style.css' rel='stylesheet' type='text/css'
     script src="/js/jquery.min.js"
-    script src="/js/jquery.iosslider.js"
-    script src="/js/jquery.touchSwipe.min.js"
-
 
   body
     div id="container" class="select-disable dim"
+      input type="hidden" id="seeking_tnr"
+      input type="hidden" id="seeking_title"
       div id="left-bar"
         div class="logo"
           img class="logo" src="img/logo.png"
@@ -25,19 +24,20 @@ html
         div id="header-text"
           - if request.path == "/omtale"
             p id="title" #{book.title}
-            p id="sub-title" #{book.creatorName}
+            p id="sub-title" #{book.authors}
           - elsif request.path == "/flere"
             p id="title" #{t.menu.more_by_author}
-            p id="sub-title" #{book.creatorName}
+            p id="sub-title" #{book.authors}
           - elsif request.path == "/relaterte"
             p id="title" #{t.menu.similar_works}
             p id="sub-title"
               span "#{book.title}"&nbsp;
-              span style="font-weight:normal" #{t.made_by} #{book.creatorName}
+              span style="font-weight:normal" #{t.made_by} #{book.authors}
       div id="contents"
         == yield
       div id="vi-leter"
         p #{t.looking}
         div id="avbryt"
           button[class="top-button" id="avbryt-knapp"] == t.cancel
+          button[class="top-button" id="retry-knapp"] == "Prøv på nytt"
       div[id="overlay"]

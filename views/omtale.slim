@@ -8,9 +8,12 @@ div id="content-left"
     - else
       div id="omtale-bilde"
         div id="inner-border"
-          div.book-author #{book.creatorName}
+          div.book-author #{book.authors}
           div.book-title #{book.title}
-      /div class="hyllestatus inne" Boka er kanskje inne
+    - if book.book_on_shelf
+      div class="hyllestatus inne" Boka er inne
+    - else
+      div class="hyllestatus ute" Boka er utlånt
   div.ratings
     - rating = book.rating
     -if rating[:source] and rating[:num_raters] > 0
@@ -27,12 +30,19 @@ div id="content-left"
           <br/> #{t.from} #{rating[:source]}
 
 div id="content-right"
-  div id="omtale-wrapper" class="iosSlider"
-    div id="scroller" class="slider"
+  div id="left_arrow"
+    img src="/img/arrow_left_inactive.png"
+  div id="right_arrow"
+    - if book.review_collection.size > 1
+      img src="/img/arrow_right_active.png"
+    - else
+      img src="/img/arrow_right_inactive.png"
+  div id="omtale-wrapper"
+    div id="scroller"
       - if not book.review_collection.empty?
         - book.review_collection.each_with_index do |r, i|
           div class="slide"
-            div class="review"
+            div class="review #{'current' if i == 0}" id="omtale_#{i}" style="#{'display:none' unless i == 0}"
               p #{{r[:text]}}
               p class="source" #{r[:source]}
       - else
@@ -46,6 +56,7 @@ div id="content-right"
             li #{i}
 
 
+
 div.clearfix
 div id="content-bottom"
   div class="flere"
@@ -54,14 +65,14 @@ div id="content-bottom"
       - num = book.same_author_collection.size < 5 ? book.same_author_collection.size : 3
       - book.randomize_books(book.same_author_collection)[0...num].each do |b|
         div.liste-small
-          input[class="tnr_id" type="hidden" value="#{b[:book].to_s.match(/tnr_(.*)/)[1]}"]
+          input[class="tnr_id" type="hidden" value=(b.book_id.to_s.match(/tnr_(.*)/)[1])]
           - if b[:cover_url]
             div.cover-small
               img src="#{b[:cover_url]}"
           - else
-            div.cover-small-missing #{b[:creatorName]} <strong> #{b[:title]}</strong>
+            div.cover-small-missing #{b[:authors]} <strong> #{b[:title]}</strong>
           p.title: strong #{b[:title]}
-          /p.author #{b[:creatorName]}
+          /p.author #{b[:authors]}
       - if book.same_author_collection.size > 4
         a href="/flere"
           div.cover-small
@@ -73,15 +84,15 @@ div id="content-bottom"
       - num = book.similar_works_collection.size < 5 ? book.similar_works_collection.size : 3
       - book.randomize_books(book.similar_works_collection)[0...num].each do |b|
         div.liste-small
-          input[class="tnr_id" type="hidden" value="#{b[:book].to_s.match(/tnr_(.*)/)[1]}"]
+          input[class="tnr_id" type="hidden" value=(b.book_id.to_s.match(/tnr_(.*)/)[1])]
           - if b[:cover_url]
             div.cover-small
               img src="#{b[:cover_url]}"
           - else
             div.cover-small-missing
-              p #{b[:creatorName]} <strong> #{b[:title]}</strong>
+              p #{b[:authors]} <strong> #{b[:title]}</strong>
           p class="title wider": strong #{b[:title]}
-          p class="author wider" #{b[:creatorName]}
+          p class="author wider" #{b[:authors]}
       - if book.similar_works_collection.size > 4
         a href="/relaterte"
           div.cover-small
@@ -102,66 +113,55 @@ javascript:
 
     $('#indicator li:first').addClass("active");
 
-    var scrollTimer;
+    $('#left_arrow').on('click', function(){
+      var current = parseInt($('.current').attr('id').substr(7));
+      var numReviews = $('.review').size();
 
-    $('.review').scroll(function(){
-      $('#omtale-wrapper').iosSlider('lock');
-      $('.review').css({ overflow: 'auto' });
-      clearTimeout(scrollTimer);
-      scrollTimer = setTimeout( enableSwipe, 250 );
-    })
+      if (current > 0) {
+        var next = current - 1;
+        $('.current').removeClass('current').hide();
+        $('#omtale_'+next).addClass('current').show();
 
-    function enableSwipe() {
-      $('#omtale-wrapper').iosSlider('unlock');
-    }
+        $('#indicator li').removeClass('active');
+        $('#indicator li:eq(' + next + ')').addClass('active');
 
-    $('#omtale-wrapper').iosSlider({
-          snapToChildren: true,
-          scrollbar: false,
-          desktopClickDrag: true,
-          onSlideChange: slideChange,
-          onSlideStart: hideScrollBar,
-          onSlideComplete: showScrollBar
-    });
-
-    function hideScrollBar(args) {
-      //$('.review').delay(200).css({ overflow: 'hidden' });
-    }
-
-    function showScrollBar(args) {
-      //$('.review').css({ overflow: 'auto' });
-      }
-
-    function slideChange(args) {
-      $('#indicator li').removeClass('active');
-      $('#indicator li:eq(' + (args.currentSlideNumber - 1) + ')').addClass('active');
-    }
-
-    /* iosslider deaktivert
-    $('#omtale-wrapper').swipe({
-      swipeStatus:swipe1,
-      allowPageScroll:"vertical",
-      threshold:2000,
-      maxTimeThreshold:5000
-    });
-
-    function swipe1(event, phase, direction, distance) {
-      //$(this).text( phase + " you have swiped " + distance + "px in direction:" + direction );
-      if(phase=="move") {
-        if (direction=="up") {
-          $(this).stop().animate({scrollTop: '-=100'}, 500);
-        }
-        if (direction=="down") {
-          $(this).stop().animate({scrollTop: '+=100'}, 500);
+        $('#right_arrow img').attr('src', "/img/arrow_right_active.png");
+        if (next == 0) {
+          $('#left_arrow img').attr('src', "/img/arrow_left_inactive.png");
         }
       }
-    }
-    */
+    });
+
+    $('#right_arrow').on('click', function(){
+      var current = parseInt($('.current').attr('id').substr(7));
+      var numReviews = $('.review').size();
+
+      if (current < (numReviews -1)) {
+        var next = current + 1;
+        $('.current').removeClass('current').hide();
+        $('#omtale_'+next).addClass('current').show();
+
+        $('#indicator li').removeClass('active');
+        $('#indicator li:eq(' + next + ')').addClass('active');
+
+        $('#left_arrow img').attr('src', "/img/arrow_left_active.png");
+        if (next == numReviews -1) {
+          $('#right_arrow img').attr('src', "/img/arrow_right_inactive.png");
+        }
+      }
+
+    });
+
     $('.liste-small').on('click', function(evt) {
       evt.preventDefault();
         var title = $(this).find('p.title').html();
         var tnr = $(this).find('input.tnr_id').val();
+        // Save tnr & title in case of retry
+        $('#seeking_tnr').val(tnr);
+        $('#seeking_title').val(title);
+
         // show overlay
+        $('button#retry-knapp').hide();
         $('#overlay').show();
         $('button#avbryt-knapp').html('Avbryt');
         $('div#vi-leter p').html("#{t.fetching_info} \"" + title + '" <div id="loading"></div>' );
@@ -178,8 +178,38 @@ javascript:
         });
 
         request.fail(function(jqXHR, textStatus, errorThrown) {
+          $('div#vi-leter p').html('&#9760; Beklager, dette tok for lang tid!' );
+          $('button#retry-knapp').show();
           return;
         });
     });
 
+    $('#retry-knapp').on('click', function(evt) {
+      evt.preventDefault();
+        var tnr = $('#seeking_tnr').val();
+        var title = $('#seeking_title').val();
+
+        // show overlay
+        $('button#retry-knapp').hide();
+        $('#overlay').show();
+        $('button#avbryt-knapp').html('Avbryt');
+        $('div#vi-leter p').html("#{t.fetching_info} \"" + title + '" <div id="loading"></div>' );
+        $('#vi-leter').show();
+
+        request = $.ajax({
+          url: '/populate/'+tnr,
+          type: 'GET'});
+
+        request.done(function(msg) {
+          $.get('/copy', function(data) {
+            window.location.replace("/omtale");
+          });
+        });
+
+        request.fail(function(jqXHR, textStatus, errorThrown) {
+          $('div#vi-leter p').html('&#9760; Beklager, dette tok for lang tid!' );
+          $('button#retry-knapp').show();
+          return;
+        });
+    });
   });

@@ -33,13 +33,14 @@ session[:books] = {}    # {:tnr => book_object}
 session[:history] = []  # Array of Hash
                         # ex: {:path => "/omtale" :book => session[:books][:tnr]}
 session[:current] = nil # Current book in session
-session[:log] = {:start => Time.now, :stop => nil, :rfid => 0, :omtale => 0, :flere => 0, :relaterte => 0}
+session[:log] = {:start => "pending", :stop => nil, :rfid => 0, :omtale => 0, :flere => 0, :relaterte => 0}
 
 # before each request
 before do
   @history = session[:history]
   # Force locale on each request to counter annoying autodetect
-  R18n.set(session[:locale])
+  session[:locale] = params[:locale] if params[:locale]
+  #R18n.set(session[:locale])
 end
 
 # Routing
@@ -48,14 +49,16 @@ get '/' do
 
   # Generate session log line
   session[:log][:stop] = Time.now
-                       # start stop rfid omtale flere relaterte
-  logger.info("Finito #{session[:log][:start].strftime("%Y-%m-%dT%H:%M:%S.%L")} #{session[:log][:stop].strftime("%Y-%m-%dT%H:%M:%S.%L")} #{session[:log][:rfid]} #{session[:log][:omtale]} #{session[:log][:flere]} #{session[:log][:relaterte]}")
+  # start stop rfid omtale flere relaterte
+  if session[:log][:start].kind_of? Time
+    logger.info("Finito #{session[:log][:start].strftime("%Y-%m-%dT%H:%M:%S.%L")} #{session[:log][:stop].strftime("%Y-%m-%dT%H:%M:%S.%L")} #{session[:log][:rfid]} #{session[:log][:omtale]} #{session[:log][:flere]} #{session[:log][:relaterte]}")
+  end
 
   # Clear session history
   session[:history] = []
   session[:current] = nil
-  session[:log] = {:start => Time.now, :rfid => 0, :omtale => 0, :flere => 0, :relaterte => 0}
-  logger.info("Sesjon - -")
+  session[:log] = {:start => "starting", :stop => nil, :rfid => 0, :omtale => 0, :flere => 0, :relaterte => 0}
+  logger.info("Venteskjerm - -")
 
   slim(:index, :layout => false)
 end
@@ -76,17 +79,21 @@ end
 
 get '/omtale' do
   redirect '/' unless session[:current]
-
+  if session[:log][:start] == "starting"
+    session[:log][:start] = Time.now
+    logger.info("Sesjonstart - - ")
+  end
   session[:log][:omtale] += 1
   session[:history].push({:path => '/omtale', :tnr => session[:current].tnr})
-  logger.info("Omtalevisning #{session[:current].book_id} #{session[:current].review_collection.size} \"#{session[:current].creatorName || session[:current].responsible || 'ukjent'}\" \"#{session[:current].title}\"")
+  logger.info("Omtalevisning #{session[:current].book_id} #{session[:current].review_collection.size} \"#{session[:current].authors || session[:current].responsible || 'ukjent'}\" \"#{session[:current].title || 'usannsynligatnoenhardennetittelen'}\"")
   slim :omtale, :locals => {:book => session[:current], :lang => session[:locale]}
 end
 
 get '/omtale/:tnr' do
   # Help route to fetch book manually by tnr
   tnr = params[:tnr].strip.to_i
-  session[:books][tnr] = Book.new(tnr)
+  book = Book.new.find(tnr)
+  session[:books][tnr] = book
   session[:current] = session[:books][tnr]
 
   redirect '/omtale'
@@ -97,7 +104,7 @@ get '/flere' do
 
   session[:log][:flere] += 1
   session[:history].push({:path => '/flere', :tnr => session[:current].tnr})
-  logger.info("Flere \"#{session[:current].creatorName || session[:current].responsible}\" #{session[:current].same_author_collection.size}")
+  logger.info("Flere \"#{session[:current].authors || session[:current].responsible}\" #{session[:current].same_author_collection.size}")
   slim :flere, :locals => {:book => session[:current], :lang => session[:locale]}
 end
 
@@ -106,7 +113,7 @@ get '/relaterte' do
 
   session[:log][:relaterte] += 1
   session[:history].push({:path => '/relaterte', :tnr => session[:current].tnr})
-  logger.info("Relaterte \"#{session[:current].creatorName || session[:current].responsible} - #{session[:current].title}\" #{session[:current].similar_works_collection.size}")
+  logger.info("Relaterte \"#{session[:current].authors || session[:current].responsible} - #{session[:current].title}\" #{session[:current].similar_works_collection.size}")
   slim :relaterte, :locals => {:book => session[:current], :lang => session[:locale]}
 end
 
@@ -143,8 +150,13 @@ end
 
 get '/populate/:tnr' do
   tnr = params[:tnr].strip.to_i
-  session[:books][:new] = session[:books][tnr] || Book.new(tnr)
+  begin
+    timeout(5) { session[:books][:new] = session[:books][tnr] || Book.new.find(tnr) }
+  rescue Timeout::Error
+    status 500
+  else
   "success!"
+  end
 end
 
 get '/copy' do
@@ -181,10 +193,14 @@ get '/ws' do
 end
 
 put '/error_report' do
-  msg = "En feil har blitt oppdaget på tittelnr: #{session[:current].tnr} \n Lykke til med å finne feilen ...;)"
-  SETTINGS["error_report"]["emails"].each do |recipient|
-    send_error_report(recipient, msg, :subject => "Aktiv hylle - feilmelding!")
-    logger.info("Error message sent to #{recipient}") 
+  if SETTINGS["error_report"]["emails"]
+    msg = "En feil har blitt oppdaget på tittelnr: #{session[:current].tnr} \n Lykke til med å finne feilen ...;)"
+    SETTINGS["error_report"]["emails"].each do |recipient|
+      send_error_report(recipient, msg, :subject => "Aktiv hylle - feilmelding!", :display => SETTINGS["error_report"]["display"])
+      logger.info("Error message sent to #{recipient}")
+    end
+    "message sent!"
+  else
+    "no emails to send to!"
   end
-  "message sent!"
 end

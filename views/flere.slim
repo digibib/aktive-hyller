@@ -4,8 +4,8 @@ div id="liste-wrapper"
       a href="/omtale" class="liste-link"
         li
           p class="liste-tittel" #{same_author_book[:title]}
-          p class="liste-forfatter" #{same_author_book[:creatorName]}
-          input[class="tnr_id" type="hidden" value="#{same_author_book[:book].to_s.match(/tnr_(.*)/)[1]}"]
+          p class="liste-forfatter" #{same_author_book[:authors]}
+          input[class="tnr_id" type="hidden" value=(same_author_book[:book_id].to_s.match(/tnr_(.*)/)[1])]
           hr style="width:100%;"
           div class="liste-bilde"
             - if same_author_book[:cover_url]
@@ -13,7 +13,7 @@ div id="liste-wrapper"
             - else
               div id="omtale-bilde-liste"
                 div id="inner-border-liste"
-                  div.book-author-liste #{same_author_book[:creatorName]}
+                  div.book-author-liste #{same_author_book[:authors]}
                   div.book-title-liste #{same_author_book[:title]}
 div id="fade-to-white"
 
@@ -29,20 +29,18 @@ javascript:
       $('#vi-leter').hide();
       if(request) {request.abort();} //abort running requests
     });
-  
-
-    // loading animation
-    i = 0;
-    setInterval(function() {
-      i = ++i % 4;
-      $("#loading").html(""+Array(i+1).join("."));
-    }, 500);
 
     $('a.liste-link').on('click', function(evt) {
       evt.preventDefault();
         var title = $(this).find('p.liste-tittel').html();
         var tnr = $(this).find('input.tnr_id').val();
+
+        // Save tnr & title in case of retry
+        $('#seeking_tnr').val(tnr);
+        $('#seeking_title').val(title);
+
         // show overlay
+        $('button#retry-knapp').hide();
         $('#overlay').show();
         $('button#avbryt-knapp').html('Avbryt');
         $('div#vi-leter p').html("#{t.fetching_info} \"" + title + '" <div id="loading"></div>' );
@@ -59,6 +57,37 @@ javascript:
         });
 
         request.fail(function(jqXHR, textStatus, errorThrown) {
+          $('div#vi-leter p').html('&#9760; Beklager, dette tok for lang tid!' );
+          $('button#retry-knapp').show();
+          return;
+        });
+    });
+
+    $('#retry-knapp').on('click', function(evt) {
+      evt.preventDefault();
+        var tnr = $('#seeking_tnr').val();
+        var title = $('#seeking_title').val();
+
+        // show overlay
+        $('button#retry-knapp').hide();
+        $('#overlay').show();
+        $('button#avbryt-knapp').html('Avbryt');
+        $('div#vi-leter p').html("#{t.fetching_info} \"" + title + '" <div id="loading"></div>' );
+        $('#vi-leter').show();
+
+        request = $.ajax({
+          url: '/populate/'+tnr,
+          type: 'GET'});
+
+        request.done(function(msg) {
+          $.get('/copy', function(data) {
+            window.location.replace("/omtale");
+          });
+        });
+
+        request.fail(function(jqXHR, textStatus, errorThrown) {
+          $('div#vi-leter p').html('&#9760; Beklager, dette tok for lang tid!' );
+          $('button#retry-knapp').show();
           return;
         });
     });

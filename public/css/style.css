@@ -18,8 +18,8 @@ div#overlay        { position: fixed; width:100%; height: 100%; top:0; left: 0;
 div#vi-leter       { color: #fff; position:fixed; display:none;
                      top: 470px; left:0px; z-index:1000; width:1680px; text-align:center;}
 #vi-leter p        { font-size:3em; }
-div#avbryt         { z-index: 1000; position: fixed; top: 570px; left: 720px;}
-
+div#avbryt         { z-index: 1000; position: fixed; top: 570px; left: 620px;}
+#retry-knapp { display:none;}
 div.clearfix       { clear:both;}
 div#barcode_search { text-align: center; padding: 20px;}
 #loading           { width:60px; display:inline-block; text-align:left;}
@@ -32,7 +32,9 @@ img.omtalt-bok     { width: 230px; max-height: 340px; border: 10px solid white;
                      box-shadow: 5px 6px 7px 2px rgba(0,0,0,0.25);
                       position:absolute;top:0;bottom:0;margin:auto;}
 div.hyllestatus    { font-size:1.5em; bottom:40px; left:-5px; display:block; position:absolute; text-align:center;
-                     color:#fff; padding:5px; background:green; opacity:0.7; width:250px;}
+                     color:#fff; padding:5px; opacity:0.7; width:250px;}
+div.inne           { background: green;}
+div.ute            { background: red;}
 div#omtale-bilde   { display: block; width: 230px; height: 320px; background:#fff; padding:10px;
                      box-shadow: 1px 3px 10px 2px rgba(0,0,0,0.25);}
 div#inner-border   { padding: 20px; border:2px solid gray; background: #ddd; height:280px; text-align: center;}
@@ -43,11 +45,11 @@ div.no-review      { padding:1em; font-size: 1.5em;}
 div.no-review p    { line-height: 1.2em;}
 div.no-review li   { margin-left: 1em; padding: 0.2em;}
 
-div.review         { margin-top:20px;font-size: 1.3em; padding: 20px 40px; width:88%; height:77%; overflow:auto; }
+div.review         { margin-top:20px;font-size: 1.3em; padding: 20px 40px; width:88%; height:77%; overflow:hidden; }
 p.source         { font-size: 0.7em; margin-top:1em; font-weight:bold;}
 
 div#debug          { background-color:yellow; border: 1px solid black; border-radius: 2px;}
-div#container      { width: 1680px; height:1050px; color: #222; border:0px solid black; overflow: hidden;
+div#container      { width: 1680px; height:1049px; color: #222; border:0px solid black; overflow: hidden;
                      background-image: url("../img/leftbar.png"); background-repeat: no-repeat;}
 div#nysgjerrig     { width:100%; height: 100%; vertical-align: middle}
 div#nysgjerrig-tittel { margin-top:100px; font-size: 6em; font-weight: bold; text-align: center}
@@ -63,7 +65,7 @@ div.buffer         { clear:both; margin-top:60px;}
 
 
 div#left-bar { background: rgba(230,87,64, 0); margin-right: 60px; float:left;
-                     width: 238px; height: 1050px; position:relative; }
+                     width: 238px; height: 1049px; position:relative; }
 
 div#avslutt-container { position: absolute; bottom:0; left:0;}
 button#avslutt span    { position:relative; bottom:15px;}
@@ -73,7 +75,7 @@ div#top-buttons    { float: right; margin: 24px;}
 div#contents       { padding: 0; float: left; width: 1365px; overflow:hidden; position: relative;}
 div#content-left   { margin-left: 94px; height: 460px; width: 300px; float: left; }
 
-div#content-right  { float: left; margin-left:85px; width:785px; height: 460px; }
+div#content-right  { float: left; margin-left:85px; width:785px; height: 460px; position: relative;}
 div#content-bottom { clear:both; margin-top: 55px; width:1365px; height:367px;
                      background: #555; color: #fff; padding:10px;}
 div.flere          { float:left; width: 660px; padding-left:10px; }
@@ -109,8 +111,8 @@ div.cover-small-missing { width:120px; height:170px; border: 5px solid white;
                           background: -moz-linear-gradient(top,  #eee,  #b5b5b5);
                           text-align: center; color:#444; display:table-cell; vertical-align:middle; }
 
-div#omtale-wrapper { width: 815px; height:460px; border: 2px solid #aaa;
-                     box-shadow:inset 0 0 10px #bbb; background:#eee; /*overflow:hidden;*/}
+div#omtale-wrapper { width: 815px; height:460px; border: 2px solid #999; overflow:hidden;
+                     box-shadow:inset 0 0 10px #bbb; background:#fff; position:relative;}
 
 div#omtale-scroll  { float: right; margin-right:20px; }
 div.rating         { width:218px; height:60px; border: 1px solid #aaa; padding:14px;}
@@ -120,6 +122,7 @@ div.ratings        { margin-top: 14px; font-size: 0.9em; display:table; text-ali
 .inne              { background: green; opacity:0.7; color: #fff;}
 
 #scrollable        { position:relative; overflow:hidden; height: 575px; }
+#scroller          { height: 390px; overflow: auto; width: 840px;}
 
 img.rating         { margin-top: 20px; margin-bottom: 10px;;}
 img.scroll-icon    { width: 60px;}
@@ -150,40 +153,14 @@ ul.review-list li  { padding:0 10px; height:300px; }
 div#fade-to-white  { position: absolute; top: 0; left: 0; width:100%; padding: 50px 0;
                      background-image: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);}
 
-
-/* slider container */
-.iosSlider {
-    /* required */
-    position: relative;
-    top: 0;
-    left: 0;
-    overflow: hidden;
-
-    width: 815px;
-    height: 460px;
-}
-
-/* slider */
-.iosSlider .slider {
-    /* required */
-    width: 100%;
-    height: 100%;
-
-}
-
-/* slide */
-.iosSlider .slider .slide {
-    /* required */
-    float: left;
-    overflow:hidden;
-    width: 835px;
-    height: 390px;}
-
 .indicator-wrapper {
     position: absolute;
     bottom: 10px;
     left:50%;
 }
+
+#right_arrow  { position: absolute; top: 120px; right: -80px;}
+#left_arrow  { position: absolute; top: 120px; left: -50px;}
 
 #indicator li { display:block; float:left; list-style:none; width:8px; height:8px;
                 background: #aaa; border-radius:4px; text-indent:-9999em;

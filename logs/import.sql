@@ -1,3 +1,3 @@
 .separator |
-.import sessions.csv sessions
-.import omtaler.csv omtaler
+.import logs/sessions.csv sessions
+.import logs/omtaler.csv omtaler

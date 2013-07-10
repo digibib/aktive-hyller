@@ -1,3 +1,6 @@
+# name of station
+name: my-station
+
 # supported readers
 rfid: true
 barcode: true
@@ -5,10 +8,13 @@ barcode: true
 # data access
 sparql_endpoint:   http://localhost:8890/sparql
 default_graph:     http://example.com/books
+sources_graph:     http://example.com/sources
 similarity_graph:  http://data.deichman.no/noeSomLigner
 resource_prefix:   http://example.com/resource/
 book_status_api:   http://bibsyst/???????
 department:      "voksenavdelingen"
+book_on_shelf:
+  - hutl
 novelist:
   profile: profile-id
   password: secret
@@ -40,6 +46,6 @@ smtp:
   password: password
 
 error_report:
-  display: :0.0 # unix DISPLAY env for screenshot
+  display: ':0.0' # unix DISPLAY env for screenshot
   emails:
     - example1@example.com
