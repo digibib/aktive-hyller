@@ -272,8 +272,8 @@ EOF
 
 ```
 cat <<EOF | tee Procfile
-app: /home/aktiv/.rvm/scripts/rvm; cd /home/aktiv/code/aktive-hyller; ruby app.rb
-rfid: sleep 3; /home/aktiv/.rvm/scripts/rvm; cd /home/aktiv/code/rfidgeek; ruby rfid.rb
+app: /home/aktiv/.rvm/scripts/rvm; cd /home/aktiv/code/aktive-hyller; bundle exec ruby app.rb
+rfid: sleep 3; /home/aktiv/.rvm/scripts/rvm; cd /home/aktiv/code/rfidgeek; bundle exec ruby rfid.rb
 EOF
 ```
 
@@ -282,33 +282,6 @@ EOF
 ```rvmsudo foreman export upstart /etc/init -a aktivehyller -p 4567 -u aktiv -l ~/code/aktive-hyller/logs/upstart```
 
 this creates an upstart job for both rfid reader and active shelf on port 4567 with logs on ~/code/aktive-hyller/logs/upstart
-if to start automatically on booy add runlevel [2345]:
-
-example upstart:
-
-```
-cat <<EOF | sudo tee /etc/init/aktivehyller.conf
-pre-start script
-
-bash << "EOF"
-  mkdir -p /home/aktiv/code/aktive-hyller/logs/upstart
-  chown -R aktiv /home/aktiv/code/aktive-hyller/logs/upstart
-EOF
-
-end script
-
-start on (started network-interface
-          or started network-manager
-          or started networking
-          and runlevel [2345]
-          and local-filesystems)
-
-stop on (stopping network-interface
-         or stopping network-manager
-         or stopping networking
-         and runlevel [016])
-EOF
-```
 
 ## Aktive hyller configuration
 
