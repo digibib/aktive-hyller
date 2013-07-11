@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
-Name=autologout
-Comment=autologout
+Name=aktivehyller
+Comment=Aktive hyller
 Exec=/home/aktiv/code/aktive-hyller/scripts/aktivehyller.sh
 Type=Application
 Categories=;

@@ -41,8 +41,8 @@ namespace :setup do
 
     puts "generating foreman Procfile"
     `cat <<EOF | tee #{home}/code/Procfile
-app: #{home}/.rvm/scripts/rvm; cd #{pwd}; ruby app.rb
-rfid: sleep 3; #{home}/.rvm/scripts/rvm; cd #{home}/code/rfidgeek; ruby rfid.rb
+app: #{home}/.rvm/scripts/rvm; cd #{pwd}; bundle exec ruby app.rb
+rfid: sleep 3; #{home}/.rvm/scripts/rvm; cd #{home}/code/rfidgeek; bundle exec ruby rfid.rb
 EOF`
    
    puts "Installing required gems via bundler"
