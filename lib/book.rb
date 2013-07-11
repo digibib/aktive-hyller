@@ -199,12 +199,15 @@ class Book
   end
 
   def fetch_book_status
-    res = Typhoeus.get("https://www.deich.folkebibl.no/cgi-bin/rest_service/copies/latest/data/#{self.work_tnrs.join(',')} fields=simple loc=#{SETTINGS['book_on_shelf'].join(':')}")
-    res = JSON.parse(res.response_body)
-    if res["elements"].select { |k,v| v["available"] > 0 }.empty?
-      self.book_on_shelf = false
-    else
-      self.book_on_shelf = true
+    # check in settings if book holding should be checked
+    unless Array(SETTINGS['book_on_shelf']).empty?
+      res = Typhoeus.get("#{SETTINGS['book_status_api']}#{self.work_tnrs.join(',')} fields=simple loc=#{SETTINGS['book_on_shelf'].join(':')}")
+      res = JSON.parse(res.response_body)
+      if res["elements"].select { |k,v| v["available"] > 0 }.empty?
+        self.book_on_shelf = "out"
+      else
+        self.book_on_shelf = "in"
+      end
     end
   end
 
