@@ -151,7 +151,7 @@ end
 get '/populate/:tnr' do
   tnr = params[:tnr].strip.to_i
   begin
-    timeout(5) { session[:books][:new] = session[:books][tnr] || Book.new.find(tnr) }
+    timeout(SETTINGS['timeout_value'] || 6) { session[:books][:new] = session[:books][tnr] || Book.new.find(tnr) }
   rescue Timeout::Error
     status 500
   else
