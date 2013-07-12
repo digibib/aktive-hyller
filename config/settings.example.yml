@@ -13,8 +13,7 @@ similarity_graph:  http://data.deichman.no/noeSomLigner
 resource_prefix:   http://example.com/resource/
 book_status_api:   http://bibsyst/???????
 department:      "voksenavdelingen"
-book_on_shelf:
-  - hutl
+book_on_shelf: # list avdelinger som skal sjekkes for om boka er utlånt eller ei
 novelist:
   profile: profile-id
   password: secret
