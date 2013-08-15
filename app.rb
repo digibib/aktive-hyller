@@ -1,8 +1,6 @@
 #encoding: UTF-8
-require_relative "./config/init.rb"
 
 require "sinatra"
-require "sinatra-websocket"
 require "sinatra/reloader" if development?
 require "slim"
 require "json"
@@ -171,25 +169,37 @@ end
 
 get '/ws' do
   # handles the messages from the RFID-reader
-  return false unless request.websocket?
+  App = lambda do |env|
+    if Faye::WebSocket.websocket?(env)
+      ws = Faye::WebSocket.new(env)
 
-  request.websocket do |ws|
+      ws.on :open do 
+        settings.sockets << ws
+      end
 
-    ws.onopen do
-      settings.sockets << ws
-    end
-
-    ws.onmessage do |msg|
-      logger.info("RFID #{msg} -")
-      session[:log][:rfid] += 1
-      EM.next_tick { settings.sockets.each{|s| s.send(msg) } }
-    end
-
-    ws.onclose do
-      #warn("websocket closed")
-      settings.sockets.delete(ws)
+      ws.on :message do |msg|
+        logger.info("RFID #{msg} -")
+        session[:log][:rfid] += 1
+        EM.next_tick { settings.sockets.each{|s| s.send(msg) } }
+        #ws.send(msg.data)
+      end
+  
+      ws.on :close do |event|
+        p [:close, event.code, event.reason]
+        settings.sockets.delete(ws)
+        ws = nil
+      end
+  
+      # Return async Rack response
+      ws.rack_response
+  
+    else
+      # Normal HTTP request
+      [200, {'Content-Type' => 'text/plain'}, ['Hello']]
     end
   end
+  #return false unless request.websocket?
+
 end
 
 put '/error_report' do
