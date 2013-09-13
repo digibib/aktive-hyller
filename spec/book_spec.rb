@@ -1,5 +1,4 @@
 require_relative '../lib/book'
-require 'bogus/rspec'
 require 'typhoeus'
 
 describe "Book" do
@@ -19,7 +18,7 @@ describe "Book" do
 			book.rating[:source].should == "Goodreads"
 		end
 		it "saves description" do
-			book.review_collection.should include {|r| r[:source] == "Goodreads"} 
+			book.review_collection.should include {|r| r[:source] == "Goodreads"}
 		end
 			it "saves sum of ratings" do
 			book.rating[:rating].should == 596
