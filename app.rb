@@ -192,6 +192,11 @@ get '/ws' do
   end
 end
 
+get '/book/:tnr' do
+  tnr = params[:tnr]
+  EM.next_tick { settings.sockets.each{|s| s.send(tnr) } }
+end
+
 put '/error_report' do
   if SETTINGS["error_report"]["emails"]
     msg = "En feil har blitt oppdaget på tittelnr: #{session[:current].tnr} \n Lykke til med å finne feilen ...;)"
