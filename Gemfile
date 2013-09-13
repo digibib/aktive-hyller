@@ -19,7 +19,7 @@ gem "rake"
 gem 'capybara'
 
 group :development do
-  gem 'selenium-webdriver'
+  #gem 'selenium-webdriver'
   gem 'rack_session_access'
   gem 'cucumber'
   gem 'rspec'
