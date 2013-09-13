@@ -1,1 +1,1 @@
-ssh $SSH_DEPLOYMACHINE "cd /home/aktiv/code/aktive-hyller; git pull; pkill firefox; sudo service aktivehyller restart"
+ssh $1 "cd /home/aktiv/code/aktive-hyller; git pull; pkill firefox; sudo service aktivehyller restart"
