@@ -1,1 +1,1 @@
-ssh $1 "cd /home/aktiv/code/aktive-hyller; git pull; rvm use 1.9.3; bundle; pkill firefox; sudo service aktivehyller restart"
+ssh $1 "cd /home/aktiv/code/aktive-hyller; git pull; source /home/aktiv/.rvm/scripts/rvm; bundle; pkill firefox; sudo service aktivehyller restart"
