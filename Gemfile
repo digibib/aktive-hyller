@@ -16,11 +16,10 @@ gem 'rvm-capistrano'
 gem "sqlite3"
 gem "foreman"
 gem "rake"
-gem 'rspec'
-gem 'bogus'
 gem 'capybara'
-gem 'cucumber'
 
 group :development do
+  gem 'cucumber'
+  gem 'rspec'
   gem "pry"
 end
