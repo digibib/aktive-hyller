@@ -78,7 +78,7 @@ get '/timeout' do
 end
 
 get '/omtale' do
-  redirect '/' unless session[:current]
+  #redirect '/' unless session[:current]
   if session[:log][:start] == "starting"
     session[:log][:start] = Time.now
     logger.info("Sesjonstart - - ")

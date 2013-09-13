@@ -1,12 +1,15 @@
 Given(/^the book has an RFID\-tag$/) do
-  pending # express the regexp above with the code you wish you had
+  @tnr = "882715"
 end
 
 Given(/^the book is placed on the shelf$/) do
-  pending # express the regexp above with the code you wish you had
+  #@book = Book.new.find(@tnr)
+  visit "/book/"+@tnr
 end
 
 Then(/^I should see the title and author of the book$/) do
-  pending # express the regexp above with the code you wish you had
+  #session = Capybara::Session.new(:current, @book)
+  visit "/omtale/"+@tnr
+  page.should have_content "Panserhjerte"
 end
 
