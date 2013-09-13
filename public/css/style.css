@@ -167,3 +167,5 @@ div#fade-to-white  { position: absolute; top: 0; left: 0; width:100%; padding: 5
                 background: #aaa; border-radius:4px; text-indent:-9999em;
                 margin-right:4px;}
 #indicator li.active { background: #f8941d;}
+
+div#ahversion {display: none;}
