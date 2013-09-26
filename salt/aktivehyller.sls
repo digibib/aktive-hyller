@@ -32,6 +32,7 @@ installpkgs:
       - libav-tools
       - sqlite3
       - libsqlite3-dev
+      - openssh-server
 
 bundler: 
   pkg:
@@ -107,11 +108,21 @@ bundle_ah:
 # GLOBAL SETTINGS
 ########
 
-/etc/upstart-xsessions:
-  file.uncomment:
-    - regex: ubuntu
+#/etc/upstart-xsessions:
+#  file.append:
+#    - text: Lubuntu
+#    - stateful: True
+
+/etc/init/aktivehyller.conf:
+  file.managed:
+    - source: salt://aktivehyller/files/aktivehyller.conf
     - stateful: True
 
+/etc/init/rfidgeek.conf:
+  file.managed:
+    - source: salt://aktivehyller/files/rfidgeek.conf
+    - stateful: True
+        
 ######## 
 # LOCAL SETTINGS
 ########
@@ -149,57 +160,57 @@ bundle_ah:
       - user
       - group
 
-/home/aktiv/.config/upstart:
+/home/aktiv/.config/autostart:
   file.directory:
     - user: aktiv
     - group: aktiv
     - makedirs: True
 
-/home/aktiv/.config/upstart/firefox.conf:
-  file.managed:
-    - source: salt://aktivehyller/files/firefox.conf
+/home/aktiv/.config/autostart/aktivehyller.desktop:
+  file.symlink:
+    - target: /home/aktiv/code/aktive-hyller/scripts/aktivehyller.desktop
     - user: aktiv
     - group: aktiv
 
+/home/aktiv/.config/autostart/xscreensaver-timeout.desktop:
+  file.symlink:
+    - target: /home/aktiv/code/aktive-hyller/scripts/xscreensaver-timeout.desktop
+    - user: aktiv
+    - group: aktiv
+    
 ########## 
 # SERVICES
 ##########
 
-foreman:
-  cmd.run:
-    - name: foreman export upstart /etc/init -a aktivehyller -p 4567 -u aktiv -l /home/aktiv/code/aktive-hyller/logs/upstart
-    - cwd: /home/aktiv/code/aktive-hyller
-    - require:
-      - cmd: bundle_ah
-      - git: https://github.com/digibib/aktive-hyller.git
-                    
 aktivehyller:
   service:
     - running
     - enable: True
     - require:
       - cmd: bundle_ah
-      - cmd: foreman
+      - file: /etc/init/aktivehyller.conf
       - file: /home/aktiv/code/aktive-hyller/config/settings.yml
     - watch:
       - file: /home/aktiv/code/aktive-hyller/config/settings.yml
 
-firefox:
+rfidgeek:
   service:
     - running
     - enable: True
     - require:
       - service: aktivehyller
-      - file: /home/aktiv/.config/upstart/firefox.conf
+      - file: /etc/init/rfidgeek.conf
     - watch:
-      - service: aktivehyller
-      - file: /home/aktiv/.config/upstart/firefox.conf
-            
+      - file: /home/aktiv/code/rfidgeek/config/config.yml
+
 lightdm:
   service:
     - running
     - watch:
       - git: https://github.com/digibib/aktive-hyller.git
       - git: https://github.com/digibib/rfidgeek.git
-      - file: /etc/upstart-xsessions
+    - cmd.run:
+      - name: pkill xscreensaver-timeout.sh
+    - cmd.run:
+      - name: pkill aktivehyller.sh
 
