@@ -202,12 +202,14 @@ class Book
   def fetch_book_status
     # check in settings if book holding should be checked
     unless Array(SETTINGS['book_on_shelf']).empty?
-      res = Typhoeus.get("#{SETTINGS['book_status_api']}#{self.work_tnrs.join(',')} fields=simple loc=#{SETTINGS['book_on_shelf'].join(':')}")
+      res = Typhoeus.get("#{SETTINGS['book_status_api']}#{self.work_tnrs.join(',')} fields=simple loc=#{SETTINGS['book_on_shelf'].join(':')}", :followlocation => true)
       res = JSON.parse(res.response_body)
-      if res["elements"].select { |k,v| v["available"] > 0 }.empty?
-        self.book_on_shelf = "out"
-      else
-        self.book_on_shelf = "in"
+      if res["elements"]
+        if res["elements"].select { |k,v| v["available"] > 0 }.empty?
+          self.book_on_shelf = "out"
+        else
+          self.book_on_shelf = "in"
+        end
       end
     end
   end
@@ -288,17 +290,18 @@ class Book
     # end
     english_isbn = self.work_isbns.select { |isbn| isbn.to_s.match(/^0|^9780/) }.first || self.work_isbns.first.to_s
     hydra = Typhoeus::Hydra.new
-    req1 = Typhoeus::Request.new("http://www.goodreads.com/book/isbn", :timeout => 2,
+    req1 = Typhoeus::Request.new("www.goodreads.com/book/isbn", :timeout => 2,
       :params => {:format => 'xml', :key => "wDjpR0GY1xXIqTnx2QL37A",
-      :isbn => english_isbn})
+      :isbn => english_isbn}, :followlocation => true)
     req1.on_complete  { |response| Goodreads(response) unless response.timed_out? }
     if SETTINGS['novelist']
-      req2 = Typhoeus::Request.new("http://140.234.254.43/Services/SearchService.asmx/Search",
+      req2 = Typhoeus::Request.new("140.234.254.43/Services/SearchService.asmx/Search",
         :timeout => 2, :params => {:prof => SETTINGS['novelist']['profile'],
-          :pwd => SETTINGS['novelist']['password'], :db => "noh", :query => english_isbn})
+        :pwd => SETTINGS['novelist']['password'], :db => "noh", :query => english_isbn},
+        :followlocation => true)
       req2.on_complete { |response| Novelist(response) unless response.timed_out? }
     end
-    req3 = Typhoeus::Request.new("http://bokelskere.no/api/1.0/boker/info/#{self.isbn}/", :timeout => 2)
+    req3 = Typhoeus::Request.new("bokelskere.no/api/1.0/boker/info/#{self.isbn}/", :timeout => 2, :followlocation => true)
     req3.on_complete { |response| Bokelskere(response) unless response.timed_out? }
 
     if self.isbn
@@ -336,6 +339,7 @@ class Book
     return nil if self.rating[:rating]
 
     return nil unless result
+    return nil unless result.code == 200
     return nil unless result.body
     return nil if result.body.strip.empty?
     return nil if result.body =~ /Not Found/
@@ -370,7 +374,7 @@ class Book
     self.work_isbns.each do |isbn|
       res = Typhoeus::Request.get("http://partner.bokkilden.no/SamboWeb/partner.do", :timeout => 2,
         :params => {:format => "XML", :uttrekk => 5, :pid => 0, :ept => 3, :xslId => 117,
-              :enkeltsok => isbn.to_s})
+        :enkeltsok => isbn.to_s}, :followlocation => true)
       if res.body
         xml = Nokogiri::XML res.body
         if xml.xpath('//Ingress').size() >= 1
