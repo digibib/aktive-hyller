@@ -5,7 +5,6 @@ require 'rdf'
 
 module RDF
   class BIBO < RDF::Vocabulary("http://purl.org/ontology/bibo/");end
-  class RDFS < RDF::Vocabulary("http://www.w3.org/2000/01/rdf-schema#");end
   class XFOAF < RDF::Vocabulary("http://www.foafrealm.org/xfoaf/0.1/")
     property :name
   end

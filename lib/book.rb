@@ -202,14 +202,18 @@ class Book
   def fetch_book_status
     # check in settings if book holding should be checked
     unless Array(SETTINGS['book_on_shelf']).empty?
-      res = Typhoeus.get("#{SETTINGS['book_status_api']}#{self.work_tnrs.join(',')} fields=simple loc=#{SETTINGS['book_on_shelf'].join(':')}", :followlocation => true)
-      res = JSON.parse(res.response_body)
-      if res["elements"]
+
+      response = Faraday.get "#{SETTINGS['book_status_api']}#{self.work_tnrs.join(',')}&fields=simple&loc=#{SETTINGS['book_on_shelf'].join(':')}"
+
+      if response.status == 200
+        res = JSON.parse(response.body)
         if res["elements"].select { |k,v| v["available"] > 0 }.empty?
           self.book_on_shelf = "out"
         else
           self.book_on_shelf = "in"
         end
+      else
+        puts "some unknown error"
       end
     end
   end
@@ -371,16 +375,17 @@ class Book
 
     bk_ingress = ""
 
-    self.work_isbns.each do |isbn|
-      res = Typhoeus::Request.get("http://partner.bokkilden.no/SamboWeb/partner.do", :timeout => 2,
-        :params => {:format => "XML", :uttrekk => 5, :pid => 0, :ept => 3, :xslId => 117,
-        :enkeltsok => isbn.to_s}, :followlocation => true)
-      if res.body
-        xml = Nokogiri::XML res.body
-        if xml.xpath('//Ingress').size() >= 1
-          bk_ingress = xml.xpath('//Ingress').first.content
+    Array(self.work_isbns).each do |isbn|
+      response = Faraday.get "http://partner.bokkilden.no/SamboWeb/partner.do?format=XML&uttrekk=5&pid=0&ept=3&xslId=117&enkeltsok=#{isbn.to_s}"
+
+      if response.status == 200
+        if response.body
+          xml = Nokogiri::XML response.body
+          if xml.xpath('//Ingress').size() >= 1
+            bk_ingress = xml.xpath('//Ingress').first.content
+          end
+          break unless bk_ingress.empty?
         end
-        break unless bk_ingress.empty?
       end
     end
 

@@ -9,7 +9,7 @@ gem "sinatra-r18n" # internationalization
 gem "em-websocket"
 gem "rdf"
 gem "rdf-virtuoso"
-gem "typhoeus"
+gem "typhoeus", "~> 0.5.0"
 #gem "rdf-virtuoso", :git => "https://github.com/digibib/rdf-virtuoso.git"
 gem 'capistrano'
 gem 'rvm-capistrano'
