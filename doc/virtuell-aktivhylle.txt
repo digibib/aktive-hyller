@@ -1,0 +1,55 @@
+##########
+# AKTIVE HYLLER FRA VIRTUALBOX
+##########
+
+##########
+# FORBEREDELSER
+##########
+
+enten:
+1) last ned virtualbox for riktig plattform fra:
+https://www.virtualbox.org/wiki/Downloads
+eller bruk pakkesystemet for å finne virtualbox.
+
+for tilgang til USB: last også ned:
+VirtualBox Extension Pack
+
+last ned virtuell aktiv hylle fra:
+http://datatest.deichman.no/virtualbox/aktivehyller.vmdk
+
+og ta kaffepause...
+NB! tar laaang tid ~3,7GB
+
+Installer Virtualbox
+Start Virtualbox
+
+##########
+# USB og PERIFERE ENHETER
+##########
+Installer Extension Pack
+File > Preferences > Extensions
+last opp den nedlastede extension pack-fila.
+
+##########
+# LAG NY VIRTUALBOX FRA DISK IMAGE
+##########
+
+1) New
+name: Aktive hyller 
+type: Linux
+version: Ubuntu
+
+2) Memory size
+la stå
+
+3) Hard drive
+Use an existing virtual hard drive file
+( finn den nedlastede filen aktivehyller.vmdk )
+
+4) Create
+
+##########
+# START DEN VIRTUELLE BOKSEN
+##########
+
+for USB, pass på å aktivere enheter i menyen 'Devices' øverst
